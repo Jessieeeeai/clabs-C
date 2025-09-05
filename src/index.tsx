@@ -214,306 +214,327 @@ app.get('/', (c) => {
 
 // About and Services pages removed - content moved to homepage
 
-// Cases page  
-app.get('/cases', (c) => {
-  return c.render(
-    <div>
-      <div class="page-header">
-        <div class="container">
-          <h1>成功案例</h1>
-          <p>见证我们与合作伙伴共同创造的营销奇迹</p>
-        </div>
-      </div>
-      
-      <div class="cases-content">
-        <div class="container">
-          
-          {/* Cases Overview */}
-          <div class="cases-stats glass-card">
-            <h2>我们的成绩</h2>
-            <div class="stats-grid">
-              <div class="stat-item">
-                <div class="stat-icon">
-                  <i class="fas fa-rocket"></i>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-number">50+</span>
-                  <span class="stat-label">成功项目</span>
-                </div>
+// Cases page - Professional List Layout with Database Integration
+app.get('/cases', async (c) => {
+  try {
+    const { env } = c;
+    const url = new URL(c.req.url);
+    
+    // Get query parameters
+    const category = url.searchParams.get('category') || 'all';
+    const search = url.searchParams.get('search') || '';
+    const page = parseInt(url.searchParams.get('page') || '1');
+    const limit = 12;
+    const offset = (page - 1) * limit;
+    
+    // Fetch categories
+    const categories = await env.DB.prepare(`
+      SELECT * FROM case_categories ORDER BY sort_order ASC
+    `).all();
+    
+    // Build query based on filters
+    let whereClause = "WHERE status = 'published'";
+    const params = [];
+    
+    if (category !== 'all') {
+      whereClause += " AND cc.slug = ?";
+      params.push(category);
+    }
+    
+    if (search) {
+      whereClause += " AND (c.title LIKE ? OR c.summary LIKE ? OR c.client_name LIKE ?)";
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+    
+    // Fetch cases with category info
+    const casesQuery = `
+      SELECT 
+        c.*,
+        cc.name as category_name,
+        cc.color as category_color,
+        cc.icon as category_icon
+      FROM cases c
+      LEFT JOIN case_categories cc ON c.category_id = cc.id
+      ${whereClause}
+      ORDER BY c.featured DESC, c.published_at DESC
+      LIMIT ? OFFSET ?
+    `;
+    
+    const cases = await env.DB.prepare(casesQuery).bind(...params, limit, offset).all();
+    
+    // Get total count for pagination
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM cases c
+      LEFT JOIN case_categories cc ON c.category_id = cc.id
+      ${whereClause}
+    `;
+    const totalResult = await env.DB.prepare(countQuery).bind(...params).first();
+    const total = totalResult?.total || 0;
+    const totalPages = Math.ceil(total / limit);
+    
+    const categoriesData = categories.results || [];
+    const casesData = cases.results || [];
+    
+    return c.render(
+      <div class="cases-page">
+        {/* Page Header */}
+        <div class="page-header">
+          <div class="container">
+            <div class="header-content">
+              <div class="breadcrumb">
+                <a href="/">首页</a>
+                <span class="separator">&gt;</span>
+                <span class="current">合作案例</span>
               </div>
-              <div class="stat-item">
-                <div class="stat-icon">
-                  <i class="fas fa-eye"></i>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-number">500M+</span>
-                  <span class="stat-label">总曝光量</span>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-number">1M+</span>
-                  <span class="stat-label">社区覆盖</span>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">
-                  <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-number">85%</span>
-                  <span class="stat-label">成功率</span>
-                </div>
-              </div>
+              <h1>合作案例</h1>
+              <p class="page-description">见证我们与合作伙伴共同创造的营销奇迹</p>
             </div>
-          </div>
-
-          {/* Featured Cases */}
-          <div class="featured-cases">
-            <h2 class="section-title">明星案例</h2>
             
-            <div class="case-card glass-card featured">
-              <div class="case-badge">
-                <i class="fas fa-star"></i>
-                <span>明星案例</span>
+            {/* Quick Stats */}
+            <div class="quick-stats">
+              <div class="stat-item">
+                <span class="stat-number">{total}</span>
+                <span class="stat-label">成功案例</span>
               </div>
-              <div class="case-header">
-                <div class="case-logo">
-                  <div class="logo-placeholder">ATH</div>
-                </div>
-                <div class="case-title-info">
-                  <h3>Aethir (ATH)</h3>
-                  <div class="case-tags">
-                    <span class="case-tag depin">DePIN</span>
-                    <span class="case-tag hot">爆款项目</span>
-                  </div>
-                </div>
+              <div class="stat-item">
+                <span class="stat-number">6</span>
+                <span class="stat-label">业务领域</span>
               </div>
-              
-              <div class="case-content">
-                <div class="case-description">
-                  <p>Aethir 是领先的去中心化云基础设施项目，我们为其提供了全方位的中文市场营销策略，实现了令人瞩目的市场表现。</p>
-                </div>
-                
-                <div class="case-details">
-                  <div class="detail-section">
-                    <h4><i class="fas fa-info-circle"></i> 项目信息</h4>
-                    <div class="detail-grid">
-                      <div class="detail-item">
-                        <span class="detail-label">产品</span>
-                        <span class="detail-value">Aethir Edge</span>
-                      </div>
-                      <div class="detail-item">
-                        <span class="detail-label">赛道</span>
-                        <span class="detail-value">DePIN / 云计算</span>
-                      </div>
-                      <div class="detail-item">
-                        <span class="detail-label">投资方</span>
-                        <span class="detail-value">Sanctor Capital、HashKey、Merit Circle</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="detail-section">
-                    <h4><i class="fas fa-bullseye"></i> 营销成果</h4>
-                    <div class="achievements">
-                      <div class="achievement-item">
-                        <i class="fas fa-fire text-orange-500"></i>
-                        <span>10分钟售罄公售</span>
-                      </div>
-                      <div class="achievement-item">
-                        <i class="fas fa-users text-blue-500"></i>
-                        <span>300+ 社区覆盖</span>
-                      </div>
-                      <div class="achievement-item">
-                        <i class="fas fa-trophy text-yellow-500"></i>
-                        <span>行业领先地位</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="case-metrics">
-                  <div class="metric-card">
-                    <div class="metric-number">100万+</div>
-                    <div class="metric-label">总浏览量</div>
-                    <div class="metric-trend">
-                      <i class="fas fa-arrow-up text-green-500"></i>
-                      <span>+150%</span>
-                    </div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">70K</div>
-                    <div class="metric-label">YouTube 覆盖</div>
-                    <div class="metric-trend">
-                      <i class="fas fa-arrow-up text-green-500"></i>
-                      <span>+200%</span>
-                    </div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">300+</div>
-                    <div class="metric-label">社区覆盖</div>
-                    <div class="metric-trend">
-                      <i class="fas fa-arrow-up text-green-500"></i>
-                      <span>+180%</span>
-                    </div>
-                  </div>
-                </div>
+              <div class="stat-item">
+                <span class="stat-number">500M+</span>
+                <span class="stat-label">累计曝光</span>
               </div>
             </div>
-
-            <div class="case-card glass-card">
-              <div class="case-header">
-                <div class="case-logo">
-                  <div class="logo-placeholder">BAL</div>
-                </div>
-                <div class="case-title-info">
-                  <h3>Balance</h3>
-                  <div class="case-tags">
-                    <span class="case-tag gaming">Gaming</span>
-                    <span class="case-tag funding">大额融资</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="case-content">
-                <div class="case-description">
-                  <p>Balance 是下一代 Web3 游戏基础设施项目，获得4000万美元融资。我们助力其在中文市场建立强大的品牌影响力。</p>
-                </div>
-                
-                <div class="case-details">
-                  <div class="detail-section">
-                    <h4><i class="fas fa-info-circle"></i> 项目信息</h4>
-                    <div class="detail-grid">
-                      <div class="detail-item">
-                        <span class="detail-label">融资额</span>
-                        <span class="detail-value">4000万美金</span>
-                      </div>
-                      <div class="detail-item">
-                        <span class="detail-label">赛道</span>
-                        <span class="detail-value">GameFi / 基础设施</span>
-                      </div>
-                      <div class="detail-item">
-                        <span class="detail-label">投资方</span>
-                        <span class="detail-value">a16z、Galaxy Interactive、Animoca</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="case-metrics">
-                  <div class="metric-card">
-                    <div class="metric-number">150万</div>
-                    <div class="metric-label">总浏览量</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">3000+</div>
-                    <div class="metric-label">节点销售</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">13%</div>
-                    <div class="metric-label">全球销量占比</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="case-card glass-card">
-              <div class="case-header">
-                <div class="case-logo">
-                  <div class="logo-placeholder">HUM</div>
-                </div>
-                <div class="case-title-info">
-                  <h3>Humanode</h3>
-                  <div class="case-tags">
-                    <span class="case-tag privacy">隐私计算</span>
-                    <span class="case-tag innovation">创新技术</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="case-content">
-                <div class="case-description">
-                  <p>Humanode 是革命性的全同态加密项目，我们为其提供了专业的社区建设和技术传播服务。</p>
-                </div>
-                
-                <div class="case-details">
-                  <div class="detail-section">
-                    <h4><i class="fas fa-info-circle"></i> 项目信息</h4>
-                    <div class="detail-grid">
-                      <div class="detail-item">
-                        <span class="detail-label">融资轮次</span>
-                        <span class="detail-value">种子轮 500万美金</span>
-                      </div>
-                      <div class="detail-item">
-                        <span class="detail-label">技术特点</span>
-                        <span class="detail-value">全同态加密</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="case-metrics">
-                  <div class="metric-card">
-                    <div class="metric-number">50K+</div>
-                    <div class="metric-label">总浏览量</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">1000+</div>
-                    <div class="metric-label">社区用户</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">100+</div>
-                    <div class="metric-label">节点购买</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="case-card glass-card">
-              <div class="case-header">
-                <div class="case-logo">
-                  <div class="logo-placeholder">CARV</div>
-                </div>
-                <div class="case-title-info">
-                  <h3>CARV Protocol</h3>
-                  <div class="case-tags">
-                    <span class="case-tag data">数据协议</span>
-                    <span class="case-tag binance">币安投资</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="case-content">
-                <div class="case-description">
-                  <p>CARV Protocol 是领先的游戏数据协议，获得币安等顶级机构投资。我们为其中文社区建设做出重要贡献。</p>
-                </div>
-                
-                <div class="case-metrics">
-                  <div class="metric-card">
-                    <div class="metric-number">80K+</div>
-                    <div class="metric-label">社区用户</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">200万</div>
-                    <div class="metric-label">总浏览量</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="metric-number">95%</div>
-                    <div class="metric-label">用户满意度</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
+        </div>
+        
+        {/* Filter and Search Section */}
+        <div class="filters-section">
+          <div class="container">
+            <div class="filters-header">
+              <h2>筛选案例</h2>
+              <div class="results-info">
+                共找到 <span class="highlight">{total}</span> 个案例
+              </div>
+            </div>
+            
+            {/* Category Tabs */}
+            <div class="category-tabs">
+              <a 
+                href="/cases?category=all" 
+                class={`tab ${category === 'all' ? 'active' : ''}`}
+              >
+                <i class="fas fa-th-large"></i>
+                全部
+              </a>
+              {categoriesData.map(cat => (
+                <a 
+                  href={`/cases?category=${cat.slug}`}
+                  class={`tab ${category === cat.slug ? 'active' : ''}`}
+                  style={`--category-color: ${cat.color}`}
+                >
+                  <i class={cat.icon}></i>
+                  {cat.name}
+                </a>
+              ))}
+            </div>
+            
+            {/* Search Bar */}
+            <div class="search-section">
+              <form method="GET" class="search-form">
+                <input type="hidden" name="category" value={category} />
+                <div class="search-input-group">
+                  <input 
+                    type="text" 
+                    name="search" 
+                    placeholder="搜索项目名称、客户或关键词..."
+                    value={search}
+                    class="search-input"
+                  />
+                  <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </form>
+              
+              {search && (
+                <div class="search-result-info">
+                  搜索 "<span class="search-term">{search}</span>" 的结果
+                  <a href={`/cases?category=${category}`} class="clear-search">
+                    <i class="fas fa-times"></i> 清除搜索
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
-          {/* Testimonials */}
-          <div class="testimonials-section">
-            <h2 class="section-title">客户反馈</h2>
+        {/* Cases List */}
+        <div class="cases-content">
+          <div class="container">
+            {casesData.length > 0 ? (
+              <div class="cases-list">
+                {casesData.map(caseItem => {
+                  const tags = caseItem.tags ? JSON.parse(caseItem.tags) : [];
+                  const metrics = caseItem.metrics ? JSON.parse(caseItem.metrics) : {};
+                  
+                  return (
+                    <div class={`case-list-item ${caseItem.featured ? 'featured' : ''}`}>
+                      {caseItem.featured && (
+                        <div class="featured-badge">
+                          <i class="fas fa-star"></i>
+                          <span>明星案例</span>
+                        </div>
+                      )}
+                      
+                      <div class="case-thumbnail">
+                        <div class="thumbnail-placeholder" style={`background: linear-gradient(135deg, ${caseItem.category_color || '#283dfe'}, ${caseItem.category_color || '#283dfe'}AA)`}>
+                          <span>{caseItem.client_name?.substring(0, 3).toUpperCase() || 'C'}</span>
+                        </div>
+                        {caseItem.category_name && (
+                          <div class="category-badge" style={`background-color: ${caseItem.category_color}`}>
+                            <i class={caseItem.category_icon}></i>
+                            {caseItem.category_name}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div class="case-info">
+                        <div class="case-header">
+                          <h3 class="case-title">
+                            <a href={`/cases/${caseItem.slug}`}>{caseItem.title}</a>
+                          </h3>
+                          <div class="case-meta">
+                            <span class="client-name">{caseItem.client_name}</span>
+                            <span class="separator">•</span>
+                            <span class="project-date">{new Date(caseItem.project_date).toLocaleDateString('zh-CN')}</span>
+                            <span class="separator">•</span>
+                            <span class="duration">{caseItem.project_duration}</span>
+                          </div>
+                        </div>
+                        
+                        <p class="case-summary">{caseItem.summary}</p>
+                        
+                        {tags.length > 0 && (
+                          <div class="case-tags">
+                            {tags.slice(0, 4).map(tag => (
+                              <span class="tag">{tag}</span>
+                            ))}
+                            {tags.length > 4 && <span class="tag more">+{tags.length - 4}</span>}
+                          </div>
+                        )}
+                        
+                        <div class="case-metrics-mini">
+                          {metrics.total_exposure && (
+                            <div class="metric-mini">
+                              <i class="fas fa-eye"></i>
+                              <span>{(metrics.total_exposure / 10000).toFixed(0)}万 曝光</span>
+                            </div>
+                          )}
+                          {metrics.community_growth && (
+                            <div class="metric-mini">
+                              <i class="fas fa-users"></i>
+                              <span>{metrics.community_growth}+ 社区</span>
+                            </div>
+                          )}
+                          {caseItem.views > 0 && (
+                            <div class="metric-mini">
+                              <i class="fas fa-chart-line"></i>
+                              <span>{caseItem.views} 查看</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div class="case-actions">
+                        <a href={`/cases/${caseItem.slug}`} class="case-link">
+                          查看详情
+                          <i class="fas fa-arrow-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="fas fa-search"></i>
+                </div>
+                <h3>没有找到匹配的案例</h3>
+                <p>请尝试调整搜索条件或选择其他分类</p>
+                <a href="/cases" class="btn-primary">查看全部案例</a>
+              </div>
+            )}
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div class="pagination">
+                <div class="pagination-info">
+                  显示第 {offset + 1} - {Math.min(offset + limit, total)} 项，共 {total} 项
+                </div>
+                <div class="pagination-controls">
+                  {page > 1 && (
+                    <a href={`/cases?category=${category}&search=${search}&page=${page - 1}`} class="page-btn">
+                      <i class="fas fa-chevron-left"></i>
+                      上一页
+                    </a>
+                  )}
+                  
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum = i + 1;
+                    const isActive = pageNum === page;
+                    return (
+                      <a 
+                        href={`/cases?category=${category}&search=${search}&page=${pageNum}`}
+                        class={`page-number ${isActive ? 'active' : ''}`}
+                      >
+                        {pageNum}
+                      </a>
+                    );
+                  })}
+                  
+                  {page < totalPages && (
+                    <a href={`/cases?category=${category}&search=${search}&page=${page + 1}`} class="page-btn">
+                      下一页
+                      <i class="fas fa-chevron-right"></i>
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Admin Panel for Case Management */}
+        <div class="admin-section">
+          <div class="container">
+            <div class="admin-panel">
+              <h3>案例管理</h3>
+              <p>管理员可以在这里添加、编辑和管理案例内容</p>
+              <div class="admin-actions">
+                <a href="/admin/login" class="admin-btn primary">
+                  <i class="fas fa-sign-in-alt"></i>
+                  管理后台
+                </a>
+                <a href="/admin/cases/add" class="admin-btn">
+                  <i class="fas fa-plus"></i>
+                  添加案例
+                </a>
+                <a href="/admin/cases/manage" class="admin-btn">
+                  <i class="fas fa-cog"></i>
+                  管理案例
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials */}
+        <div class="testimonials-section">
+          <div class="container">
+            <h2>客户评价</h2>
             <div class="testimonials-grid">
               <div class="testimonial-card glass-card">
                 <div class="testimonial-content">
@@ -540,8 +561,10 @@ app.get('/cases', (c) => {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* CTA */}
+        {/* CTA */}
+        <div class="container">
           <div class="cases-cta glass-card">
             <h2>让我们为您创造下一个成功案例</h2>
             <p>加入我们的成功项目行列，在 Web3 世界中脱颖而出</p>
@@ -550,17 +573,27 @@ app.get('/cases', (c) => {
                 <i class="fas fa-rocket mr-2"></i>
                 开始合作
               </a>
-              <a href="/services" class="btn-secondary">
-                <i class="fas fa-info-circle mr-2"></i>
-                了解服务
-              </a>
             </div>
           </div>
+        </div>
 
+      </div>
+    );
+    
+  } catch (error) {
+    console.error('Error loading cases page:', error);
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>页面加载出错</h1>
+            <p>抱歉，案例页面暂时无法加载。请稍后再试。</p>
+            <a href="/" class="btn-primary">返回首页</a>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    );
+  }
 })
 
 app.get('/contact', (c) => {
@@ -2632,6 +2665,1249 @@ app.get('/api/tutorials/search', async (c) => {
   } catch (error) {
     console.error('Error searching articles:', error);
     return c.json({ success: false, error: 'Failed to search articles' }, 500);
+  }
+})
+
+// ===== ADMIN BACKEND SYSTEM =====
+
+// Simple session management (in production, use proper session storage)
+const adminSessions = new Set<string>()
+
+// Helper function to check admin authentication
+function isAuthenticated(c: any): boolean {
+  const sessionId = c.req.header('x-session-id') || c.req.query('session')
+  return adminSessions.has(sessionId)
+}
+
+// Generate simple session ID
+function generateSessionId(): string {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36)
+}
+
+// Admin Login Page
+app.get('/admin/login', (c) => {
+  return c.render(
+    <div class="admin-login-page">
+      <div class="login-container">
+        <div class="login-card">
+          <div class="login-header">
+            <div class="login-logo">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h2>案例管理后台</h2>
+            <p>请输入管理员账号信息</p>
+          </div>
+          
+          <form id="loginForm" class="login-form">
+            <div class="form-group">
+              <label for="username">用户名</label>
+              <div class="input-wrapper">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" name="username" placeholder="输入管理员用户名" required />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="password">密码</label>
+              <div class="input-wrapper">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" name="password" placeholder="输入管理员密码" required />
+              </div>
+            </div>
+            
+            <button type="submit" class="login-btn">
+              <i class="fas fa-sign-in-alt"></i>
+              登录管理后台
+            </button>
+          </form>
+          
+          <div class="login-footer">
+            <p class="login-note">
+              <i class="fas fa-info-circle"></i>
+              仅限授权管理员访问
+            </p>
+            <a href="/cases" class="back-link">
+              <i class="fas fa-arrow-left"></i>
+              返回案例页面
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <script>{`
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+          e.preventDefault()
+          const username = document.getElementById('username').value
+          const password = document.getElementById('password').value
+          
+          try {
+            const response = await fetch('/api/admin/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password })
+            })
+            
+            const result = await response.json()
+            
+            if (result.success) {
+              localStorage.setItem('admin-session', result.sessionId)
+              window.location.href = '/admin/cases/manage'
+            } else {
+              alert(result.message || '登录失败，请检查用户名和密码')
+            }
+          } catch (error) {
+            alert('登录请求失败，请稍后再试')
+          }
+        })
+      `}</script>
+    </div>
+  )
+})
+
+// Admin Login API
+app.post('/api/admin/login', async (c) => {
+  try {
+    const { username, password } = await c.req.json()
+    
+    // Simple authentication (in production, use proper password hashing)
+    if (username === 'admin' && password === 'clabs2024') {
+      const sessionId = generateSessionId()
+      adminSessions.add(sessionId)
+      
+      // Set session expiry (24 hours)
+      setTimeout(() => {
+        adminSessions.delete(sessionId)
+      }, 24 * 60 * 60 * 1000)
+      
+      return c.json({ success: true, sessionId, message: '登录成功' })
+    } else {
+      return c.json({ success: false, message: '用户名或密码错误' }, 401)
+    }
+  } catch (error) {
+    return c.json({ success: false, message: '登录请求处理失败' }, 500)
+  }
+})
+
+// Admin Cases Management Page
+app.get('/admin/cases/manage', async (c) => {
+  try {
+    const { env } = c
+    
+    // Get all cases with category information
+    const cases = await env.DB.prepare(`
+      SELECT 
+        c.*,
+        cc.name as category_name,
+        cc.color as category_color
+      FROM cases c
+      LEFT JOIN case_categories cc ON c.category_id = cc.id
+      ORDER BY c.created_at DESC
+    `).all()
+
+    const categories = await env.DB.prepare(`
+      SELECT * FROM case_categories ORDER BY sort_order ASC
+    `).all()
+
+    return c.render(
+      <div class="admin-management-page">
+        <div class="admin-header">
+          <div class="container">
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-cogs"></i>
+                <span>案例管理后台</span>
+              </div>
+              <div class="admin-actions">
+                <a href="/admin/cases/add" class="btn-primary">
+                  <i class="fas fa-plus"></i>
+                  添加新案例
+                </a>
+                <a href="/cases" class="btn-secondary">
+                  <i class="fas fa-eye"></i>
+                  查看前台
+                </a>
+                <button onclick="logout()" class="btn-danger">
+                  <i class="fas fa-sign-out-alt"></i>
+                  退出登录
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <div class="container">
+            <div class="admin-stats">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-info">
+                  <h3>{cases.results?.length || 0}</h3>
+                  <p>总案例数</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-info">
+                  <h3>{categories.results?.length || 0}</h3>
+                  <p>案例分类</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-info">
+                  <h3>{cases.results?.reduce((sum, c) => sum + (c.views || 0), 0) || 0}</h3>
+                  <p>总浏览量</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="cases-management">
+              <div class="management-header">
+                <h2>案例管理</h2>
+                <div class="management-filters">
+                  <select id="categoryFilter">
+                    <option value="">所有分类</option>
+                    {categories.results?.map(cat => (
+                      <option value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                  <select id="statusFilter">
+                    <option value="">所有状态</option>
+                    <option value="published">已发布</option>
+                    <option value="draft">草稿</option>
+                    <option value="archived">已归档</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="cases-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>缩略图</th>
+                      <th>案例标题</th>
+                      <th>客户</th>
+                      <th>分类</th>
+                      <th>状态</th>
+                      <th>浏览量</th>
+                      <th>创建时间</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cases.results?.map(caseItem => (
+                      <tr>
+                        <td>
+                          {caseItem.thumbnail_url ? (
+                            <img src={caseItem.thumbnail_url} alt={caseItem.title} class="case-thumbnail" />
+                          ) : (
+                            <div class="no-thumbnail">
+                              <i class="fas fa-image"></i>
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          <div class="case-title-cell">
+                            <h4>{caseItem.title}</h4>
+                            <p class="case-summary">{caseItem.summary}</p>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="client-cell">
+                            {caseItem.client_logo_url && (
+                              <img src={caseItem.client_logo_url} alt={caseItem.client_name} class="client-logo" />
+                            )}
+                            <span>{caseItem.client_name}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="category-badge" style={`background-color: ${caseItem.category_color}20; color: ${caseItem.category_color}`}>
+                            {caseItem.category_name}
+                          </span>
+                        </td>
+                        <td>
+                          <span class={`status-badge status-${caseItem.status}`}>
+                            {caseItem.status === 'published' ? '已发布' : 
+                             caseItem.status === 'draft' ? '草稿' : 
+                             caseItem.status === 'archived' ? '已归档' : caseItem.status}
+                          </span>
+                        </td>
+                        <td>{caseItem.views || 0}</td>
+                        <td>{new Date(caseItem.created_at).toLocaleDateString('zh-CN')}</td>
+                        <td>
+                          <div class="action-buttons">
+                            <a href={`/cases/${caseItem.slug}`} class="btn-icon" title="查看">
+                              <i class="fas fa-eye"></i>
+                            </a>
+                            <a href={`/admin/cases/edit/${caseItem.id}`} class="btn-icon" title="编辑">
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <button onclick={`deleteCase(${caseItem.id})`} class="btn-icon btn-danger" title="删除">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>{`
+          function logout() {
+            localStorage.removeItem('admin-session')
+            window.location.href = '/admin/login'
+          }
+
+          async function deleteCase(caseId) {
+            if (!confirm('确定要删除这个案例吗？此操作无法撤销。')) {
+              return
+            }
+
+            try {
+              const sessionId = localStorage.getItem('admin-session')
+              const response = await fetch('/api/admin/cases/' + caseId, {
+                method: 'DELETE',
+                headers: {
+                  'x-session-id': sessionId
+                }
+              })
+
+              const result = await response.json()
+              
+              if (result.success) {
+                alert('案例删除成功')
+                window.location.reload()
+              } else {
+                alert(result.message || '删除失败')
+              }
+            } catch (error) {
+              alert('删除请求失败，请稍后再试')
+            }
+          }
+
+          // Check authentication on page load
+          const sessionId = localStorage.getItem('admin-session')
+          if (!sessionId) {
+            window.location.href = '/admin/login'
+          }
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading admin management:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>加载失败</h1>
+            <p>无法加载管理页面，请稍后再试。</p>
+            <a href="/admin/login" class="btn-primary">重新登录</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
+
+// Add New Case Page
+app.get('/admin/cases/add', async (c) => {
+  try {
+    const { env } = c
+
+    const categories = await env.DB.prepare(`
+      SELECT * FROM case_categories ORDER BY sort_order ASC
+    `).all()
+
+    return c.render(
+      <div class="admin-add-case-page">
+        <div class="admin-header">
+          <div class="container">
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-plus"></i>
+                <span>添加新案例</span>
+              </div>
+              <div class="admin-actions">
+                <a href="/admin/cases/manage" class="btn-secondary">
+                  <i class="fas fa-arrow-left"></i>
+                  返回管理
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <div class="container">
+            <form id="addCaseForm" class="case-form">
+              <div class="form-section">
+                <h3>基本信息</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="title">案例标题 *</label>
+                    <input type="text" id="title" name="title" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="slug">URL路径 *</label>
+                    <input type="text" id="slug" name="slug" placeholder="auto-generated" />
+                    <small>留空自动生成</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="client_name">客户名称 *</label>
+                    <input type="text" id="client_name" name="client_name" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="category_id">案例分类 *</label>
+                    <select id="category_id" name="category_id" required>
+                      <option value="">请选择分类</option>
+                      {categories.results?.map(cat => (
+                        <option value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="summary">案例简介 *</label>
+                  <textarea id="summary" name="summary" rows="3" placeholder="简要描述这个案例..." required></textarea>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>项目详情</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="project_date">项目日期</label>
+                    <input type="date" id="project_date" name="project_date" />
+                  </div>
+                  <div class="form-group">
+                    <label for="project_duration">项目周期</label>
+                    <input type="text" id="project_duration" name="project_duration" placeholder="例：3个月" />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="industry">行业领域</label>
+                    <input type="text" id="industry" name="industry" placeholder="例：DeFi, GameFi, NFT" />
+                  </div>
+                  <div class="form-group">
+                    <label for="location">项目地区</label>
+                    <input type="text" id="location" name="location" placeholder="例：全球, 亚太" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="website_url">项目网站</label>
+                  <input type="url" id="website_url" name="website_url" placeholder="https://" />
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>媒体资源</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="thumbnail_url">缩略图URL</label>
+                    <input type="url" id="thumbnail_url" name="thumbnail_url" placeholder="https://" />
+                  </div>
+                  <div class="form-group">
+                    <label for="banner_url">封面图URL</label>
+                    <input type="url" id="banner_url" name="banner_url" placeholder="https://" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="client_logo_url">客户Logo URL</label>
+                  <input type="url" id="client_logo_url" name="client_logo_url" placeholder="https://" />
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>案例内容</h3>
+                <div class="form-group">
+                  <label for="content">详细内容</label>
+                  <textarea id="content" name="content" rows="10" placeholder="详细描述案例的执行过程、策略、成果等..."></textarea>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>标签和数据</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="tags">项目标签</label>
+                    <input type="text" id="tags" name="tags" placeholder="标签1,标签2,标签3" />
+                    <small>多个标签用英文逗号分隔</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="status">发布状态</label>
+                    <select id="status" name="status">
+                      <option value="draft">草稿</option>
+                      <option value="published">立即发布</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="metrics">项目数据 (JSON格式)</label>
+                  <textarea id="metrics" name="metrics" rows="4" placeholder='{"total_exposure": 1500000, "community_growth": 8500, "conversion_rate": 12.5}'></textarea>
+                  <small>请输入JSON格式的项目数据</small>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" onclick="history.back()" class="btn-secondary">取消</button>
+                <button type="submit" class="btn-primary">
+                  <i class="fas fa-save"></i>
+                  保存案例
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <script>{`
+          // Auto-generate slug from title
+          document.getElementById('title').addEventListener('input', function(e) {
+            const slug = e.target.value
+              .toLowerCase()
+              .replace(/[^a-z0-9\\u4e00-\\u9fa5]+/g, '-')
+              .replace(/^-+|-+$/g, '')
+            document.getElementById('slug').value = slug
+          })
+
+          document.getElementById('addCaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault()
+            
+            const formData = new FormData(e.target)
+            const caseData = {}
+            
+            for (let [key, value] of formData.entries()) {
+              if (key === 'tags') {
+                caseData[key] = JSON.stringify(value.split(',').map(tag => tag.trim()).filter(tag => tag))
+              } else if (key === 'metrics') {
+                try {
+                  caseData[key] = value ? JSON.parse(value) : null
+                } catch (error) {
+                  alert('项目数据格式错误，请输入正确的JSON格式')
+                  return
+                }
+              } else {
+                caseData[key] = value || null
+              }
+            }
+
+            try {
+              const sessionId = localStorage.getItem('admin-session')
+              const response = await fetch('/api/admin/cases', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-session-id': sessionId
+                },
+                body: JSON.stringify(caseData)
+              })
+
+              const result = await response.json()
+              
+              if (result.success) {
+                alert('案例添加成功！')
+                window.location.href = '/admin/cases/manage'
+              } else {
+                alert(result.message || '添加失败，请检查输入信息')
+              }
+            } catch (error) {
+              alert('提交失败，请稍后再试')
+            }
+          })
+
+          // Check authentication
+          const sessionId = localStorage.getItem('admin-session')
+          if (!sessionId) {
+            window.location.href = '/admin/login'
+          }
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading add case page:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>页面加载失败</h1>
+            <p>无法加载添加案例页面，请稍后再试。</p>
+            <a href="/admin/cases/manage" class="btn-primary">返回管理</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
+
+// API: Add New Case
+app.post('/api/admin/cases', async (c) => {
+  try {
+    const { env } = c
+    const caseData = await c.req.json()
+
+    // Generate slug if not provided
+    if (!caseData.slug) {
+      caseData.slug = caseData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+    }
+
+    // Insert case into database
+    const result = await env.DB.prepare(`
+      INSERT INTO cases (
+        title, slug, summary, content, category_id, thumbnail_url, banner_url,
+        client_name, client_logo_url, project_date, project_duration,
+        industry, location, website_url, tags, metrics, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      caseData.title,
+      caseData.slug,
+      caseData.summary,
+      caseData.content,
+      caseData.category_id,
+      caseData.thumbnail_url,
+      caseData.banner_url,
+      caseData.client_name,
+      caseData.client_logo_url,
+      caseData.project_date,
+      caseData.project_duration,
+      caseData.industry,
+      caseData.location,
+      caseData.website_url,
+      caseData.tags,
+      JSON.stringify(caseData.metrics),
+      caseData.status
+    ).run()
+
+    if (result.success) {
+      return c.json({ success: true, message: '案例添加成功', caseId: result.meta.last_row_id })
+    } else {
+      return c.json({ success: false, message: '数据库操作失败' }, 500)
+    }
+  } catch (error) {
+    console.error('Error adding case:', error)
+    return c.json({ success: false, message: '添加案例失败: ' + error.message }, 500)
+  }
+})
+
+// API: Delete Case
+app.delete('/api/admin/cases/:id', async (c) => {
+  try {
+    const { env } = c
+    const caseId = c.req.param('id')
+
+    const result = await env.DB.prepare(`
+      DELETE FROM cases WHERE id = ?
+    `).bind(caseId).run()
+
+    if (result.success && result.meta.changes > 0) {
+      return c.json({ success: true, message: '案例删除成功' })
+    } else {
+      return c.json({ success: false, message: '案例未找到或删除失败' }, 404)
+    }
+  } catch (error) {
+    console.error('Error deleting case:', error)
+    return c.json({ success: false, message: '删除案例失败' }, 500)
+  }
+})
+
+// Edit Case Page
+app.get('/admin/cases/edit/:id', async (c) => {
+  try {
+    const { env } = c
+    const caseId = c.req.param('id')
+
+    const caseData = await env.DB.prepare(`
+      SELECT * FROM cases WHERE id = ?
+    `).bind(caseId).first()
+
+    if (!caseData) {
+      return c.render(
+        <div class="error-page">
+          <div class="container">
+            <div class="error-message">
+              <h1>案例未找到</h1>
+              <p>请求的案例不存在或已被删除。</p>
+              <a href="/admin/cases/manage" class="btn-primary">返回管理</a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    const categories = await env.DB.prepare(`
+      SELECT * FROM case_categories ORDER BY sort_order ASC
+    `).all()
+
+    // Parse JSON fields
+    let tags = []
+    let metrics = {}
+    
+    try {
+      tags = caseData.tags ? JSON.parse(caseData.tags) : []
+    } catch (e) {}
+    
+    try {
+      metrics = caseData.metrics ? JSON.parse(caseData.metrics) : {}
+    } catch (e) {}
+
+    return c.render(
+      <div class="admin-edit-case-page">
+        <div class="admin-header">
+          <div class="container">
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-edit"></i>
+                <span>编辑案例: {caseData.title}</span>
+              </div>
+              <div class="admin-actions">
+                <a href="/admin/cases/manage" class="btn-secondary">
+                  <i class="fas fa-arrow-left"></i>
+                  返回管理
+                </a>
+                <a href={`/cases/${caseData.slug}`} target="_blank" class="btn-secondary">
+                  <i class="fas fa-eye"></i>
+                  预览案例
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <div class="container">
+            <form id="editCaseForm" class="case-form">
+              <input type="hidden" name="id" value={caseData.id} />
+              
+              <div class="form-section">
+                <h3>基本信息</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="title">案例标题 *</label>
+                    <input type="text" id="title" name="title" value={caseData.title} required />
+                  </div>
+                  <div class="form-group">
+                    <label for="slug">URL路径 *</label>
+                    <input type="text" id="slug" name="slug" value={caseData.slug} required />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="client_name">客户名称 *</label>
+                    <input type="text" id="client_name" name="client_name" value={caseData.client_name} required />
+                  </div>
+                  <div class="form-group">
+                    <label for="category_id">案例分类 *</label>
+                    <select id="category_id" name="category_id" required>
+                      <option value="">请选择分类</option>
+                      {categories.results?.map(cat => (
+                        <option value={cat.id} selected={cat.id === caseData.category_id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="summary">案例简介 *</label>
+                  <textarea id="summary" name="summary" rows="3" required>{caseData.summary}</textarea>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>项目详情</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="project_date">项目日期</label>
+                    <input type="date" id="project_date" name="project_date" value={caseData.project_date} />
+                  </div>
+                  <div class="form-group">
+                    <label for="project_duration">项目周期</label>
+                    <input type="text" id="project_duration" name="project_duration" value={caseData.project_duration} />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="industry">行业领域</label>
+                    <input type="text" id="industry" name="industry" value={caseData.industry} />
+                  </div>
+                  <div class="form-group">
+                    <label for="location">项目地区</label>
+                    <input type="text" id="location" name="location" value={caseData.location} />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="website_url">项目网站</label>
+                  <input type="url" id="website_url" name="website_url" value={caseData.website_url} />
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>媒体资源</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="thumbnail_url">缩略图URL</label>
+                    <input type="url" id="thumbnail_url" name="thumbnail_url" value={caseData.thumbnail_url} />
+                  </div>
+                  <div class="form-group">
+                    <label for="banner_url">封面图URL</label>
+                    <input type="url" id="banner_url" name="banner_url" value={caseData.banner_url} />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="client_logo_url">客户Logo URL</label>
+                  <input type="url" id="client_logo_url" name="client_logo_url" value={caseData.client_logo_url} />
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>案例内容</h3>
+                <div class="form-group">
+                  <label for="content">详细内容</label>
+                  <textarea id="content" name="content" rows="10">{caseData.content}</textarea>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>标签和数据</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="tags">项目标签</label>
+                    <input type="text" id="tags" name="tags" value={tags.join(',')} />
+                    <small>多个标签用英文逗号分隔</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="status">发布状态</label>
+                    <select id="status" name="status">
+                      <option value="draft" selected={caseData.status === 'draft'}>草稿</option>
+                      <option value="published" selected={caseData.status === 'published'}>已发布</option>
+                      <option value="archived" selected={caseData.status === 'archived'}>已归档</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="metrics">项目数据 (JSON格式)</label>
+                  <textarea id="metrics" name="metrics" rows="4">{JSON.stringify(metrics, null, 2)}</textarea>
+                  <small>请输入JSON格式的项目数据</small>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" onclick="history.back()" class="btn-secondary">取消</button>
+                <button type="submit" class="btn-primary">
+                  <i class="fas fa-save"></i>
+                  保存更改
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <script>{`
+          document.getElementById('editCaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault()
+            
+            const formData = new FormData(e.target)
+            const caseData = {}
+            
+            for (let [key, value] of formData.entries()) {
+              if (key === 'tags') {
+                caseData[key] = JSON.stringify(value.split(',').map(tag => tag.trim()).filter(tag => tag))
+              } else if (key === 'metrics') {
+                try {
+                  caseData[key] = value ? JSON.parse(value) : null
+                } catch (error) {
+                  alert('项目数据格式错误，请输入正确的JSON格式')
+                  return
+                }
+              } else {
+                caseData[key] = value || null
+              }
+            }
+
+            try {
+              const sessionId = localStorage.getItem('admin-session')
+              const response = await fetch('/api/admin/cases/' + caseData.id, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-session-id': sessionId
+                },
+                body: JSON.stringify(caseData)
+              })
+
+              const result = await response.json()
+              
+              if (result.success) {
+                alert('案例更新成功！')
+                window.location.href = '/admin/cases/manage'
+              } else {
+                alert(result.message || '更新失败，请检查输入信息')
+              }
+            } catch (error) {
+              alert('提交失败，请稍后再试')
+            }
+          })
+
+          // Check authentication
+          const sessionId = localStorage.getItem('admin-session')
+          if (!sessionId) {
+            window.location.href = '/admin/login'
+          }
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading edit case page:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>页面加载失败</h1>
+            <p>无法加载编辑页面，请稍后再试。</p>
+            <a href="/admin/cases/manage" class="btn-primary">返回管理</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
+
+// API: Update Case
+app.put('/api/admin/cases/:id', async (c) => {
+  try {
+    const { env } = c
+    const caseId = c.req.param('id')
+    const caseData = await c.req.json()
+
+    const result = await env.DB.prepare(`
+      UPDATE cases SET
+        title = ?, slug = ?, summary = ?, content = ?, category_id = ?,
+        thumbnail_url = ?, banner_url = ?, client_name = ?, client_logo_url = ?,
+        project_date = ?, project_duration = ?, industry = ?, location = ?,
+        website_url = ?, tags = ?, metrics = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(
+      caseData.title,
+      caseData.slug,
+      caseData.summary,
+      caseData.content,
+      caseData.category_id,
+      caseData.thumbnail_url,
+      caseData.banner_url,
+      caseData.client_name,
+      caseData.client_logo_url,
+      caseData.project_date,
+      caseData.project_duration,
+      caseData.industry,
+      caseData.location,
+      caseData.website_url,
+      caseData.tags,
+      JSON.stringify(caseData.metrics),
+      caseData.status,
+      caseId
+    ).run()
+
+    if (result.success && result.meta.changes > 0) {
+      return c.json({ success: true, message: '案例更新成功' })
+    } else {
+      return c.json({ success: false, message: '案例未找到或更新失败' }, 404)
+    }
+  } catch (error) {
+    console.error('Error updating case:', error)
+    return c.json({ success: false, message: '更新案例失败: ' + error.message }, 500)
+  }
+})
+
+// Individual Case Detail Page
+app.get('/cases/:slug', async (c) => {
+  try {
+    const { env } = c
+    const slug = c.req.param('slug')
+
+    // Get case details with category info
+    const caseItem = await env.DB.prepare(`
+      SELECT 
+        c.*,
+        cc.name as category_name,
+        cc.color as category_color,
+        cc.icon as category_icon
+      FROM cases c
+      LEFT JOIN case_categories cc ON c.category_id = cc.id
+      WHERE c.slug = ? AND c.status = 'published'
+    `).bind(slug).first()
+
+    if (!caseItem) {
+      return c.render(
+        <div class="error-page">
+          <div class="container">
+            <div class="error-message">
+              <h1>案例未找到</h1>
+              <p>请求的案例不存在或尚未发布。</p>
+              <a href="/cases" class="btn-primary">查看所有案例</a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // Update view count
+    await env.DB.prepare(`
+      UPDATE cases SET views = views + 1 WHERE id = ?
+    `).bind(caseItem.id).run()
+
+    // Parse JSON fields
+    let tags = []
+    let metrics = {}
+    
+    try {
+      tags = caseItem.tags ? JSON.parse(caseItem.tags) : []
+    } catch (e) {}
+    
+    try {
+      metrics = caseItem.metrics ? JSON.parse(caseItem.metrics) : {}
+    } catch (e) {}
+
+    return c.render(
+      <div class="case-detail-page">
+        {/* Case Header */}
+        <div class="case-header" style={caseItem.banner_url ? `background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${caseItem.banner_url})` : ''}>
+          <div class="container">
+            <div class="case-breadcrumb">
+              <a href="/">首页</a>
+              <i class="fas fa-chevron-right"></i>
+              <a href="/cases">案例</a>
+              <i class="fas fa-chevron-right"></i>
+              <span>{caseItem.title}</span>
+            </div>
+            
+            <div class="case-hero">
+              <div class="case-category">
+                <span class="category-badge" style={`background-color: ${caseItem.category_color}; color: white`}>
+                  <i class={caseItem.category_icon}></i>
+                  {caseItem.category_name}
+                </span>
+              </div>
+              
+              <h1 class="case-title">{caseItem.title}</h1>
+              <p class="case-summary">{caseItem.summary}</p>
+              
+              <div class="case-meta">
+                <div class="client-info">
+                  {caseItem.client_logo_url && (
+                    <img src={caseItem.client_logo_url} alt={caseItem.client_name} class="client-logo" />
+                  )}
+                  <span class="client-name">{caseItem.client_name}</span>
+                </div>
+                <div class="project-info">
+                  {caseItem.project_date && (
+                    <span class="project-date">
+                      <i class="fas fa-calendar"></i>
+                      {new Date(caseItem.project_date).toLocaleDateString('zh-CN')}
+                    </span>
+                  )}
+                  {caseItem.project_duration && (
+                    <span class="project-duration">
+                      <i class="fas fa-clock"></i>
+                      {caseItem.project_duration}
+                    </span>
+                  )}
+                  {caseItem.location && (
+                    <span class="project-location">
+                      <i class="fas fa-map-marker-alt"></i>
+                      {caseItem.location}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Case Content */}
+        <div class="case-content">
+          <div class="container">
+            <div class="case-body">
+              <div class="case-main">
+                {/* Case Metrics */}
+                {Object.keys(metrics).length > 0 && (
+                  <div class="case-metrics">
+                    <h3>项目成果</h3>
+                    <div class="metrics-grid">
+                      {metrics.total_exposure && (
+                        <div class="metric-card">
+                          <div class="metric-icon">
+                            <i class="fas fa-eye"></i>
+                          </div>
+                          <div class="metric-info">
+                            <h4>{(metrics.total_exposure / 10000).toFixed(0)}万+</h4>
+                            <p>总曝光量</p>
+                          </div>
+                        </div>
+                      )}
+                      {metrics.community_growth && (
+                        <div class="metric-card">
+                          <div class="metric-icon">
+                            <i class="fas fa-users"></i>
+                          </div>
+                          <div class="metric-info">
+                            <h4>{metrics.community_growth}+</h4>
+                            <p>社区增长</p>
+                          </div>
+                        </div>
+                      )}
+                      {metrics.conversion_rate && (
+                        <div class="metric-card">
+                          <div class="metric-icon">
+                            <i class="fas fa-chart-line"></i>
+                          </div>
+                          <div class="metric-info">
+                            <h4>{metrics.conversion_rate}%</h4>
+                            <p>转化率</p>
+                          </div>
+                        </div>
+                      )}
+                      {metrics.engagement_rate && (
+                        <div class="metric-card">
+                          <div class="metric-icon">
+                            <i class="fas fa-heart"></i>
+                          </div>
+                          <div class="metric-info">
+                            <h4>{metrics.engagement_rate}%</h4>
+                            <p>互动率</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Case Content */}
+                <div class="case-description">
+                  <h3>项目详情</h3>
+                  <div class="content-body">
+                    {caseItem.content ? (
+                      <div dangerouslySetInnerHTML={{ __html: caseItem.content.replace(/\n/g, '<br>') }}></div>
+                    ) : (
+                      <p>暂无详细内容</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Tags */}
+                {tags.length > 0 && (
+                  <div class="case-tags-section">
+                    <h3>项目标签</h3>
+                    <div class="tags-list">
+                      {tags.map(tag => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div class="case-sidebar">
+                {/* Project Info */}
+                <div class="sidebar-card">
+                  <h4>项目信息</h4>
+                  <div class="project-details">
+                    <div class="detail-item">
+                      <span class="label">客户</span>
+                      <span class="value">{caseItem.client_name}</span>
+                    </div>
+                    {caseItem.industry && (
+                      <div class="detail-item">
+                        <span class="label">行业</span>
+                        <span class="value">{caseItem.industry}</span>
+                      </div>
+                    )}
+                    {caseItem.project_date && (
+                      <div class="detail-item">
+                        <span class="label">项目时间</span>
+                        <span class="value">{new Date(caseItem.project_date).toLocaleDateString('zh-CN')}</span>
+                      </div>
+                    )}
+                    {caseItem.project_duration && (
+                      <div class="detail-item">
+                        <span class="label">项目周期</span>
+                        <span class="value">{caseItem.project_duration}</span>
+                      </div>
+                    )}
+                    {caseItem.website_url && (
+                      <div class="detail-item">
+                        <span class="label">项目网站</span>
+                        <span class="value">
+                          <a href={caseItem.website_url} target="_blank" rel="noopener noreferrer">
+                            访问网站 <i class="fas fa-external-link-alt"></i>
+                          </a>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div class="sidebar-card cta-card">
+                  <h4>对这个案例感兴趣？</h4>
+                  <p>联系我们了解更多详情，讨论您的项目需求</p>
+                  <a href="/contact" class="btn-primary">
+                    <i class="fas fa-envelope"></i>
+                    联系我们
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Cases */}
+        <div class="related-cases">
+          <div class="container">
+            <h3>相关案例</h3>
+            <div class="cases-grid">
+              {/* This would be populated with related cases from the same category */}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading case detail:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>加载失败</h1>
+            <p>无法加载案例详情，请稍后再试。</p>
+            <a href="/cases" class="btn-primary">返回案例列表</a>
+          </div>
+        </div>
+      </div>
+    )
   }
 })
 

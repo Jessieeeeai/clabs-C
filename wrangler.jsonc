@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "c-labs-website",
+  "name": "webapp",
   "compatibility_date": "2025-09-05",
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [
@@ -9,26 +9,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "c-labs-tutorials",
-      "database_id": "placeholder-id"
+      "database_name": "webapp-production",
+      "database_id": "local-development"
     }
   ]
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
-  //   }
-  // ],
-  // "ai": {
-  //   "binding": "AI"
-  // }
 }
