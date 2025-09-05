@@ -832,3 +832,346 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Tutorial Admin Management
+function initTutorialAdmin() {
+    const tutorialForm = document.querySelector('.tutorial-form');
+    if (tutorialForm) {
+        tutorialForm.addEventListener('submit', handleTutorialSubmit);
+        
+        // Initialize rich text editor
+        initContentEditor();
+        
+        // Initialize form validation
+        initTutorialFormValidation();
+    }
+    
+    // Initialize tutorial search
+    initTutorialSearch();
+    
+    // Initialize article actions
+    initArticleActions();
+}
+
+async function handleTutorialSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    // Get form data
+    const formData = new FormData(form);
+    const contentEditor = document.getElementById('tutorial-content');
+    
+    const data = {
+        title: formData.get('title'),
+        category: formData.get('category'),
+        summary: formData.get('excerpt'), // Map excerpt to summary
+        content: contentEditor.innerHTML,
+        readTime: parseInt(formData.get('readTime')) || 5,
+        tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()) : [],
+        featured: formData.get('featured') === 'on',
+        status: 'published'
+    };
+    
+    // Validate required fields
+    if (!data.title || !data.category || !data.content) {
+        showNotification('请填写标题、分类和内容', 'error');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = '发布中...';
+    
+    try {
+        const response = await fetch('/api/admin/tutorials/articles', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('教程发布成功！', 'success');
+            // Reset form
+            form.reset();
+            contentEditor.innerHTML = '';
+            // Redirect to article
+            setTimeout(() => {
+                window.location.href = `/tutorials/${data.category}/${result.data.slug}`;
+            }, 1500);
+        } else {
+            throw new Error(result.error || '发布失败');
+        }
+    } catch (error) {
+        console.error('Error publishing tutorial:', error);
+        showNotification(`发布失败: ${error.message}`, 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }
+}
+
+function initContentEditor() {
+    const editor = document.getElementById('tutorial-content');
+    if (!editor) return;
+    
+    // Add basic formatting toolbar functionality
+    const toolbar = document.querySelector('.editor-toolbar');
+    if (toolbar) {
+        toolbar.addEventListener('click', (e) => {
+            if (e.target.matches('.editor-btn')) {
+                e.preventDefault();
+                const command = e.target.dataset.command;
+                
+                if (command === 'createLink') {
+                    const url = prompt('请输入链接地址:');
+                    if (url) {
+                        document.execCommand(command, false, url);
+                    }
+                } else {
+                    document.execCommand(command, false, null);
+                }
+                
+                editor.focus();
+            }
+        });
+    }
+    
+    // Add placeholder functionality
+    editor.addEventListener('input', () => {
+        if (editor.textContent.trim() === '') {
+            editor.classList.add('empty');
+        } else {
+            editor.classList.remove('empty');
+        }
+    });
+}
+
+function initTutorialFormValidation() {
+    const form = document.querySelector('.tutorial-form');
+    if (!form) return;
+    
+    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+    
+    inputs.forEach(input => {
+        input.addEventListener('blur', () => {
+            validateTutorialField(input);
+        });
+        
+        input.addEventListener('input', () => {
+            clearFieldError(input);
+        });
+    });
+}
+
+function validateTutorialField(field) {
+    const value = field.value.trim();
+    const fieldName = field.getAttribute('name');
+    
+    // Remove existing error
+    clearFieldError(field);
+    
+    if (field.hasAttribute('required') && !value) {
+        showFieldError(field, '此字段为必填项');
+        return false;
+    }
+    
+    // Specific validations
+    if (fieldName === 'readTime' && value) {
+        const readTime = parseInt(value);
+        if (isNaN(readTime) || readTime < 1 || readTime > 180) {
+            showFieldError(field, '阅读时间应在1-180分钟之间');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function showFieldError(field, message) {
+    const errorElement = document.createElement('div');
+    errorElement.className = 'field-error text-red-500 text-sm mt-1';
+    errorElement.textContent = message;
+    
+    field.parentNode.appendChild(errorElement);
+    field.classList.add('border-red-500');
+}
+
+function clearFieldError(field) {
+    const existingError = field.parentNode.querySelector('.field-error');
+    if (existingError) {
+        existingError.remove();
+    }
+    field.classList.remove('border-red-500');
+}
+
+function initTutorialSearch() {
+    const searchInput = document.getElementById('tutorial-search');
+    if (!searchInput) return;
+    
+    let searchTimeout;
+    
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.trim();
+        
+        searchTimeout = setTimeout(() => {
+            if (query.length >= 2) {
+                performTutorialSearch(query);
+            }
+        }, 500);
+    });
+    
+    // Search tag clicks
+    const searchTags = document.querySelectorAll('.search-tag');
+    searchTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            const tagText = tag.textContent;
+            searchInput.value = tagText;
+            performTutorialSearch(tagText);
+        });
+    });
+}
+
+async function performTutorialSearch(query) {
+    try {
+        const response = await fetch(`/api/tutorials/search?q=${encodeURIComponent(query)}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            displaySearchResults(result.data, query);
+        } else {
+            throw new Error(result.error);
+        }
+    } catch (error) {
+        console.error('Search error:', error);
+        showNotification('搜索失败，请稍后重试', 'error');
+    }
+}
+
+function displaySearchResults(articles, query) {
+    // Create search results container if it doesn't exist
+    let resultsContainer = document.getElementById('search-results');
+    if (!resultsContainer) {
+        resultsContainer = document.createElement('div');
+        resultsContainer.id = 'search-results';
+        resultsContainer.className = 'search-results mt-6';
+        
+        const searchContainer = document.querySelector('.search-container');
+        if (searchContainer) {
+            searchContainer.parentNode.insertBefore(resultsContainer, searchContainer.nextSibling);
+        }
+    }
+    
+    if (articles.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="no-results glass-card p-6 text-center">
+                <h3>未找到相关教程</h3>
+                <p>试试其他关键词或浏览分类页面</p>
+            </div>
+        `;
+        return;
+    }
+    
+    resultsContainer.innerHTML = `
+        <h3 class="text-xl font-semibold mb-4">搜索结果 (${articles.length})</h3>
+        <div class="search-results-grid grid gap-4">
+            ${articles.map(article => `
+                <div class="search-result-card glass-card p-4">
+                    <h4><a href="/tutorials/${article.category}/${article.slug}" class="text-blue-600 hover:underline">${highlightQuery(article.title, query)}</a></h4>
+                    <p class="text-gray-600 mt-2">${highlightQuery(article.summary || '', query)}</p>
+                    <div class="mt-3 flex items-center gap-4 text-sm text-gray-500">
+                        <span><i class="fas fa-clock"></i> ${article.read_time}分钟</span>
+                        <span><i class="fas fa-eye"></i> ${article.views.toLocaleString()}</span>
+                        <span class="category-badge">${article.category}</span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function highlightQuery(text, query) {
+    if (!text || !query) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+}
+
+function initArticleActions() {
+    // Like button functionality
+    const likeButtons = document.querySelectorAll('.like-btn');
+    likeButtons.forEach(btn => {
+        btn.addEventListener('click', handleLikeClick);
+    });
+    
+    // Share button functionality  
+    const shareButtons = document.querySelectorAll('.share-btn');
+    shareButtons.forEach(btn => {
+        btn.addEventListener('click', handleShareClick);
+    });
+    
+    // Bookmark functionality
+    const bookmarkButtons = document.querySelectorAll('.bookmark-btn');
+    bookmarkButtons.forEach(btn => {
+        btn.addEventListener('click', handleBookmarkClick);
+    });
+}
+
+function handleLikeClick(e) {
+    const button = e.currentTarget;
+    const isLiked = button.classList.contains('liked');
+    
+    if (!isLiked) {
+        button.classList.add('liked');
+        button.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 200);
+        
+        // Update count
+        const countSpan = button.querySelector('span');
+        const currentCount = parseInt(countSpan.textContent.match(/\d+/)[0]);
+        countSpan.textContent = `有用 (${currentCount + 1})`;
+        
+        showNotification('感谢您的反馈！', 'success');
+    }
+}
+
+function handleShareClick(e) {
+    const url = window.location.href;
+    const title = document.title;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        }).catch(console.error);
+    } else {
+        copyToClipboard(url);
+        showNotification('链接已复制到剪贴板', 'success');
+    }
+}
+
+function handleBookmarkClick(e) {
+    const button = e.currentTarget;
+    const isBookmarked = button.classList.contains('bookmarked');
+    
+    button.classList.toggle('bookmarked');
+    
+    if (!isBookmarked) {
+        showNotification('已添加到收藏', 'success');
+    } else {
+        showNotification('已从收藏中移除', 'info');
+    }
+}
+
+// Initialize tutorial admin when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initTutorialAdmin();
+});

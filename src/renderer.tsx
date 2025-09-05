@@ -79,6 +79,7 @@ export const renderer = jsxRenderer(({ children }) => {
                 <a href="/services" class="nav-link">服务</a>
                 <a href="/cases" class="nav-link">案例</a>
                 <a href="/work" class="nav-link">作品集</a>
+                <a href="/tutorials" class="nav-link">Web3教程</a>
                 <a href="/ip/giant-cutie" class="nav-link">Giant Cutie</a>
                 <a href="/contact" class="nav-link">联系</a>
               </div>
@@ -105,6 +106,7 @@ export const renderer = jsxRenderer(({ children }) => {
                 <a href="/services" class="mobile-nav-link">服务</a>
                 <a href="/cases" class="mobile-nav-link">案例</a>
                 <a href="/work" class="mobile-nav-link">作品集</a>
+                <a href="/tutorials" class="mobile-nav-link">Web3教程</a>
                 <a href="/ip/giant-cutie" class="mobile-nav-link">Giant Cutie</a>
                 <a href="/contact" class="mobile-nav-link">联系</a>
               </div>
