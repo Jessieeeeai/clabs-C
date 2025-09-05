@@ -21,9 +21,23 @@ app.get('/', (c) => {
       <div class="hero-section">
         <div class="hero-content">
           <div class="hero-logo">
-            <img src="/static/logo.png" alt="C Labs" class="logo" />
+            <div class="logo-placeholder">
+              <div class="logo-icon">
+                <i class="fas fa-cube"></i>
+              </div>
+              <div class="logo-particles">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
           </div>
-          <h1 class="hero-title">TOP Vol Web3 Chinese Brand</h1>
+          <h1 class="hero-title">
+            <span class="title-line">TOP Vol</span>
+            <span class="title-line highlight">Web3 Chinese Brand</span>
+          </h1>
           <p class="hero-subtitle">专业的 Web3 品牌营销机构，连接全球与中文社区</p>
           <div class="hero-stats">
             <div class="stat">

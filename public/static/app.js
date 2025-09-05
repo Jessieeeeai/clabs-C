@@ -1,45 +1,66 @@
-// C Labs Website JavaScript
+// C Labs Modern Website JavaScript
 
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle
+    // Initialize all components
+    initMobileMenu();
+    initContactForm();
+    initSmoothScrolling();
+    initScrollAnimations();
+    initParallaxEffects();
+    initWorkPageFilters();
+    initIPPageTabs();
+    initModernAnimations();
+    initPerformanceOptimizations();
+    
+    // Add loading completion class
+    document.body.classList.add('loaded');
+});
+
+// Mobile menu functionality
+function initMobileMenu() {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     
     if (mobileMenuBtn && mobileMenu) {
         mobileMenuBtn.addEventListener('click', function() {
-            mobileMenu.classList.toggle('hidden');
+            const isOpen = mobileMenu.classList.contains('hidden');
+            
+            if (isOpen) {
+                mobileMenu.classList.remove('hidden');
+                mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                // Add smooth animation
+                setTimeout(() => {
+                    mobileMenu.style.opacity = '1';
+                }, 10);
+            } else {
+                mobileMenu.style.opacity = '0';
+                mobileMenu.style.maxHeight = '0';
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 300);
+            }
         });
     }
-    
-    // Contact form handling
+}
+
+// Enhanced contact form handling
+async function initContactForm() {
     const contactForm = document.querySelector('form');
     if (contactForm) {
         contactForm.addEventListener('submit', handleContactForm);
-    }
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+        
+        // Add real-time validation
+        const inputs = contactForm.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('blur', validateField);
+            input.addEventListener('input', clearErrors);
         });
-    });
-    
-    // Add scroll effects
-    addScrollEffects();
-    
-    // Initialize animations
-    initializeAnimations();
-});
+    }
+}
 
-// Contact form handler
 async function handleContactForm(e) {
     e.preventDefault();
     
@@ -47,9 +68,21 @@ async function handleContactForm(e) {
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     
-    // Show loading state
+    // Validate form
+    if (!validateForm(form)) {
+        showNotification('请填写所有必填字段', 'error');
+        return;
+    }
+    
+    // Show loading state with modern animation
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner mr-2"></span>发送中...';
+    submitBtn.innerHTML = `
+        <div class="flex items-center gap-2">
+            <div class="spinner"></div>
+            <span>发送中...</span>
+        </div>
+    `;
+    submitBtn.style.transform = 'scale(0.98)';
     
     try {
         const formData = new FormData(form);
@@ -68,66 +101,218 @@ async function handleContactForm(e) {
         if (result.success) {
             showNotification(result.message || '消息发送成功！我们会尽快回复您。', 'success');
             form.reset();
+            
+            // Success animation
+            submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>发送成功';
+            
+            setTimeout(() => {
+                resetSubmitButton(submitBtn, originalText);
+            }, 3000);
         } else {
             throw new Error(result.message || '发送失败，请重试');
         }
     } catch (error) {
         console.error('Contact form error:', error);
         showNotification('发送失败，请检查网络连接或稍后重试。', 'error');
-    } finally {
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
+        resetSubmitButton(submitBtn, originalText);
     }
 }
 
-// Show notification
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+function validateForm(form) {
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
     
-    if (type === 'success') {
-        notification.classList.add('bg-green-500', 'text-white');
-        notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
-    } else if (type === 'error') {
-        notification.classList.add('bg-red-500', 'text-white');
-        notification.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
-    } else {
-        notification.classList.add('bg-blue-500', 'text-white');
-        notification.innerHTML = `<i class="fas fa-info-circle mr-2"></i>${message}`;
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            showFieldError(field, '此字段为必填项');
+            isValid = false;
+        }
+    });
+    
+    // Email validation
+    const emailField = form.querySelector('input[type="email"]');
+    if (emailField && emailField.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+            showFieldError(emailField, '请输入有效的邮箱地址');
+            isValid = false;
+        }
     }
+    
+    return isValid;
+}
+
+function validateField(e) {
+    const field = e.target;
+    clearFieldError(field);
+    
+    if (field.hasAttribute('required') && !field.value.trim()) {
+        showFieldError(field, '此字段为必填项');
+    }
+    
+    if (field.type === 'email' && field.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(field.value)) {
+            showFieldError(field, '请输入有效的邮箱地址');
+        }
+    }
+}
+
+function clearErrors(e) {
+    clearFieldError(e.target);
+}
+
+function showFieldError(field, message) {
+    clearFieldError(field);
+    field.style.borderColor = '#ef4444';
+    
+    const error = document.createElement('div');
+    error.className = 'field-error text-red-500 text-sm mt-1';
+    error.textContent = message;
+    
+    field.parentNode.appendChild(error);
+}
+
+function clearFieldError(field) {
+    field.style.borderColor = '';
+    const existingError = field.parentNode.querySelector('.field-error');
+    if (existingError) {
+        existingError.remove();
+    }
+}
+
+function resetSubmitButton(button, originalText) {
+    button.disabled = false;
+    button.style.transform = '';
+    button.style.background = '';
+    button.textContent = originalText;
+}
+
+// Enhanced notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existing = document.querySelectorAll('.notification');
+    existing.forEach(notif => notif.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification fixed top-20 right-4 z-50 p-4 rounded-xl shadow-2xl transform transition-all duration-500 translate-x-full max-w-sm`;
+    
+    // Modern glassmorphism design
+    const styles = {
+        success: {
+            bg: 'rgba(16, 185, 129, 0.95)',
+            backdrop: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            icon: 'fas fa-check-circle'
+        },
+        error: {
+            bg: 'rgba(239, 68, 68, 0.95)',
+            backdrop: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            icon: 'fas fa-exclamation-circle'
+        },
+        info: {
+            bg: 'rgba(59, 130, 246, 0.95)',
+            backdrop: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            icon: 'fas fa-info-circle'
+        }
+    };
+    
+    const style = styles[type] || styles.info;
+    
+    notification.style.background = style.bg;
+    notification.style.backdropFilter = style.backdrop;
+    notification.style.border = style.border;
+    notification.style.color = 'white';
+    
+    notification.innerHTML = `
+        <div class="flex items-start gap-3">
+            <i class="${style.icon} text-lg flex-shrink-0 mt-0.5"></i>
+            <div class="flex-1">
+                <p class="font-medium">${message}</p>
+            </div>
+            <button class="notification-close text-white/80 hover:text-white ml-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
     
     document.body.appendChild(notification);
     
     // Animate in
     setTimeout(() => {
         notification.classList.remove('translate-x-full');
+        notification.classList.add('translate-x-0');
     }, 100);
+    
+    // Close button
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => closeNotification(notification));
     
     // Auto remove after 5 seconds
     setTimeout(() => {
-        notification.classList.add('translate-x-full');
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
+        closeNotification(notification);
     }, 5000);
 }
 
-// Add scroll effects
-function addScrollEffects() {
-    const navbar = document.querySelector('nav');
-    
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 100) {
-            navbar.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm');
-        } else {
-            navbar.classList.remove('shadow-sm');
+function closeNotification(notification) {
+    notification.classList.add('translate-x-full', 'opacity-0');
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
         }
+    }, 500);
+}
+
+// Smooth scrolling for anchor links
+function initSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const targetPosition = target.offsetTop - navHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+// Advanced scroll animations
+function initScrollAnimations() {
+    const navbar = document.querySelector('nav');
+    let lastScrollTop = 0;
+    
+    // Navbar effects
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Navbar background
+        if (scrollTop > 100) {
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.boxShadow = '0 4px 32px rgba(0, 0, 0, 0.12)';
+        } else {
+            navbar.style.background = 'rgba(255, 255, 255, 0.9)';
+            navbar.style.boxShadow = '0 4px 32px rgba(0, 0, 0, 0.08)';
+        }
+        
+        // Hide/show navbar on scroll
+        if (scrollTop > lastScrollTop && scrollTop > 200) {
+            navbar.style.transform = 'translateY(-100%)';
+        } else {
+            navbar.style.transform = 'translateY(0)';
+        }
+        lastScrollTop = scrollTop;
     });
     
-    // Intersection Observer for fade-in animations
+    // Intersection Observer for scroll animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -136,76 +321,43 @@ function addScrollEffects() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in-up');
+                entry.target.classList.add('animate');
+                
+                // Stagger animations for grid items
+                const gridItems = entry.target.querySelectorAll('.advantage-card, .case-card, .service-card, .work-item');
+                gridItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('fade-in-up');
+                    }, index * 100);
+                });
             }
         });
     }, observerOptions);
     
-    // Observe elements that should fade in
-    document.querySelectorAll('.advantage-card, .case-card, .service-card, .kol-card, .case-detail').forEach(el => {
+    // Observe elements for scroll animations
+    document.querySelectorAll('.advantages-section, .cases-preview, .services-section, .kol-section, .work-content').forEach(el => {
+        el.classList.add('animate-on-scroll');
         observer.observe(el);
     });
 }
 
-// Initialize animations
-function initializeAnimations() {
-    // Add hover effects to cards
-    document.querySelectorAll('.advantage-card, .case-card, .service-card').forEach(card => {
-        card.classList.add('hover-lift');
-    });
+// Parallax effects for modern feel
+function initParallaxEffects() {
+    const parallaxElements = document.querySelectorAll('.hero-section, .page-header, .cta-section');
     
-    // Add 3D effect to hero elements
-    document.querySelectorAll('.kol-card').forEach(card => {
-        card.classList.add('card-3d');
-    });
-}
-
-// Utility functions
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Platform link tracking (for analytics)
-function trackPlatformClick(platform, url) {
-    // Add analytics tracking here if needed
-    console.log(`Platform click: ${platform} - ${url}`);
-    
-    // Google Analytics event tracking example
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'click', {
-            event_category: 'Platform Link',
-            event_label: platform,
-            value: url
+    if (parallaxElements.length > 0) {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            
+            parallaxElements.forEach(element => {
+                const rate = scrolled * -0.5;
+                element.style.backgroundPosition = `center ${rate}px`;
+            });
         });
     }
 }
 
-// Add click tracking to platform links
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.platform-link').forEach(link => {
-        link.addEventListener('click', function() {
-            const platform = this.textContent.trim();
-            const url = this.href;
-            trackPlatformClick(platform, url);
-        });
-    });
-    
-    // Initialize work page functionality
-    initWorkPageFilters();
-    
-    // Initialize IP page functionality
-    initIPPageTabs();
-});
-
-// Work page filter functionality
+// Work page enhanced filtering
 function initWorkPageFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const workItems = document.querySelectorAll('.work-item');
@@ -216,23 +368,34 @@ function initWorkPageFilters() {
         button.addEventListener('click', function() {
             const filter = this.dataset.filter;
             
-            // Update active button
-            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Update active button with smooth transition
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.transform = 'scale(1)';
+            });
             this.classList.add('active');
+            this.style.transform = 'scale(1.05)';
             
-            // Filter work items
-            workItems.forEach(item => {
+            // Filter work items with staggered animation
+            workItems.forEach((item, index) => {
                 const category = item.dataset.category;
                 
                 if (filter === 'all' || category === filter) {
-                    item.style.display = 'block';
+                    // Show item with delay
                     setTimeout(() => {
-                        item.style.opacity = '1';
-                        item.style.transform = 'translateY(0)';
-                    }, 50);
+                        item.style.display = 'block';
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(30px) scale(0.9)';
+                        
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0) scale(1)';
+                        }, 50);
+                    }, index * 50);
                 } else {
+                    // Hide item
                     item.style.opacity = '0';
-                    item.style.transform = 'translateY(20px)';
+                    item.style.transform = 'translateY(-20px) scale(0.9)';
                     setTimeout(() => {
                         item.style.display = 'none';
                     }, 300);
@@ -242,7 +405,7 @@ function initWorkPageFilters() {
     });
 }
 
-// IP page tabs functionality
+// IP page enhanced tabs
 function initIPPageTabs() {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -253,110 +416,220 @@ function initIPPageTabs() {
         button.addEventListener('click', function() {
             const tabId = this.dataset.tab;
             
-            // Update active tab button
-            tabButtons.forEach(btn => btn.classList.remove('active'));
+            // Update active tab button with animation
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.transform = 'translateY(0)';
+            });
             this.classList.add('active');
+            this.style.transform = 'translateY(-2px)';
             
-            // Show corresponding tab content
+            // Show corresponding tab content with fade effect
             tabContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === tabId) {
+                if (content.classList.contains('active')) {
+                    content.style.opacity = '0';
+                    content.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        content.classList.remove('active');
+                        
+                        if (content.id === tabId) {
+                            content.classList.add('active');
+                            content.style.opacity = '1';
+                            content.style.transform = 'translateY(0)';
+                        }
+                    }, 200);
+                } else if (content.id === tabId) {
                     content.classList.add('active');
+                    content.style.opacity = '0';
+                    content.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        content.style.opacity = '1';
+                        content.style.transform = 'translateY(0)';
+                    }, 50);
                 }
             });
         });
     });
 }
 
-// Load more works functionality
+// Modern animations and micro-interactions
+function initModernAnimations() {
+    // Add hover effects to cards
+    document.querySelectorAll('.advantage-card, .case-card, .service-card, .work-item, .platform-card').forEach(card => {
+        card.classList.add('hover-lift');
+        
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-12px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Add 3D effect to special cards
+    document.querySelectorAll('.kol-card').forEach(card => {
+        card.classList.add('card-3d');
+    });
+    
+    // Button ripple effect
+    document.querySelectorAll('.btn-primary, .btn-secondary, .filter-btn').forEach(button => {
+        button.addEventListener('click', createRipple);
+    });
+    
+    // Platform link tracking with enhanced animation
+    document.querySelectorAll('.platform-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const platform = this.textContent.trim();
+            const url = this.href;
+            trackPlatformClick(platform, url);
+            
+            // Click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+    });
+}
+
+// Ripple effect for buttons
+function createRipple(event) {
+    const button = event.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+    
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+    circle.classList.add('ripple');
+    
+    circle.style.position = 'absolute';
+    circle.style.borderRadius = '50%';
+    circle.style.transform = 'scale(0)';
+    circle.style.animation = 'ripple 600ms linear';
+    circle.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+    circle.style.pointerEvents = 'none';
+    
+    const ripple = button.querySelector('.ripple');
+    if (ripple) {
+        ripple.remove();
+    }
+    
+    button.style.position = 'relative';
+    button.style.overflow = 'hidden';
+    button.appendChild(circle);
+}
+
+// Enhanced load more functionality
 function loadMoreWorks() {
-    // Simulate loading more works
     showNotification('正在加载更多作品...', 'info');
     
+    // Simulate loading with realistic delay
+    const loadingBtn = document.querySelector('.work-load-more button');
+    loadingBtn.disabled = true;
+    loadingBtn.innerHTML = '<div class="spinner mr-2"></div>加载中...';
+    
     setTimeout(() => {
-        // Add mock works data
         const worksGrid = document.querySelector('.works-grid');
         if (worksGrid) {
             const mockWorks = createMockWorkItems(6);
-            worksGrid.innerHTML += mockWorks;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = mockWorks;
+            
+            // Add items with staggered animation
+            Array.from(tempDiv.children).forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(50px) scale(0.8)';
+                    worksGrid.appendChild(item);
+                    
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0) scale(1)';
+                    }, 50);
+                }, index * 150);
+            });
+            
+            loadingBtn.disabled = false;
+            loadingBtn.textContent = '加载更多作品';
             showNotification('已加载更多作品', 'success');
         }
-    }, 1500);
+    }, 2000);
 }
 
-// Create mock work items
-function createMockWorkItems(count) {
-    const mockData = [
-        {
-            title: 'AI Agent 赛道深度分析',
-            category: 'video',
-            platform: 'youtube',
-            views: '35K',
-            likes: '621',
-            comments: '89',
-            tags: ['AI', '深度分析']
-        },
-        {
-            title: 'Web3 社交协议对比',
-            category: 'article',
-            platform: 'medium',
-            views: '18K',
-            likes: '234',
-            shares: '67',
-            tags: ['社交协议', '对比分析']
-        },
-        {
-            title: 'RWA 投资机会分享',
-            category: 'video',
-            platform: 'tiktok',
-            views: '280K',
-            likes: '12K',
-            shares: '1.8K',
-            tags: ['RWA', '投资']
+// Performance optimizations
+function initPerformanceOptimizations() {
+    // Lazy load images
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src || img.src;
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+        
+        document.querySelectorAll('img[data-src], img.lazy').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+    
+    // Debounce scroll events
+    let ticking = false;
+    
+    function updateScrollEffects() {
+        // Scroll-based animations here
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(updateScrollEffects);
+            ticking = true;
         }
+    });
+    
+    // Preload critical resources
+    const criticalResources = [
+        '/static/styles.css',
+        'https://cdn.tailwindcss.com',
+        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap'
     ];
     
-    let html = '';
-    for (let i = 0; i < count; i++) {
-        const item = mockData[i % mockData.length];
-        html += `
-            <div class="work-item fade-in-up" data-category="${item.category}">
-                <div class="work-thumbnail">
-                    <img src="/static/thumbnails/placeholder-${i + 1}.jpg" alt="${item.title}" />
-                    <div class="work-overlay">
-                        <div class="play-btn">
-                            <i class="fas fa-play"></i>
-                        </div>
-                        <div class="work-platform ${item.platform}">${item.platform}</div>
-                    </div>
-                </div>
-                <div class="work-info">
-                    <h3>${item.title}</h3>
-                    <p class="work-stats">
-                        <span><i class="fas fa-eye"></i> ${item.views} 观看</span>
-                        <span><i class="fas fa-thumbs-up"></i> ${item.likes} 点赞</span>
-                        ${item.comments ? `<span><i class="fas fa-comment"></i> ${item.comments} 评论</span>` : ''}
-                    </p>
-                    <div class="work-tags">
-                        ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
-                    <a href="#" class="work-link">查看内容</a>
-                </div>
-            </div>
-        `;
-    }
-    return html;
+    criticalResources.forEach(href => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = href;
+        link.as = href.endsWith('.css') ? 'style' : 'font';
+        if (link.as === 'font') {
+            link.crossOrigin = 'anonymous';
+        }
+        document.head.appendChild(link);
+    });
 }
 
-// Add load more button functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const loadMoreBtn = document.querySelector('.work-load-more button');
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', loadMoreWorks);
+// Platform click tracking
+function trackPlatformClick(platform, url) {
+    console.log(`Platform click: ${platform} - ${url}`);
+    
+    // Google Analytics integration
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'click', {
+            event_category: 'Platform Link',
+            event_label: platform,
+            value: url
+        });
     }
-});
+}
 
-// Copy to clipboard functionality
+// Copy to clipboard with modern feedback
 function copyToClipboard(text) {
     if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => {
@@ -389,67 +662,137 @@ function fallbackCopyToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-// Add copy functionality to email addresses
+// Email copy functionality
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('a[href^="mailto:"]').forEach(emailLink => {
+        const originalHref = emailLink.href;
+        
         emailLink.addEventListener('click', function(e) {
             e.preventDefault();
             const email = this.href.replace('mailto:', '');
             copyToClipboard(email);
+            
+            // Visual feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
         });
         
-        // Add copy icon
-        emailLink.innerHTML += ' <i class="fas fa-copy text-xs ml-1 opacity-50"></i>';
+        // Enhanced email link styling
+        emailLink.innerHTML += ' <i class="fas fa-copy text-xs ml-1 opacity-70"></i>';
         emailLink.title = '点击复制邮箱地址';
+        emailLink.style.transition = 'all 0.3s ease';
     });
 });
 
-// Lazy loading for images
-function initLazyLoading() {
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    imageObserver.unobserve(img);
-                }
-            });
-        });
-        
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
+// Load more button functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const loadMoreBtn = document.querySelector('.work-load-more button');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', loadMoreWorks);
     }
-}
+});
 
-// Initialize lazy loading on DOM ready
-document.addEventListener('DOMContentLoaded', initLazyLoading);
-
-// Preload critical resources
-function preloadResources() {
-    const criticalImages = [
-        '/static/logo.png',
-        '/static/giant-cutie-avatar.jpg'
+// Mock work items generator (enhanced)
+function createMockWorkItems(count) {
+    const mockData = [
+        {
+            title: 'AI Agent 赛道深度分析：下一个风口的机会与挑战',
+            category: 'video',
+            platform: 'youtube',
+            views: '35K',
+            likes: '621',
+            comments: '89',
+            tags: ['AI', '深度分析', '投资机会']
+        },
+        {
+            title: 'Web3 社交协议全面对比：哪个更有潜力？',
+            category: 'article',
+            platform: 'medium',
+            views: '18K',
+            likes: '234',
+            shares: '67',
+            tags: ['社交协议', '对比分析', 'Web3']
+        },
+        {
+            title: 'RWA 投资必知的 5 个核心要点',
+            category: 'video',
+            platform: 'tiktok',
+            views: '280K',
+            likes: '12K',
+            shares: '1.8K',
+            tags: ['RWA', '投资技巧', '实物资产']
+        },
+        {
+            title: 'Modular 区块链技术深度解读',
+            category: 'video',
+            platform: 'youtube',
+            views: '42K',
+            likes: '789',
+            comments: '156',
+            tags: ['Modular', '技术解读', '区块链']
+        },
+        {
+            title: 'DeFi 2.0 时代的新机遇分析',
+            category: 'article',
+            platform: 'medium',
+            views: '25K',
+            likes: '445',
+            shares: '98',
+            tags: ['DeFi', '金融创新', '机遇分析']
+        },
+        {
+            title: 'Web3 游戏经济模型设计要点',
+            category: 'video',
+            platform: 'bilibili',
+            views: '15K',
+            likes: '332',
+            comments: '67',
+            tags: ['GameFi', '经济模型', '游戏设计']
+        }
     ];
     
-    criticalImages.forEach(src => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = src;
-        document.head.appendChild(link);
-    });
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        const item = mockData[i % mockData.length];
+        const randomId = Math.random().toString(36).substring(7);
+        
+        html += `
+            <div class="work-item hover-lift" data-category="${item.category}" style="transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                <div class="work-thumbnail">
+                    <div style="width: 100%; height: 240px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600;">
+                        ${item.title.substring(0, 20)}...
+                    </div>
+                    <div class="work-overlay">
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="work-platform ${item.platform}">${item.platform.toUpperCase()}</div>
+                    </div>
+                </div>
+                <div class="work-info">
+                    <h3>${item.title}</h3>
+                    <p class="work-stats">
+                        <span><i class="fas fa-eye"></i> ${item.views} 观看</span>
+                        <span><i class="fas fa-thumbs-up"></i> ${item.likes} 点赞</span>
+                        ${item.comments ? `<span><i class="fas fa-comment"></i> ${item.comments} 评论</span>` : ''}
+                    </p>
+                    <div class="work-tags">
+                        ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <a href="#" class="work-link">查看内容 <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+            </div>
+        `;
+    }
+    return html;
 }
 
-// Call preload on load
-window.addEventListener('load', preloadResources);
-
-// Service Worker registration (for PWA capabilities)
+// Service Worker registration for PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
+        navigator.serviceWorker.register('/sw.js')
             .then(registration => {
                 console.log('SW registered: ', registration);
             })
@@ -458,3 +801,34 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
+// Add CSS animations keyframes
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    .notification {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .fade-in-up {
+        animation: fadeInUpSmooth 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    
+    @keyframes fadeInUpSmooth {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
