@@ -212,294 +212,7 @@ app.get('/', (c) => {
   )
 })
 
-// About page
-app.get('/about', (c) => {
-  return c.render(
-    <div>
-      <div class="page-header">
-        <div class="container">
-          <h1>关于 C Labs</h1>
-          <p>TOP Vol Web3 Chinese Brand - 专业的 Web3 品牌营销机构</p>
-        </div>
-      </div>
-      
-      <div class="about-content">
-        <div class="container">
-          <div class="about-section">
-            <h2>我们的使命</h2>
-            <p>C Labs 通过吸收和了解各种不同 Web3 文化、产品之后，不断对外产出高专业度、高社会价值的服务，以及各种 KOL 孵化并且让其商业落地，辐射范围覆盖全球。</p>
-          </div>
-          
-          <div class="about-section">
-            <h2>核心能力</h2>
-            <div class="capabilities-grid">
-              <div class="capability">
-                <h3>内容创作</h3>
-                <p>专业的 Web3 内容策划与创作团队</p>
-              </div>
-              <div class="capability">
-                <h3>KOL 孵化</h3>
-                <p>培养和管理顶级 Web3 意见领袖</p>
-              </div>
-              <div class="capability">
-                <h3>全球传播</h3>
-                <p>覆盖全球主要数字营销渠道</p>
-              </div>
-              <div class="capability">
-                <h3>专业服务</h3>
-                <p>4年行业经验，深度理解 Web3 生态</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-})
-
-// Services page
-app.get('/services', (c) => {
-  return c.render(
-    <div>
-      <div class="page-header">
-        <div class="container">
-          <h1>服务范围</h1>
-          <p>全方位 Web3 营销解决方案</p>
-        </div>
-      </div>
-      
-      <div class="services-content">
-        <div class="container">
-          
-          {/* Services Overview */}
-          <div class="services-intro glass-card">
-            <div class="services-intro-content">
-              <h2>为什么选择 C Labs？</h2>
-              <p>我们不仅是营销服务提供商，更是您在 Web3 世界的战略合作伙伴。凭借4年的行业经验和顶级 KOL 资源，我们帮助项目方实现品牌价值最大化。</p>
-              <div class="intro-stats">
-                <div class="intro-stat">
-                  <span class="stat-number">500M+</span>
-                  <span class="stat-label">累计曝光量</span>
-                </div>
-                <div class="intro-stat">
-                  <span class="stat-number">50+</span>
-                  <span class="stat-label">成功项目</span>
-                </div>
-                <div class="intro-stat">
-                  <span class="stat-number">4年</span>
-                  <span class="stat-label">行业经验</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Services Grid */}
-          <div class="services-grid">
-            
-            <div class="service-card glass-card">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="fas fa-star"></i>
-                </div>
-                <h3>KOL 营销推广</h3>
-                <span class="service-badge premium">核心服务</span>
-              </div>
-              <div class="service-content">
-                <p>拥有顶级中文 KOL "Giant Cutie"，全平台粉丝总计超过50万，是 Web3 项目进入中文市场的最佳入口。</p>
-                
-                <div class="service-features">
-                  <h4>平台覆盖</h4>
-                  <div class="platform-list">
-                    <div class="platform-item">
-                      <i class="fab fa-youtube text-red-600"></i>
-                      <span>YouTube: 199K 粉丝</span>
-                      <small>6.5M+ 播放量</small>
-                    </div>
-                    <div class="platform-item">
-                      <i class="fab fa-x-twitter text-blue-500"></i>
-                      <span>X (Twitter): 127.8K 粉丝</span>
-                    </div>
-                    <div class="platform-item">
-                      <i class="fab fa-tiktok text-gray-800"></i>
-                      <span>TikTok: 31.5K 粉丝</span>
-                      <small>5.2M+ 播放量</small>
-                    </div>
-                    <div class="platform-item">
-                      <i class="fas fa-video text-blue-600"></i>
-                      <span>快手: 92K 粉丝</span>
-                      <small>22M+ 播放量</small>
-                    </div>
-                    <div class="platform-item">
-                      <i class="fas fa-play-circle text-pink-500"></i>
-                      <span>B站: 71.6K 粉丝</span>
-                      <small>3M+ 播放量</small>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="service-pricing">
-                  <span class="price-label">起价</span>
-                  <span class="price-amount">$2000</span>
-                  <span class="price-unit">/ 视频</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="service-card glass-card">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="fas fa-pen-fancy"></i>
-                </div>
-                <h3>内容策划与传播</h3>
-                <span class="service-badge popular">热门</span>
-              </div>
-              <div class="service-content">
-                <p>专业的 Web3 内容团队，提供从策划到执行的全链条服务，确保内容质量和传播效果。</p>
-                
-                <div class="service-features">
-                  <h4>服务内容</h4>
-                  <ul class="feature-list">
-                    <li><i class="fas fa-check text-green-500"></i>深度项目解析文章</li>
-                    <li><i class="fas fa-check text-green-500"></i>专业视频内容制作</li>
-                    <li><i class="fas fa-check text-green-500"></i>直播 AMA 活动策划</li>
-                    <li><i class="fas fa-check text-green-500"></i>多平台内容分发</li>
-                    <li><i class="fas fa-check text-green-500"></i>社交媒体运营</li>
-                  </ul>
-                </div>
-
-                <div class="service-pricing">
-                  <span class="price-label">起价</span>
-                  <span class="price-amount">$1500</span>
-                  <span class="price-unit">/ 月</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="service-card glass-card">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <h3>社区建设与运营</h3>
-              </div>
-              <div class="service-content">
-                <p>帮助项目方建立和维护活跃的中文社区，提升用户参与度和品牌忠诚度。</p>
-                
-                <div class="service-features">
-                  <h4>核心能力</h4>
-                  <ul class="feature-list">
-                    <li><i class="fas fa-check text-green-500"></i>社区策略规划</li>
-                    <li><i class="fas fa-check text-green-500"></i>日常运营管理</li>
-                    <li><i class="fas fa-check text-green-500"></i>活动策划执行</li>
-                    <li><i class="fas fa-check text-green-500"></i>用户增长优化</li>
-                    <li><i class="fas fa-check text-green-500"></i>数据分析报告</li>
-                  </ul>
-                </div>
-
-                <div class="service-pricing">
-                  <span class="price-label">起价</span>
-                  <span class="price-amount">$1000</span>
-                  <span class="price-unit">/ 月</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="service-card glass-card">
-              <div class="service-header">
-                <div class="service-icon">
-                  <i class="fas fa-paint-brush"></i>
-                </div>
-                <h3>品牌包装设计</h3>
-              </div>
-              <div class="service-content">
-                <p>Web3 项目品牌视觉设计和传播策略，打造专业且具有辨识度的品牌形象。</p>
-                
-                <div class="service-features">
-                  <h4>设计服务</h4>
-                  <ul class="feature-list">
-                    <li><i class="fas fa-check text-green-500"></i>品牌定位分析</li>
-                    <li><i class="fas fa-check text-green-500"></i>视觉设计系统</li>
-                    <li><i class="fas fa-check text-green-500"></i>营销素材制作</li>
-                    <li><i class="fas fa-check text-green-500"></i>传播策略规划</li>
-                    <li><i class="fas fa-check text-green-500"></i>网站界面设计</li>
-                  </ul>
-                </div>
-
-                <div class="service-pricing">
-                  <span class="price-label">起价</span>
-                  <span class="price-amount">$3000</span>
-                  <span class="price-unit">/ 项目</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Process Section */}
-          <div class="process-section">
-            <h2 class="section-title">合作流程</h2>
-            <div class="process-steps">
-              <div class="process-step">
-                <div class="step-number">01</div>
-                <div class="step-content">
-                  <h4>需求沟通</h4>
-                  <p>深入了解项目需求和目标受众</p>
-                </div>
-              </div>
-              <div class="process-arrow">
-                <i class="fas fa-arrow-right"></i>
-              </div>
-              <div class="process-step">
-                <div class="step-number">02</div>
-                <div class="step-content">
-                  <h4>策略制定</h4>
-                  <p>制定个性化营销策略和执行计划</p>
-                </div>
-              </div>
-              <div class="process-arrow">
-                <i class="fas fa-arrow-right"></i>
-              </div>
-              <div class="process-step">
-                <div class="step-number">03</div>
-                <div class="step-content">
-                  <h4>内容执行</h4>
-                  <p>专业团队执行内容制作和发布</p>
-                </div>
-              </div>
-              <div class="process-arrow">
-                <i class="fas fa-arrow-right"></i>
-              </div>
-              <div class="process-step">
-                <div class="step-number">04</div>
-                <div class="step-content">
-                  <h4>效果监测</h4>
-                  <p>实时监测数据，优化营销效果</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div class="services-cta glass-card">
-            <h2>准备开始您的 Web3 营销之旅？</h2>
-            <p>联系我们，获得专业的营销策略建议和报价</p>
-            <div class="cta-buttons">
-              <a href="/contact" class="btn-primary">
-                <i class="fas fa-comments mr-2"></i>
-                免费咨询
-              </a>
-              <a href="mailto:business@c-labs.com" class="btn-secondary">
-                <i class="fas fa-envelope mr-2"></i>
-                发送邮件
-              </a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  )
-})
+// About and Services pages removed - content moved to homepage
 
 // Cases page  
 app.get('/cases', (c) => {
@@ -1449,7 +1162,316 @@ app.get('/ip/giant-cutie', (c) => {
   )
 })
 
-// Web3 Tutorials Main Page
+// Lana IP Details page
+app.get('/ip/lana', (c) => {
+  return c.render(
+    <div>
+      <div class="ip-hero">
+        <div class="container">
+          <div class="ip-profile">
+            <div class="ip-avatar">
+              <div class="avatar-large">LA</div>
+            </div>
+            <div class="ip-info">
+              <h1>Lana Yang</h1>
+              <p class="ip-tagline">Web3 内容创作者 & 社区建设者</p>
+              <p class="ip-description">
+                专注于Web3生态系统的内容创作和社区建设，以独特的视角和专业的态度，
+                为Web3爱好者提供有价值的内容和见解。活跃于多个社交平台，致力于推动Web3文化传播。
+              </p>
+              <div class="ip-contact">
+                <a href="mailto:business@c-labs.com" class="btn-primary">商务合作</a>
+                <a href="/contact" class="btn-secondary">联系我们</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="ip-content">
+        <div class="container">
+          <div class="ip-tabs">
+            <button class="tab-btn active" data-tab="overview">概览</button>
+            <button class="tab-btn" data-tab="platforms">平台数据</button>
+            <button class="tab-btn" data-tab="works">最新作品</button>
+            <button class="tab-btn" data-tab="cases">合作案例</button>
+          </div>
+          
+          {/* Overview Tab */}
+          <div class="tab-content active" id="overview">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number">150K+</div>
+                <div class="stat-label">全平台粉丝总数</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">👀</div>
+                <div class="stat-number">20M+</div>
+                <div class="stat-label">累计内容播放量</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-number">92%</div>
+                <div class="stat-label">内容完播率</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-number">15+</div>
+                <div class="stat-label">成功合作项目</div>
+              </div>
+            </div>
+            
+            <div class="content-types">
+              <h2>内容特色</h2>
+              <div class="content-grid">
+                <div class="content-type">
+                  <h3>🎨 创意内容</h3>
+                  <p>独特视角的Web3内容创作，融合艺术与技术</p>
+                </div>
+                <div class="content-type">
+                  <h3>🌐 社区互动</h3>
+                  <p>积极的社区参与和用户互动，建立深度连接</p>
+                </div>
+                <div class="content-type">
+                  <h3>📊 数据分析</h3>
+                  <p>基于数据的市场分析和项目评估</p>
+                </div>
+                <div class="content-type">
+                  <h3>🤝 合作推广</h3>
+                  <p>专业的品牌合作和项目推广服务</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Platforms Tab */}
+          <div class="tab-content" id="platforms">
+            <div class="platforms-grid">
+              <div class="platform-card">
+                <div class="platform-header">
+                  <div class="platform-icon twitter-bg">
+                    <i class="fab fa-x-twitter"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h3>X (Twitter)</h3>
+                    <p>主要内容平台</p>
+                  </div>
+                </div>
+                <div class="platform-stats">
+                  <div class="stat">
+                    <span class="stat-number">85K</span>
+                    <span class="stat-label">关注者</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">7.2%</span>
+                    <span class="stat-label">互动率</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">300+</span>
+                    <span class="stat-label">月推文数</span>
+                  </div>
+                </div>
+                <a href="https://x.com/lanayang_" target="_blank" class="platform-link">
+                  访问主页 <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
+              
+              <div class="platform-card">
+                <div class="platform-header">
+                  <div class="platform-icon instagram-bg">
+                    <i class="fab fa-instagram"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h3>Instagram</h3>
+                    <p>视觉内容分享</p>
+                  </div>
+                </div>
+                <div class="platform-stats">
+                  <div class="stat">
+                    <span class="stat-number">32K</span>
+                    <span class="stat-label">粉丝</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">8.5%</span>
+                    <span class="stat-label">互动率</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">20+</span>
+                    <span class="stat-label">月发布</span>
+                  </div>
+                </div>
+                <a href="https://instagram.com/lanayang.eth" target="_blank" class="platform-link">
+                  访问主页 <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
+              
+              <div class="platform-card">
+                <div class="platform-header">
+                  <div class="platform-icon linkedin-bg">
+                    <i class="fab fa-linkedin"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h3>LinkedIn</h3>
+                    <p>专业网络</p>
+                  </div>
+                </div>
+                <div class="platform-stats">
+                  <div class="stat">
+                    <span class="stat-number">15K</span>
+                    <span class="stat-label">连接</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">12%</span>
+                    <span class="stat-label">互动率</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">月文章</span>
+                  </div>
+                </div>
+                <a href="https://linkedin.com/in/lanayang" target="_blank" class="platform-link">
+                  访问主页 <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
+              
+              <div class="platform-card">
+                <div class="platform-header">
+                  <div class="platform-icon medium-bg">
+                    <i class="fab fa-medium"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h3>Medium</h3>
+                    <p>深度文章</p>
+                  </div>
+                </div>
+                <div class="platform-stats">
+                  <div class="stat">
+                    <span class="stat-number">18K</span>
+                    <span class="stat-label">关注者</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label">阅读完成率</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number">25+</span>
+                    <span class="stat-label">技术文章</span>
+                  </div>
+                </div>
+                <a href="https://medium.com/@lanayang" target="_blank" class="platform-link">
+                  访问主页 <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          {/* Works Tab */}
+          <div class="tab-content" id="works">
+            <div class="recent-works">
+              <h2>最新作品</h2>
+              <div class="works-list">
+                <div class="work-item-small">
+                  <div class="work-thumbnail-small">
+                    <img src="/static/thumbnails/lana-1.jpg" alt="最新作品" />
+                    <span class="work-platform-badge twitter">Twitter</span>
+                  </div>
+                  <div class="work-details">
+                    <h4>Web3 社区建设的核心要素</h4>
+                    <p class="work-date">2024年1月18日</p>
+                    <div class="work-stats-small">
+                      <span>15K 浏览</span>
+                      <span>320 互动</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="work-item-small">
+                  <div class="work-thumbnail-small">
+                    <img src="/static/thumbnails/lana-2.jpg" alt="最新作品" />
+                    <span class="work-platform-badge instagram">Instagram</span>
+                  </div>
+                  <div class="work-details">
+                    <h4>NFT 艺术与技术的完美结合</h4>
+                    <p class="work-date">2024年1月16日</p>
+                    <div class="work-stats-small">
+                      <span>8K 观看</span>
+                      <span>450 点赞</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="work-item-small">
+                  <div class="work-thumbnail-small">
+                    <img src="/static/thumbnails/lana-3.jpg" alt="最新作品" />
+                    <span class="work-platform-badge medium">Medium</span>
+                  </div>
+                  <div class="work-details">
+                    <h4>DeFi 协议安全性深度分析</h4>
+                    <p class="work-date">2024年1月14日</p>
+                    <div class="work-stats-small">
+                      <span>5K 阅读</span>
+                      <span>180 评论</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="works-cta">
+                <a href="/work" class="btn-primary">查看全部作品</a>
+              </div>
+            </div>
+          </div>
+          
+          {/* Cases Tab */}
+          <div class="tab-content" id="cases">
+            <div class="collaboration-cases">
+              <h2>合作案例</h2>
+              <div class="cases-list">
+                <div class="case-preview">
+                  <h4>Polygon Labs</h4>
+                  <p>多链生态系统内容推广合作</p>
+                  <div class="case-metrics-small">
+                    <span>50万+ 曝光</span>
+                    <span>25K 互动</span>
+                    <span>高质量内容</span>
+                  </div>
+                  <a href="/cases#polygon" class="case-link">查看详情</a>
+                </div>
+                
+                <div class="case-preview">
+                  <h4>OpenSea</h4>
+                  <p>NFT 平台社区建设项目</p>
+                  <div class="case-metrics-small">
+                    <span>80万 浏览量</span>
+                    <span>1500+ 用户增长</span>
+                    <span>15%转化率</span>
+                  </div>
+                  <a href="/cases#opensea" class="case-link">查看详情</a>
+                </div>
+                
+                <div class="case-preview">
+                  <h4>Chainlink</h4>
+                  <p>Oracle 技术教育内容合作</p>
+                  <div class="case-metrics-small">
+                    <span>35万+ 阅读</span>
+                    <span>500+ 技术互动</span>
+                    <span>专业认可</span>
+                  </div>
+                  <a href="/cases#chainlink" class="case-link">查看详情</a>
+                </div>
+              </div>
+              <div class="cases-cta">
+                <a href="/cases" class="btn-primary">查看全部案例</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+})
+
+// Web3 Tutorials Main Page - Redesigned with Professional Education Platform Style
 app.get('/tutorials', async (c) => {
   try {
     const { env } = c;
@@ -1472,119 +1494,226 @@ app.get('/tutorials', async (c) => {
     const featured = featuredArticles.results || [];
     
     const renderContent = () => (
-      <div>
-      <div class="page-header">
-        <div class="container">
-          <h1>Web3 入门教程</h1>
-          <p>从零开始学习Web3，掌握区块链世界的核心技能</p>
-        </div>
-      </div>
-      
-      <div class="tutorials-content">
-        <div class="container">
-          <div class="tutorials-intro">
-            <div class="intro-card glass-card">
-              <div class="intro-icon">
-                <i class="fas fa-graduation-cap"></i>
+      <div class="education-platform">
+        {/* Hero Section with Professional Design */}
+        <section class="education-hero">
+          <div class="container mx-auto px-4 py-16">
+            <div class="max-w-4xl mx-auto text-center">
+              <div class="hero-badge">
+                <span class="badge-text">专业教育</span>
               </div>
-              <h2>欢迎进入Web3世界</h2>
-              <p>这里是你的Web3学习起点。我们精心准备了从基础到进阶的完整教程体系，帮助你快速掌握区块链技术和加密货币交易。</p>
+              <h1 class="hero-title">Web3 学院</h1>
+              <h2 class="hero-subtitle">掌握Web3核心技能 · 从新手到专家的完整学习路径</h2>
+              <p class="hero-description">
+                由Giant Cutie等顶级KOL亲自打造的专业Web3教育内容，涵盖交易所使用、钱包安全、DeFi协议、空投策略等核心主题。
+                无论您是完全新手还是进阶用户，都能找到合适的学习路径。
+              </p>
+              <div class="hero-stats">
+                <div class="stat-item">
+                  <span class="stat-number">50+</span>
+                  <span class="stat-label">精选教程</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">6</span>
+                  <span class="stat-label">核心领域</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">100K+</span>
+                  <span class="stat-label">学习者</span>
+                </div>
+              </div>
             </div>
           </div>
-          
-          <div class="tutorial-categories">
-            <h2 class="section-title">教程分类</h2>
-            <div class="categories-grid">
-              {categoriesData.map(category => (
-                <a href={`/tutorials/${category.slug}`} class="category-card">
-                  <div class={`category-icon ${category.slug}`}>
-                    <i class={category.icon || 'fas fa-book'}></i>
-                  </div>
-                  <div class="category-info">
-                    <h3>{category.name}</h3>
-                    <p class="category-desc">{category.description}</p>
-                    <div class="category-stats">
-                      <span class="tutorials-count">{category.article_count}篇教程</span>
+        </section>
+
+        {/* Learning Path Section */}
+        <section class="learning-paths">
+          <div class="container mx-auto px-4 py-12">
+            <div class="section-header">
+              <h2 class="section-title">学习路径</h2>
+              <p class="section-subtitle">系统化的课程体系，循序渐进掌握Web3技能</p>
+            </div>
+            
+            {/* Course Categories - Professional Design */}
+            <div class="course-categories">
+              {categoriesData.map((category, index) => (
+                <div class="learning-path-card">
+                  <div class="path-header">
+                    <div class="path-level">
+                      <span class="level-badge">{index + 1}</span>
+                      <span class="level-text">{index === 0 ? '基础' : index === 1 ? '进阶' : index === 2 ? '实战' : '高级'}</span>
+                    </div>
+                    <div class={`path-icon ${category.slug}`}>
+                      <i class={category.icon || 'fas fa-graduation-cap'}></i>
                     </div>
                   </div>
-                  <div class="category-arrow">
-                    <i class="fas fa-chevron-right"></i>
+                  
+                  <div class="path-content">
+                    <h3 class="path-title">{category.name}</h3>
+                    <p class="path-description">{category.description}</p>
+                    
+                    <div class="path-stats">
+                      <div class="stat">
+                        <i class="fas fa-book"></i>
+                        <span>{category.article_count || 0} 个课程</span>
+                      </div>
+                      <div class="stat">
+                        <i class="fas fa-clock"></i>
+                        <span>{(category.article_count || 0) * 5} 分钟</span>
+                      </div>
+                      <div class="stat">
+                        <i class="fas fa-users"></i>
+                        <span>{Math.floor(Math.random() * 1000) + 500} 学员</span>
+                      </div>
+                    </div>
+                    
+                    <div class="path-progress">
+                      <div class="progress-bar">
+                        <div class="progress-fill" style={`width: ${Math.floor(Math.random() * 60) + 20}%`}></div>
+                      </div>
+                      <span class="progress-text">开始学习</span>
+                    </div>
                   </div>
-                </a>
+                  
+                  <div class="path-action">
+                    <a href={`/tutorials/${category.slug}`} class="path-btn">
+                      <span>开始课程</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-          
-          <div class="featured-tutorials">
-            <h2 class="section-title">热门教程</h2>
-            <div class="featured-grid">
+        </section>
+
+        {/* Featured Courses Section */}
+        <section class="featured-courses">
+          <div class="container mx-auto px-4 py-12">
+            <div class="section-header">
+              <h2 class="section-title">精选课程</h2>
+              <p class="section-subtitle">由专业团队精心制作的高质量教程内容</p>
+            </div>
+            
+            <div class="courses-grid">
               {featured.map(article => (
-                <div class="tutorial-preview-card">
-                  <div class={`tutorial-category-tag ${article.category}`}>
-                    {categoriesData.find(cat => cat.slug === article.category)?.name || article.category}
+                <div class="course-card">
+                  <div class="course-header">
+                    <div class="course-thumbnail">
+                      <div class="thumbnail-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                      </div>
+                      <div class={`course-category ${article.category}`}>
+                        {categoriesData.find(cat => cat.slug === article.category)?.name || article.category}
+                      </div>
+                    </div>
                   </div>
-                  <h3>{article.title}</h3>
-                  <p class="tutorial-excerpt">{article.summary}</p>
-                  <div class="tutorial-meta">
-                    <span class="read-time">
-                      <i class="fas fa-clock"></i> {article.read_time}分钟阅读
-                    </span>
-                    <span class="views">
-                      <i class="fas fa-eye"></i> {article.views.toLocaleString()} 浏览
-                    </span>
+                  
+                  <div class="course-content">
+                    <h3 class="course-title">{article.title}</h3>
+                    <p class="course-description">{article.summary}</p>
+                    
+                    <div class="course-meta">
+                      <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>{article.read_time} 分钟</span>
+                      </div>
+                      <div class="meta-item">
+                        <i class="fas fa-eye"></i>
+                        <span>{article.views.toLocaleString()} 学习</span>
+                      </div>
+                      <div class="meta-item">
+                        <i class="fas fa-star"></i>
+                        <span>4.8</span>
+                      </div>
+                    </div>
+                    
+                    <div class="course-instructor">
+                      <div class="instructor-avatar">
+                        <span>GC</span>
+                      </div>
+                      <div class="instructor-info">
+                        <span class="instructor-name">Giant Cutie</span>
+                        <span class="instructor-title">Web3 专家</span>
+                      </div>
+                    </div>
                   </div>
-                  <a href={`/tutorials/${article.category}/${article.slug}`} class="tutorial-link">
-                    阅读教程 <i class="fas fa-arrow-right"></i>
-                  </a>
+                  
+                  <div class="course-action">
+                    <a href={`/tutorials/${article.category}/${article.slug}`} class="course-btn">
+                      立即学习
+                    </a>
+                  </div>
                 </div>
               ))}
               
               {featured.length === 0 && (
-                <div class="no-featured">
-                  <p>暂无推荐教程</p>
+                <div class="empty-state">
+                  <i class="fas fa-book-open"></i>
+                  <p>课程内容正在准备中...</p>
                 </div>
               )}
             </div>
           </div>
-          
-          <div class="tutorial-search">
-            <h2 class="section-title">搜索教程</h2>
-            <div class="search-container">
-              <div class="search-box">
-                <input type="text" placeholder="搜索教程内容..." id="tutorial-search" />
-                <button class="search-btn">
-                  <i class="fas fa-search"></i>
-                </button>
+        </section>
+
+        {/* Search and Tools Section */}
+        <section class="learning-tools">
+          <div class="container mx-auto px-4 py-12">
+            <div class="tools-grid">
+              <div class="tool-card search-tool">
+                <h3>智能搜索</h3>
+                <p>快速找到您需要的教程内容</p>
+                <div class="search-box">
+                  <input type="text" placeholder="搜索课程、主题、工具..." id="course-search" />
+                  <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+                <div class="popular-tags">
+                  <span class="tag">币安</span>
+                  <span class="tag">MetaMask</span>
+                  <span class="tag">DeFi</span>
+                  <span class="tag">空投</span>
+                  <span class="tag">NFT</span>
+                </div>
               </div>
-              <div class="search-tags">
-                <span class="search-tag">币安</span>
-                <span class="search-tag">MetaMask</span>
-                <span class="search-tag">空投</span>
-                <span class="search-tag">DeFi</span>
-                <span class="search-tag">NFT</span>
-                <span class="search-tag">交易策略</span>
+              
+              <div class="tool-card progress-tool">
+                <h3>学习进度</h3>
+                <p>追踪您的学习成果</p>
+                <div class="progress-stats">
+                  <div class="progress-item">
+                    <span class="progress-label">已完成课程</span>
+                    <span class="progress-value">0 / {featured.length}</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                  </div>
+                </div>
+                <button class="progress-btn">查看详情</button>
               </div>
             </div>
           </div>
-          
-          <div class="admin-panel">
-            <h2 class="section-title">管理后台</h2>
-            <div class="admin-actions glass-card">
-              <p>管理员可以在这里上传和编辑教程内容</p>
-              <div class="admin-buttons">
-                <a href="/admin/tutorials" class="btn-primary">
-                  <i class="fas fa-plus mr-2"></i>添加新教程
+        </section>
+        
+        {/* Admin Panel - Hidden from public users */}
+        <section class="admin-section" style="display: none;">
+          <div class="container mx-auto px-4 py-8">
+            <div class="admin-panel">
+              <h3>内容管理</h3>
+              <div class="admin-actions">
+                <a href="/admin/tutorials" class="admin-btn">
+                  <i class="fas fa-plus"></i>添加课程
                 </a>
-                <a href="/admin/tutorials/manage" class="btn-secondary">
-                  <i class="fas fa-cog mr-2"></i>管理教程
+                <a href="/admin/tutorials/manage" class="admin-btn">
+                  <i class="fas fa-cog"></i>管理内容
                 </a>
               </div>
             </div>
           </div>
-          
-        </div>
+        </section>
       </div>
-    </div>
   );
     
     return c.render(renderContent());

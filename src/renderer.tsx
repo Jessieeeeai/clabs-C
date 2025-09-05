@@ -75,12 +75,11 @@ export const renderer = jsxRenderer(({ children }) => {
               
               <div class="hidden md:flex items-center space-x-8">
                 <a href="/" class="nav-link">首页</a>
-                <a href="/about" class="nav-link">关于我们</a>
-                <a href="/services" class="nav-link">服务</a>
                 <a href="/cases" class="nav-link">案例</a>
                 <a href="/work" class="nav-link">作品集</a>
                 <a href="/tutorials" class="nav-link">Web3教程</a>
                 <a href="/ip/giant-cutie" class="nav-link">Giant Cutie</a>
+                <a href="/ip/lana" class="nav-link">Lana</a>
                 <a href="/contact" class="nav-link">联系</a>
               </div>
               
@@ -102,12 +101,11 @@ export const renderer = jsxRenderer(({ children }) => {
             <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
               <div class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link">首页</a>
-                <a href="/about" class="mobile-nav-link">关于我们</a>
-                <a href="/services" class="mobile-nav-link">服务</a>
                 <a href="/cases" class="mobile-nav-link">案例</a>
                 <a href="/work" class="mobile-nav-link">作品集</a>
                 <a href="/tutorials" class="mobile-nav-link">Web3教程</a>
                 <a href="/ip/giant-cutie" class="mobile-nav-link">Giant Cutie</a>
+                <a href="/ip/lana" class="mobile-nav-link">Lana</a>
                 <a href="/contact" class="mobile-nav-link">联系</a>
               </div>
             </div>
@@ -135,10 +133,10 @@ export const renderer = jsxRenderer(({ children }) => {
               <div>
                 <h3 class="font-semibold mb-4">服务</h3>
                 <ul class="space-y-2 text-gray-400">
-                  <li><a href="/services" class="hover:text-white transition-colors">KOL 营销</a></li>
-                  <li><a href="/services" class="hover:text-white transition-colors">内容传播</a></li>
-                  <li><a href="/services" class="hover:text-white transition-colors">社区运营</a></li>
-                  <li><a href="/services" class="hover:text-white transition-colors">品牌策划</a></li>
+                  <li><a href="/#services" class="hover:text-white transition-colors">KOL 营销</a></li>
+                  <li><a href="/#services" class="hover:text-white transition-colors">内容传播</a></li>
+                  <li><a href="/#services" class="hover:text-white transition-colors">社区运营</a></li>
+                  <li><a href="/#services" class="hover:text-white transition-colors">品牌策划</a></li>
                 </ul>
               </div>
               
