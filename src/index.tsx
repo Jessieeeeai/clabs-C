@@ -136,7 +136,7 @@ app.get('/', async (c) => {
       <div class="kol-section">
         <div class="container">
           <h2 class="section-title">自有IP</h2>
-          <p class="section-subtitle ip-subtitle-enhanced">专业的Web3内容创作团队，覆盖全球主流社交平台</p>
+          <p class="section-subtitle ip-subtitle-enhanced">专业的投研内容创作团队，覆盖全球主流社交平台</p>
           
           <div class="ip-matrix-grid">
             {/* Giant Cutie Card */}

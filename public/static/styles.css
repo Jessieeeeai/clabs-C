@@ -823,8 +823,8 @@ nav {
 
 /* Enhanced subtitle for IP section */
 .ip-subtitle-enhanced {
-  font-size: 2.475rem; /* 增加50%字体大小 */
-  color: #93c5fd; /* 更浅的蓝色 */
+  font-size: 1.65rem; /* 基于原来1.375rem增加20% */
+  color: #bfdbfe; /* 更浅的蓝色，light blue-200 */
   font-weight: 500;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
