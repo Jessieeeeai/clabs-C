@@ -195,7 +195,7 @@ nav {
   box-shadow: 0 8px 30px rgba(40, 61, 254, 0.3);
 }
 
-/* Cool Blue-Purple Hero Section */
+/* Unified Hero Section */
 .hero-section {
   min-height: 100vh;
   display: flex;
@@ -204,63 +204,12 @@ nav {
   position: relative;
   overflow: hidden;
   padding: 2rem 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.25) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
-    linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #312e81 50%, #3730a3 75%, #4338ca 100%);
-  background-size: 400% 400%;
-  animation: coolGradientFlow 25s ease infinite;
+  background: #5D6C7C;
 }
 
-@keyframes coolGradientFlow {
-  0% { 
-    background-position: 0% 50%;
-    filter: hue-rotate(0deg);
-  }
-  33% { 
-    background-position: 100% 50%;
-    filter: hue-rotate(30deg);
-  }
-  66% { 
-    background-position: 100% 100%;
-    filter: hue-rotate(-30deg);
-  }
-  100% { 
-    background-position: 0% 50%;
-    filter: hue-rotate(0deg);
-  }
-}
+/* 移除复杂动画效果，保持简洁 */
 
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.1) 0%, transparent 40%);
-  backdrop-filter: blur(2px);
-  animation: floatingOrbs 30s ease-in-out infinite;
-}
-
-@keyframes floatingOrbs {
-  0%, 100% { 
-    transform: translate(0, 0) scale(1);
-    opacity: 0.8;
-  }
-  33% { 
-    transform: translate(-20px, -30px) scale(1.1);
-    opacity: 0.6;
-  }
-  66% { 
-    transform: translate(20px, -15px) scale(0.9);
-    opacity: 1;
-  }
-}
+/* 简化版动画效果 */
 
 .hero-section::after {
   content: '';
@@ -736,10 +685,7 @@ nav {
 /* Modern Section Designs */
 .advantages-section {
   padding: 8rem 0;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(0, 217, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-    linear-gradient(135deg, #1e293b 0%, #2d3748 30%, #374151 60%, #4a5568 90%, #475569 100%);
+  background: #5D6C7C;
   position: relative;
   overflow: hidden;
 }
@@ -803,10 +749,7 @@ nav {
 /* Enhanced KOL Section */
 .kol-section {
   padding: 8rem 0;
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-    linear-gradient(135deg, #475569 0%, #374151 25%, #2d3748 50%, #1e293b 75%, #0f172a 100%);
+  background: #5D6C7C;
   position: relative;
   overflow: hidden;
 }
@@ -1658,39 +1601,12 @@ nav {
   text-align: center;
 }
 
-/* Enhanced Services Section with smooth transition */
+/* Enhanced Services Section */
 .services-section {
   padding: 6rem 0;
-  background: linear-gradient(135deg, 
-    #0f172a 0%,
-    #1a202c 20%,
-    #2d3748 40%,
-    #4a5568 60%,
-    #718096 80%,
-    #e2e8f0 100%);
+  background: #5D6C7C;
   position: relative;
   overflow: hidden;
-}
-
-.services-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background: linear-gradient(180deg, 
-    rgba(15, 23, 42, 1) 0%,
-    rgba(15, 23, 42, 0.8) 30%,
-    rgba(15, 23, 42, 0.4) 70%,
-    transparent 100%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.services-section .container {
-  position: relative;
-  z-index: 2;
 }
 
 .services-grid {
@@ -1748,40 +1664,14 @@ nav {
   line-height: 1.6;
 }
 
-/* Stunning CTA Section with smooth transition */
+/* Stunning CTA Section */
 .cta-section {
   padding: 6rem 0;
-  background: linear-gradient(135deg, 
-    #e2e8f0 0%,
-    #cbd5e1 15%,
-    #94a3b8 30%,
-    var(--brand-primary) 50%, 
-    var(--accent-purple) 70%, 
-    var(--accent-blue) 85%, 
-    var(--accent-cyan) 100%);
-  background-size: 400% 400%;
-  animation: gradientFlow 15s ease infinite;
+  background: #5D6C7C;
   color: white;
   text-align: center;
   position: relative;
   overflow: hidden;
-}
-
-.cta-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background: linear-gradient(180deg, 
-    rgba(226, 232, 240, 1) 0%,
-    rgba(226, 232, 240, 0.7) 25%,
-    rgba(226, 232, 240, 0.3) 50%,
-    rgba(226, 232, 240, 0.1) 75%,
-    transparent 100%);
-  z-index: 1;
-  pointer-events: none;
 }
 
 .cta-section::before {
