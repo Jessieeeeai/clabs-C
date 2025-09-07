@@ -1703,8 +1703,6 @@ nav {
 .service-card:hover {
   transform: translateY(-10px);
   box-shadow: var(--shadow-2xl);
-  background: linear-gradient(135deg, rgba(173, 216, 230, 0.9) 0%, rgba(135, 206, 235, 0.8) 100%) !important;
-  border-color: var(--accent-light-blue);
 }
 
 .service-card h3 {
@@ -4632,9 +4630,7 @@ nav {
 
 .service-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 25px 50px -12px rgba(96, 165, 250, 0.4);
-  border-color: var(--accent-light-blue);
-  background: linear-gradient(135deg, rgba(173, 216, 230, 0.9) 0%, rgba(135, 206, 235, 0.8) 100%) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .service-icon {
