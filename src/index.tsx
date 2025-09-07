@@ -380,6 +380,14 @@ app.get('/', async (c) => {
               <h3>品牌策划</h3>
               <p>项目品牌定位与市场教育</p>
             </div>
+            <div class="service-card">
+              <h3>交易投研</h3>
+              <p>每日行情深度投研，专业团队稳定输出，交易统计胜率可查</p>
+            </div>
+            <div class="service-card">
+              <h3>行业投研</h3>
+              <p>行业走势分析，资金流向分析，深度专业，每月一次行研报告</p>
+            </div>
           </div>
         </div>
       </div>
