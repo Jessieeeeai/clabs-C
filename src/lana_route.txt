@@ -1,0 +1,328 @@
+app.get('/ip/lana', async (c) => {
+  try {
+    const { env } = c
+
+    // Get Lana profile data
+    const profile = await env.DB.prepare(`
+      SELECT * FROM ip_profiles WHERE slug = 'lana'
+    `).first()
+
+    if (!profile) {
+      return c.render(
+        <div class="error-page">
+          <div class="container">
+            <div class="error-message">
+              <h1>IP未找到</h1>
+              <p>请求的IP页面不存在。</p>
+              <a href="/" class="btn-primary">返回首页</a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // Get platform statistics
+    const platforms = await env.DB.prepare(`
+      SELECT * FROM ip_platform_stats 
+      WHERE ip_id = ? 
+      ORDER BY followers_count DESC
+    `).bind(profile.id).all()
+
+    // Get featured works
+    const featuredWorks = await env.DB.prepare(`
+      SELECT * FROM ip_works 
+      WHERE ip_id = ? AND featured = true AND status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 6
+    `).bind(profile.id).all()
+
+    // Get all works for portfolio
+    const allWorks = await env.DB.prepare(`
+      SELECT * FROM ip_works 
+      WHERE ip_id = ? AND status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 12
+    `).bind(profile.id).all()
+
+    // Get achievements
+    const achievements = await env.DB.prepare(`
+      SELECT * FROM ip_achievements 
+      WHERE ip_id = ? 
+      ORDER BY display_order ASC, achievement_date DESC
+    `).bind(profile.id).all()
+
+    // Parse JSON fields
+    let socialLinks = {}
+    let specialties = []
+    let languages = []
+    
+    try {
+      socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
+      specialties = profile.specialties ? JSON.parse(profile.specialties) : []
+      languages = profile.languages ? JSON.parse(profile.languages) : []
+    } catch (e) {
+      console.error('Error parsing JSON fields:', e)
+    }
+
+    // Calculate total stats
+    const totalFollowers = platforms.results?.reduce((sum, p) => sum + (p.followers_count || 0), 0) || 0
+    const totalViews = platforms.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 0
+    const avgEngagement = platforms.results?.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / (platforms.results?.length || 1) || 0
+
+    return c.render(
+      <div class="ip-showcase-page lana-theme">
+        {/* Hero Section */}
+        <div class="ip-hero" style={profile.banner_url ? `background-image: linear-gradient(rgba(236,72,153,0.3), rgba(236,72,153,0.3)), url(${profile.banner_url})` : 'background: linear-gradient(135deg, #ec4899 0%, #f97316 100%)'}>
+          <div class="container">
+            <div class="ip-hero-content">
+              <div class="ip-avatar-section">
+                <div class="ip-avatar lana-avatar">
+                  {profile.avatar_url ? (
+                    <img src={profile.avatar_url} alt={profile.display_name} />
+                  ) : (
+                    <div class="avatar-placeholder">
+                      <i class="fas fa-user"></i>
+                    </div>
+                  )}
+                  <div class="status-indicator active">
+                    <i class="fas fa-circle"></i>
+                  </div>
+                </div>
+                <div class="verification-badge lana-badge">
+                  <i class="fas fa-crown"></i>
+                  <span>美女主播</span>
+                </div>
+              </div>
+              
+              <div class="ip-info">
+                <h1 class="ip-name">{profile.display_name}</h1>
+                <p class="ip-title">{profile.title}</p>
+                <p class="ip-slogan">{profile.slogan}</p>
+                
+                <div class="ip-stats-mini">
+                  <div class="stat-mini">
+                    <span class="number">{(totalFollowers / 1000).toFixed(0)}K+</span>
+                    <span class="label">总粉丝</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{(totalViews / 1000000).toFixed(1)}M+</span>
+                    <span class="label">总播放量</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{avgEngagement.toFixed(1)}%</span>
+                    <span class="label">平均互动率</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{platforms.results?.length || 0}</span>
+                    <span class="label">活跃平台</span>
+                  </div>
+                </div>
+
+                <div class="ip-actions">
+                  <a href="/contact" class="btn-primary lana-btn">
+                    <i class="fas fa-heart"></i>
+                    商务合作
+                  </a>
+                  <a href="#portfolio" class="btn-secondary lana-btn-secondary">
+                    <i class="fas fa-play"></i>
+                    查看作品
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Similar content structure as Giant Cutie but with Lana's data and pink theme */}
+        {/* Navigation Tabs */}
+        <div class="ip-nav-tabs sticky lana-nav">
+          <div class="container">
+            <div class="tabs-container">
+              <a href="#overview" class="tab-link active" data-tab="overview">
+                <i class="fas fa-user"></i>
+                概览
+              </a>
+              <a href="#platforms" class="tab-link" data-tab="platforms">
+                <i class="fas fa-chart-bar"></i>
+                平台数据
+              </a>
+              <a href="#portfolio" class="tab-link" data-tab="portfolio">
+                <i class="fas fa-play-circle"></i>
+                作品集
+              </a>
+              <a href="#achievements" class="tab-link" data-tab="achievements">
+                <i class="fas fa-crown"></i>
+                成就
+              </a>
+              <a href="#contact" class="tab-link" data-tab="contact">
+                <i class="fas fa-envelope"></i>
+                联系方式
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Content with same structure but Lana's data */}
+        <div class="ip-content">
+          <div class="container">
+            {/* Overview Tab */}
+            <div id="overview" class="tab-content active">
+              <div class="overview-grid">
+                <div class="overview-main">
+                  <div class="bio-section">
+                    <h3>个人简介</h3>
+                    <p class="bio-text">{profile.bio}</p>
+                  </div>
+
+                  <div class="specialties-section">
+                    <h3>专长领域</h3>
+                    <div class="specialty-tags lana-tags">
+                      {specialties.map(specialty => (
+                        <span class="specialty-tag lana-tag">{specialty}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Featured works with Lana's content */}
+                  <div class="featured-works-section">
+                    <h3>精选作品</h3>
+                    <div class="featured-works-grid">
+                      {featuredWorks.results?.slice(0, 4).map(work => (
+                        <div class="work-card featured lana-work">
+                          <div class="work-thumbnail">
+                            {work.thumbnail_url ? (
+                              <img src={work.thumbnail_url} alt={work.title} />
+                            ) : (
+                              <div class="thumbnail-placeholder">
+                                <i class="fas fa-play"></i>
+                              </div>
+                            )}
+                            <div class="play-overlay lana-overlay">
+                              <i class="fas fa-play"></i>
+                            </div>
+                          </div>
+                          <div class="work-info">
+                            <h4 class="work-title">{work.title}</h4>
+                            <p class="work-description">{work.description}</p>
+                            <div class="work-stats">
+                              <span class="stat">
+                                <i class="fas fa-eye"></i>
+                                {(work.view_count / 1000).toFixed(0)}K
+                              </span>
+                              <span class="stat">
+                                <i class="fas fa-heart"></i>
+                                {(work.like_count / 1000).toFixed(0)}K
+                              </span>
+                              <span class="platform-badge lana-platform">{work.platform}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sidebar with same structure */}
+                <div class="overview-sidebar">
+                  <div class="info-card lana-card">
+                    <h4>基本信息</h4>
+                    <div class="info-list">
+                      <div class="info-item">
+                        <span class="label">所在地</span>
+                        <span class="value">{profile.location}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">语言能力</span>
+                        <span class="value">{languages.join(', ')}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">状态</span>
+                        <span class="value status-active lana-status">
+                          <i class="fas fa-circle"></i>
+                          活跃中
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="social-links-card lana-social-card">
+                    <h4>社交媒体</h4>
+                    <div class="social-links-grid">
+                      {Object.entries(socialLinks).map(([platform, url]) => (
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="social-link lana-social">
+                          <i class={`fab fa-${platform === 'youtube' ? 'youtube' : platform === 'twitter' ? 'x-twitter' : platform}`}></i>
+                          <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {achievements.results?.length > 0 && (
+                    <div class="recent-achievements-card lana-achievements">
+                      <h4>最新成就</h4>
+                      <div class="achievements-list">
+                        {achievements.results?.slice(0, 3).map(achievement => (
+                          <div class="achievement-item">
+                            <div class="achievement-icon" style={`background-color: ${achievement.badge_color}`}>
+                              <i class={achievement.icon}></i>
+                            </div>
+                            <div class="achievement-info">
+                              <h5>{achievement.title}</h5>
+                              <p>{achievement.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Other tabs with similar structure but Lana's styling */}
+            {/* Platform data, portfolio, achievements, and contact sections would follow similar patterns */}
+            {/* ... (Similar structure to Giant Cutie but with Lana theme) */}
+          </div>
+        </div>
+
+        {/* Same JavaScript for tab functionality */}
+        <script>{`
+          // Same tab switching functionality as Giant Cutie
+          document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link')
+            const tabContents = document.querySelectorAll('.tab-content')
+
+            tabLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault()
+                
+                tabLinks.forEach(l => l.classList.remove('active'))
+                tabContents.forEach(c => c.classList.remove('active'))
+                
+                this.classList.add('active')
+                const targetTab = this.getAttribute('data-tab')
+                const targetContent = document.getElementById(targetTab)
+                if (targetContent) {
+                  targetContent.classList.add('active')
+                }
+              })
+            })
+          })
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading Lana page:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>页面加载失败</h1>
+            <p>无法加载IP页面，请稍后再试。</p>
+            <a href="/" class="btn-primary">返回首页</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})

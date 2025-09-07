@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员访问测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">管理员功能测试</h1>
+        
+        <!-- 登录区域 -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">1. 管理员登录测试</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <input type="text" id="username" placeholder="用户名" value="admin" class="px-4 py-2 border rounded-lg">
+                <input type="password" id="password" placeholder="密码" value="clabs2024" class="px-4 py-2 border rounded-lg">
+            </div>
+            
+            <button onclick="testLogin()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                测试登录
+            </button>
+            
+            <div id="loginResult" class="mt-4"></div>
+        </div>
+        
+        <!-- 上传测试区域 -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">2. 图片上传功能测试</h2>
+            
+            <input type="file" id="imageFile" accept="image/*" class="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700">
+            
+            <button onclick="testImageUpload()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 mr-4">
+                测试图片上传
+            </button>
+            
+            <button onclick="testAdminIPAccess()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
+                测试管理后台访问
+            </button>
+            
+            <div id="uploadResult" class="mt-4"></div>
+        </div>
+        
+        <!-- 结果显示区域 -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">测试结果汇总</h2>
+            <div id="allResults" class="space-y-2">
+                <div class="text-gray-500">等待测试...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionCookie = '';
+        
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 保存session信息
+                    sessionCookie = document.cookie.split('; ').find(row => row.startsWith('admin-session='));
+                    
+                    document.getElementById('loginResult').innerHTML = `
+                        <div class="text-green-600">
+                            ✅ 登录成功！<br>
+                            Session ID: ${data.sessionId}<br>
+                            Cookie: ${sessionCookie || '未设置'}<br>
+                            消息: ${data.message}
+                        </div>
+                    `;
+                    updateResults('login', '✅ 管理员登录成功');
+                } else {
+                    document.getElementById('loginResult').innerHTML = `
+                        <div class="text-red-600">
+                            ❌ 登录失败: ${data.message}
+                        </div>
+                    `;
+                    updateResults('login', '❌ 管理员登录失败');
+                }
+            } catch (error) {
+                document.getElementById('loginResult').innerHTML = `
+                    <div class="text-red-600">
+                        ❌ 登录异常: ${error.message}
+                    </div>
+                `;
+                updateResults('login', '❌ 管理员登录异常');
+            }
+        }
+        
+        async function testImageUpload() {
+            const fileInput = document.getElementById('imageFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('请选择一个图片文件');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('uploadResult').innerHTML = `
+                        <div class="text-green-600">
+                            ✅ 图片上传成功！<br>
+                            文件名: ${data.data.fileName}<br>
+                            URL: ${data.data.url}<br>
+                            大小: ${(data.data.size / 1024).toFixed(2)} KB
+                        </div>
+                    `;
+                    updateResults('upload', '✅ 图片上传功能正常');
+                } else {
+                    document.getElementById('uploadResult').innerHTML = `
+                        <div class="text-red-600">
+                            ❌ 上传失败: ${data.message}
+                        </div>
+                    `;
+                    updateResults('upload', '❌ 图片上传失败');
+                }
+            } catch (error) {
+                document.getElementById('uploadResult').innerHTML = `
+                    <div class="text-red-600">
+                        ❌ 上传异常: ${error.message}
+                    </div>
+                `;
+                updateResults('upload', '❌ 图片上传异常');
+            }
+        }
+        
+        async function testAdminIPAccess() {
+            try {
+                const response = await fetch('/admin/ip/manage', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const html = await response.text();
+                    if (html.includes('IP管理后台')) {
+                        document.getElementById('uploadResult').innerHTML += `
+                            <div class="text-green-600 mt-2">
+                                ✅ 管理后台访问成功！页面正常加载
+                            </div>
+                        `;
+                        updateResults('admin', '✅ 管理后台访问正常');
+                    } else {
+                        document.getElementById('uploadResult').innerHTML += `
+                            <div class="text-yellow-600 mt-2">
+                                ⚠️ 页面访问成功但内容异常
+                            </div>
+                        `;
+                        updateResults('admin', '⚠️ 管理后台内容异常');
+                    }
+                } else if (response.status === 302) {
+                    document.getElementById('uploadResult').innerHTML += `
+                        <div class="text-red-600 mt-2">
+                            ❌ 管理后台访问失败: 重定向到登录页 (认证问题)
+                        </div>
+                    `;
+                    updateResults('admin', '❌ 管理后台认证失败');
+                } else {
+                    document.getElementById('uploadResult').innerHTML += `
+                        <div class="text-red-600 mt-2">
+                            ❌ 管理后台访问失败: HTTP ${response.status}
+                        </div>
+                    `;
+                    updateResults('admin', '❌ 管理后台访问失败');
+                }
+            } catch (error) {
+                document.getElementById('uploadResult').innerHTML += `
+                    <div class="text-red-600 mt-2">
+                        ❌ 管理后台访问异常: ${error.message}
+                    </div>
+                `;
+                updateResults('admin', '❌ 管理后台访问异常');
+            }
+        }
+        
+        function updateResults(type, message) {
+            const resultsContainer = document.getElementById('allResults');
+            let resultHtml = resultsContainer.innerHTML;
+            
+            // 清除"等待测试..."
+            if (resultHtml.includes('等待测试...')) {
+                resultHtml = '';
+            }
+            
+            resultHtml += `<div>${message}</div>`;
+            resultsContainer.innerHTML = resultHtml;
+        }
+    </script>
+</body>
+</html>

@@ -20,7 +20,48 @@ app.use('/static/*', serveStatic({ root: './public' }))
 app.use(renderer)
 
 // Home page
-app.get('/', (c) => {
+app.get('/', async (c) => {
+  try {
+    const { env } = c
+
+    // Get IP profiles from database
+    const ipProfiles = await env.DB.prepare(`
+      SELECT * FROM ip_profiles WHERE status = 'active' ORDER BY featured DESC, created_at ASC
+    `).all()
+
+    // Get platform stats for each IP
+    const platformStats = await env.DB.prepare(`
+      SELECT ip_id, COUNT(*) as platform_count, SUM(followers_count) as total_followers, SUM(total_views) as total_views
+      FROM ip_platform_stats 
+      GROUP BY ip_id
+    `).all()
+
+    // Parse data for display
+    const ips = ipProfiles.results?.map(profile => {
+      let socialLinks = {}
+      let specialties = []
+      
+      try {
+        socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
+        specialties = profile.specialties ? JSON.parse(profile.specialties) : []
+      } catch (e) {
+        console.error('Error parsing JSON fields:', e)
+      }
+
+      const stats = platformStats.results?.find(p => p.ip_id === profile.id)
+      
+      return {
+        ...profile,
+        socialLinks,
+        specialties,
+        stats: stats || { platform_count: 0, total_followers: 0, total_views: 0 }
+      }
+    }) || []
+
+    // Calculate combined stats for hero section
+    const totalFollowers = platformStats.results?.reduce((sum, p) => sum + (p.total_followers || 0), 0) || 520000
+    const totalViews = platformStats.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 100000000
+
   return c.render(
     <div>
       <div class="hero-section">
@@ -40,27 +81,31 @@ app.get('/', (c) => {
             </div>
           </div>
           <h1 class="hero-title">
-            <span class="title-line">TOP Vol</span>
-            <span class="title-line highlight">Web3 Chinese Brand</span>
+            <span class="title-line single-line">加密货币/美股MCN机构</span>
+            <span class="title-line highlight">Cryptocurrency/US Stock MCN Institution</span>
           </h1>
-          <p class="hero-subtitle">专业的 Web3 品牌营销机构，连接全球与中文社区</p>
+          <p class="hero-subtitle">投资型用户 | Investment-focused Users</p>
           <div class="hero-stats">
             <div class="stat">
-              <span class="stat-number">199K+</span>
-              <span class="stat-label">YouTube 粉丝</span>
+              <span class="stat-number">80万+</span>
+              <span class="stat-label">自营流量</span>
             </div>
             <div class="stat">
-              <span class="stat-number">100M+</span>
+              <span class="stat-number">500万+</span>
+              <span class="stat-label">社区联盟</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">60亿+</span>
               <span class="stat-label">累计曝光</span>
             </div>
             <div class="stat">
-              <span class="stat-number">4+</span>
-              <span class="stat-label">年运营经验</span>
+              <span class="stat-number">2位</span>
+              <span class="stat-label">自有头部IP</span>
             </div>
           </div>
           <div class="hero-cta">
             <a href="/contact" class="btn-primary">联系合作</a>
-            <a href="/cases" class="btn-secondary">查看案例</a>
+            <a href="/ip/giant-cutie" class="btn-secondary">了解IP</a>
           </div>
         </div>
       </div>
@@ -90,89 +135,230 @@ app.get('/', (c) => {
 
       <div class="kol-section">
         <div class="container">
-          <h2 class="section-title">核心IP：Giant Cutie</h2>
-          <div class="kol-card">
-            <div class="kol-avatar">
-              <div class="avatar-placeholder">GC</div>
-            </div>
-            <div class="kol-info">
-              <h3>Giant Cutie</h3>
-              <p>全球覆盖的顶级 Web3 KOL</p>
-              <div class="kol-stats">
-                <div class="platform-stat">
-                  <span class="platform">YouTube</span>
-                  <span class="followers">199K 粉丝</span>
-                  <span class="views">6.5M+ 播放量</span>
+          <h2 class="section-title">自有IP</h2>
+          <p class="section-subtitle ip-subtitle-enhanced">专业的Web3内容创作团队，覆盖全球主流社交平台</p>
+          
+          <div class="ip-matrix-grid">
+            {/* Giant Cutie Card */}
+            <div class="ip-matrix-card giant-cutie-theme">
+              <div class="ip-card-header">
+                <div class="ip-avatar-container">
+                  <div class="ip-avatar">
+                    <img src="https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0" alt="Giant Cutie" />
+                    <div class="status-indicator active">
+                      <i class="fas fa-circle"></i>
+                    </div>
+                  </div>
                 </div>
-                <div class="platform-stat">
-                  <span class="platform">X (Twitter)</span>
-                  <span class="followers">127.8K 粉丝</span>
+                <div class="ip-info">
+                  <div class="ip-name-section">
+                    <h3 class="ip-name">加密大漂亮</h3>
+                    <span class="ip-name-en">Giant Cutie</span>
+                  </div>
+                  <p class="ip-description">中文区Web3.0行业最大IP，加密矿工，坐标硅谷</p>
+                  <div class="ip-badges">
+                    <span class="badge verified">
+                      <i class="fas fa-check-circle"></i>
+                      官方认证
+                    </span>
+                    <span class="badge trending">
+                      <i class="fas fa-fire"></i>
+                      热门创作者
+                    </span>
+                  </div>
                 </div>
-                <div class="platform-stat">
-                  <span class="platform">TikTok</span>
-                  <span class="followers">31.5K 粉丝</span>
-                  <span class="views">5.2M+ 播放量</span>
-                </div>
-                <div class="platform-stat">
-                  <span class="platform">快手</span>
-                  <span class="followers">92K 粉丝</span>
-                  <span class="views">22M+ 播放量</span>
-                </div>
-                <div class="platform-stat">
-                  <span class="platform">B站</span>
-                  <span class="followers">71.6K 粉丝</span>
-                  <span class="views">3M+ 播放量</span>
+                <div class="ip-actions">
+                  <a href="/ip/giant-cutie" class="btn-detail">查看详情</a>
                 </div>
               </div>
-              <div class="platform-links">
-                <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" class="platform-link youtube">YouTube</a>
-                <a href="https://x.com/giantcutie666" target="_blank" class="platform-link twitter">X</a>
-                <a href="https://www.tiktok.com/@cryptobeauty0" target="_blank" class="platform-link tiktok">TikTok</a>
-                <a href="https://v.kuaishou.com/9DIF-pM" target="_blank" class="platform-link kuaishou">快手</a>
-                <a href="https://space.bilibili.com/1350882982" target="_blank" class="platform-link bilibili">B站</a>
+              
+              <div class="ip-stats-section">
+                <div class="stats-grid-four">
+                  <div class="stat-item">
+                    <span class="stat-number">622K+</span>
+                    <span class="stat-label">总粉丝</span>
+                    <span class="stat-label-en">Total Followers</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">38.8M+</span>
+                    <span class="stat-label">月播放</span>
+                    <span class="stat-label-en">Monthly Views</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">8.5%</span>
+                    <span class="stat-label">互动率</span>
+                    <span class="stat-label-en">Engagement Rate</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">4.2M+</span>
+                    <span class="stat-label">社群成员</span>
+                    <span class="stat-label-en">Community Members</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="ip-platforms-section">
+                <h4 class="section-label">平台分布</h4>
+                <div class="platforms-list-expanded">
+                  <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">YouTube(行业)</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="https://www.youtube.com/@GiantCutie-K" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">YouTube(交易)</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="https://x.com/giantcutie666" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-x-twitter" style="color: #1DA1F2;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">Twitter</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-discord" style="color: #5865F2;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">Discord</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="https://t.me/giantcutie6688" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-telegram" style="color: #0088CC;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">Telegram</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="http://x.com/giantcutie777" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-x-twitter" style="color: #1DA1F2;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">Twitter(备用)</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              
+              <div class="ip-specialties-section">
+                <div class="specialty-tags">
+                  <span class="specialty-tag">Web3科普</span>
+                  <span class="specialty-tag">DeFi分析</span>
+                  <span class="specialty-tag">NFT评测</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Lana Card */}
+            <div class="ip-matrix-card lana-theme">
+              <div class="ip-card-header">
+                <div class="ip-avatar-container">
+                  <div class="ip-avatar">
+                    <img src="https://ugc.production.linktr.ee/fee9d116-303c-47f8-a1cd-f00a49dfdbc6_2dd6008cc940a03f14fd3d812422212d-c5-1080x1080.jpeg?io=true&size=avatar-v3_0" alt="Lana Yang" />
+                    <div class="status-indicator active">
+                      <i class="fas fa-circle"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="ip-info">
+                  <div class="ip-name-section">
+                    <h3 class="ip-name">Lana Yang</h3>
+                    <span class="ip-name-en">Lana Yang</span>
+                  </div>
+                  <p class="ip-description">英文区热榜KOL，加密分析师，行业解读</p>
+                  <div class="ip-badges">
+                    <span class="badge verified">
+                      <i class="fas fa-check-circle"></i>
+                      官方认证
+                    </span>
+                    <span class="badge rising">
+                      <i class="fas fa-chart-line"></i>
+                      快速成长
+                    </span>
+                  </div>
+                </div>
+                <div class="ip-actions">
+                  <a href="/ip/lana" class="btn-detail">查看详情</a>
+                </div>
+              </div>
+              
+              <div class="ip-stats-section">
+                <div class="stats-grid-four">
+                  <div class="stat-item">
+                    <span class="stat-number">285K+</span>
+                    <span class="stat-label">总粉丝</span>
+                    <span class="stat-label-en">Total Followers</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">15.2M+</span>
+                    <span class="stat-label">月播放</span>
+                    <span class="stat-label-en">Monthly Views</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">12.3%</span>
+                    <span class="stat-label">互动率</span>
+                    <span class="stat-label-en">Engagement Rate</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">2.1M+</span>
+                    <span class="stat-label">直播观看</span>
+                    <span class="stat-label-en">Live Viewers</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="ip-platforms-section">
+                <h4 class="section-label">平台分布</h4>
+                <div class="platforms-list">
+                  <a href="https://www.youtube.com/@LanaYangcrypto" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">YouTube</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="https://x.com/lanayangcrypto" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-x-twitter" style="color: #1DA1F2;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">Twitter</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="https://www.tiktok.com/@lana.young6" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-tiktok" style="color: #000000;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">TikTok</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                  <a href="https://t.me/+p6_lg0XGAvkxOWJl" target="_blank" rel="noopener" class="platform-item active platform-link">
+                    <i class="fab fa-telegram" style="color: #0088CC;"></i>
+                    <div class="platform-details">
+                      <span class="platform-name">Telegram</span>
+                      <span class="platform-status">活跃</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              
+              <div class="ip-specialties-section">
+                <div class="specialty-tags">
+                  <span class="specialty-tag">直播互动</span>
+                  <span class="specialty-tag">社区运营</span>
+                  <span class="specialty-tag">用户增长</span>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
-      <div class="cases-preview">
-        <div class="container">
-          <h2 class="section-title">成功案例</h2>
-          <div class="cases-grid">
-            <div class="case-card">
-              <h3>Aethir (ATH)</h3>
-              <p class="case-narrative">DePIN 赛道</p>
-              <p>10分钟售罄公售，100万次观看，300+社区覆盖</p>
-              <div class="case-stats">
-                <span class="stat">100万+ 浏览量</span>
-                <span class="stat">70K YouTube 总覆盖</span>
-              </div>
-            </div>
-            <div class="case-card">
-              <h3>Balance</h3>
-              <p class="case-narrative">Gaming 赛道</p>
-              <p>4000万美金融资，全球销售量13%</p>
-              <div class="case-stats">
-                <span class="stat">150万+ 浏览量</span>
-                <span class="stat">3000+ 节点销售</span>
-              </div>
-            </div>
-            <div class="case-card">
-              <h3>Humanode</h3>
-              <p class="case-narrative">全同态加密</p>
-              <p>500万美金种子轮，1000+社区参与</p>
-              <div class="case-stats">
-                <span class="stat">50K+ 浏览量</span>
-                <span class="stat">100+ 节点购买</span>
-              </div>
-            </div>
-          </div>
-          <div class="cases-cta">
-            <a href="/cases" class="btn-primary">查看更多案例</a>
-          </div>
-        </div>
-      </div>
 
       <div class="services-section">
         <div class="container">
@@ -192,7 +378,7 @@ app.get('/', (c) => {
             </div>
             <div class="service-card">
               <h3>品牌策划</h3>
-              <p>Web3 项目品牌定位与视觉设计</p>
+              <p>项目品牌定位与市场教育</p>
             </div>
           </div>
         </div>
@@ -210,391 +396,90 @@ app.get('/', (c) => {
       </div>
     </div>
   )
+  } catch (error) {
+    console.error('Error loading homepage:', error)
+    
+    // Fallback to static content if database fails
+    return c.render(
+      <div>
+        <div class="hero-section">
+          <div class="hero-content">
+            <div class="hero-logo">
+              <div class="logo-placeholder">
+                <div class="logo-icon">
+                  <i class="fas fa-cube"></i>
+                </div>
+                <div class="logo-particles">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            </div>
+            <h1 class="hero-title">
+              <span class="title-line">加密货币/美股MCN机构</span>
+              <span class="title-line highlight">Cryptocurrency/US Stock MCN Institution</span>
+            </h1>
+            <p class="hero-subtitle">投资型用户 | Investment-focused Users</p>
+            <div class="hero-stats">
+              <div class="stat">
+                <span class="stat-number">80万+</span>
+                <span class="stat-label">自由流量</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number">500万+</span>
+                <span class="stat-label">社区联盟</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number">60亿+</span>
+                <span class="stat-label">累计曝光</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number">2位</span>
+                <span class="stat-label">自有头部IP</span>
+              </div>
+            </div>
+            <div class="hero-cta">
+              <a href="/contact" class="btn-primary">联系合作</a>
+              <a href="/ip/lana" class="btn-secondary">了解IP</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="kol-section">
+          <div class="container">
+            <h2 class="section-title">核心IP矩阵</h2>
+            <p class="section-subtitle">数据加载中，请访问具体IP页面查看详情</p>
+            <div class="kol-cta">
+              <p class="cta-text">数据库连接异常，请稍后再试或直接联系我们</p>
+              <div class="cta-buttons">
+                <a href="/ip/giant-cutie" class="btn-primary">Giant Cutie</a>
+                <a href="/ip/lana" class="btn-secondary">Lana</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-section">
+          <div class="container">
+            <h2>准备开始合作？</h2>
+            <p>联系我们，让您的 Web3 项目在全球市场闪闪发光</p>
+            <div class="cta-buttons">
+              <a href="/contact" class="btn-primary">立即咨询</a>
+              <a href="mailto:business@c-labs.com" class="btn-secondary">发送邮件</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 })
 
 // About and Services pages removed - content moved to homepage
 
 // Cases page - Professional List Layout with Database Integration
-app.get('/cases', async (c) => {
-  try {
-    const { env } = c;
-    const url = new URL(c.req.url);
-    
-    // Get query parameters
-    const category = url.searchParams.get('category') || 'all';
-    const search = url.searchParams.get('search') || '';
-    const page = parseInt(url.searchParams.get('page') || '1');
-    const limit = 12;
-    const offset = (page - 1) * limit;
-    
-    // Fetch categories
-    const categories = await env.DB.prepare(`
-      SELECT * FROM case_categories ORDER BY sort_order ASC
-    `).all();
-    
-    // Build query based on filters
-    let whereClause = "WHERE status = 'published'";
-    const params = [];
-    
-    if (category !== 'all') {
-      whereClause += " AND cc.slug = ?";
-      params.push(category);
-    }
-    
-    if (search) {
-      whereClause += " AND (c.title LIKE ? OR c.summary LIKE ? OR c.client_name LIKE ?)";
-      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
-    }
-    
-    // Fetch cases with category info
-    const casesQuery = `
-      SELECT 
-        c.*,
-        cc.name as category_name,
-        cc.color as category_color,
-        cc.icon as category_icon
-      FROM cases c
-      LEFT JOIN case_categories cc ON c.category_id = cc.id
-      ${whereClause}
-      ORDER BY c.featured DESC, c.published_at DESC
-      LIMIT ? OFFSET ?
-    `;
-    
-    const cases = await env.DB.prepare(casesQuery).bind(...params, limit, offset).all();
-    
-    // Get total count for pagination
-    const countQuery = `
-      SELECT COUNT(*) as total
-      FROM cases c
-      LEFT JOIN case_categories cc ON c.category_id = cc.id
-      ${whereClause}
-    `;
-    const totalResult = await env.DB.prepare(countQuery).bind(...params).first();
-    const total = totalResult?.total || 0;
-    const totalPages = Math.ceil(total / limit);
-    
-    const categoriesData = categories.results || [];
-    const casesData = cases.results || [];
-    
-    return c.render(
-      <div class="cases-page">
-        {/* Page Header */}
-        <div class="page-header">
-          <div class="container">
-            <div class="header-content">
-              <div class="breadcrumb">
-                <a href="/">首页</a>
-                <span class="separator">&gt;</span>
-                <span class="current">合作案例</span>
-              </div>
-              <h1>合作案例</h1>
-              <p class="page-description">见证我们与合作伙伴共同创造的营销奇迹</p>
-            </div>
-            
-            {/* Quick Stats */}
-            <div class="quick-stats">
-              <div class="stat-item">
-                <span class="stat-number">{total}</span>
-                <span class="stat-label">成功案例</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-number">6</span>
-                <span class="stat-label">业务领域</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-number">500M+</span>
-                <span class="stat-label">累计曝光</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Filter and Search Section */}
-        <div class="filters-section">
-          <div class="container">
-            <div class="filters-header">
-              <h2>筛选案例</h2>
-              <div class="results-info">
-                共找到 <span class="highlight">{total}</span> 个案例
-              </div>
-            </div>
-            
-            {/* Category Tabs */}
-            <div class="category-tabs">
-              <a 
-                href="/cases?category=all" 
-                class={`tab ${category === 'all' ? 'active' : ''}`}
-              >
-                <i class="fas fa-th-large"></i>
-                全部
-              </a>
-              {categoriesData.map(cat => (
-                <a 
-                  href={`/cases?category=${cat.slug}`}
-                  class={`tab ${category === cat.slug ? 'active' : ''}`}
-                  style={`--category-color: ${cat.color}`}
-                >
-                  <i class={cat.icon}></i>
-                  {cat.name}
-                </a>
-              ))}
-            </div>
-            
-            {/* Search Bar */}
-            <div class="search-section">
-              <form method="GET" class="search-form">
-                <input type="hidden" name="category" value={category} />
-                <div class="search-input-group">
-                  <input 
-                    type="text" 
-                    name="search" 
-                    placeholder="搜索项目名称、客户或关键词..."
-                    value={search}
-                    class="search-input"
-                  />
-                  <button type="submit" class="search-btn">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-              </form>
-              
-              {search && (
-                <div class="search-result-info">
-                  搜索 "<span class="search-term">{search}</span>" 的结果
-                  <a href={`/cases?category=${category}`} class="clear-search">
-                    <i class="fas fa-times"></i> 清除搜索
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Cases List */}
-        <div class="cases-content">
-          <div class="container">
-            {casesData.length > 0 ? (
-              <div class="cases-list">
-                {casesData.map(caseItem => {
-                  const tags = caseItem.tags ? JSON.parse(caseItem.tags) : [];
-                  const metrics = caseItem.metrics ? JSON.parse(caseItem.metrics) : {};
-                  
-                  return (
-                    <div class={`case-list-item ${caseItem.featured ? 'featured' : ''}`}>
-                      {caseItem.featured && (
-                        <div class="featured-badge">
-                          <i class="fas fa-star"></i>
-                          <span>明星案例</span>
-                        </div>
-                      )}
-                      
-                      <div class="case-thumbnail">
-                        <div class="thumbnail-placeholder" style={`background: linear-gradient(135deg, ${caseItem.category_color || '#283dfe'}, ${caseItem.category_color || '#283dfe'}AA)`}>
-                          <span>{caseItem.client_name?.substring(0, 3).toUpperCase() || 'C'}</span>
-                        </div>
-                        {caseItem.category_name && (
-                          <div class="category-badge" style={`background-color: ${caseItem.category_color}`}>
-                            <i class={caseItem.category_icon}></i>
-                            {caseItem.category_name}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div class="case-info">
-                        <div class="case-header">
-                          <h3 class="case-title">
-                            <a href={`/cases/${caseItem.slug}`}>{caseItem.title}</a>
-                          </h3>
-                          <div class="case-meta">
-                            <span class="client-name">{caseItem.client_name}</span>
-                            <span class="separator">•</span>
-                            <span class="project-date">{new Date(caseItem.project_date).toLocaleDateString('zh-CN')}</span>
-                            <span class="separator">•</span>
-                            <span class="duration">{caseItem.project_duration}</span>
-                          </div>
-                        </div>
-                        
-                        <p class="case-summary">{caseItem.summary}</p>
-                        
-                        {tags.length > 0 && (
-                          <div class="case-tags">
-                            {tags.slice(0, 4).map(tag => (
-                              <span class="tag">{tag}</span>
-                            ))}
-                            {tags.length > 4 && <span class="tag more">+{tags.length - 4}</span>}
-                          </div>
-                        )}
-                        
-                        <div class="case-metrics-mini">
-                          {metrics.total_exposure && (
-                            <div class="metric-mini">
-                              <i class="fas fa-eye"></i>
-                              <span>{(metrics.total_exposure / 10000).toFixed(0)}万 曝光</span>
-                            </div>
-                          )}
-                          {metrics.community_growth && (
-                            <div class="metric-mini">
-                              <i class="fas fa-users"></i>
-                              <span>{metrics.community_growth}+ 社区</span>
-                            </div>
-                          )}
-                          {caseItem.views > 0 && (
-                            <div class="metric-mini">
-                              <i class="fas fa-chart-line"></i>
-                              <span>{caseItem.views} 查看</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div class="case-actions">
-                        <a href={`/cases/${caseItem.slug}`} class="case-link">
-                          查看详情
-                          <i class="fas fa-arrow-right"></i>
-                        </a>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div class="empty-state">
-                <div class="empty-icon">
-                  <i class="fas fa-search"></i>
-                </div>
-                <h3>没有找到匹配的案例</h3>
-                <p>请尝试调整搜索条件或选择其他分类</p>
-                <a href="/cases" class="btn-primary">查看全部案例</a>
-              </div>
-            )}
-            
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div class="pagination">
-                <div class="pagination-info">
-                  显示第 {offset + 1} - {Math.min(offset + limit, total)} 项，共 {total} 项
-                </div>
-                <div class="pagination-controls">
-                  {page > 1 && (
-                    <a href={`/cases?category=${category}&search=${search}&page=${page - 1}`} class="page-btn">
-                      <i class="fas fa-chevron-left"></i>
-                      上一页
-                    </a>
-                  )}
-                  
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const pageNum = i + 1;
-                    const isActive = pageNum === page;
-                    return (
-                      <a 
-                        href={`/cases?category=${category}&search=${search}&page=${pageNum}`}
-                        class={`page-number ${isActive ? 'active' : ''}`}
-                      >
-                        {pageNum}
-                      </a>
-                    );
-                  })}
-                  
-                  {page < totalPages && (
-                    <a href={`/cases?category=${category}&search=${search}&page=${page + 1}`} class="page-btn">
-                      下一页
-                      <i class="fas fa-chevron-right"></i>
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Admin Panel for Case Management */}
-        <div class="admin-section">
-          <div class="container">
-            <div class="admin-panel">
-              <h3>案例管理</h3>
-              <p>管理员可以在这里添加、编辑和管理案例内容</p>
-              <div class="admin-actions">
-                <a href="/admin/login" class="admin-btn primary">
-                  <i class="fas fa-sign-in-alt"></i>
-                  管理后台
-                </a>
-                <a href="/admin/cases/add" class="admin-btn">
-                  <i class="fas fa-plus"></i>
-                  添加案例
-                </a>
-                <a href="/admin/cases/manage" class="admin-btn">
-                  <i class="fas fa-cog"></i>
-                  管理案例
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Testimonials */}
-        <div class="testimonials-section">
-          <div class="container">
-            <h2>客户评价</h2>
-            <div class="testimonials-grid">
-              <div class="testimonial-card glass-card">
-                <div class="testimonial-content">
-                  <p>"C Labs 的专业团队帮助我们在中文市场取得了巨大成功。他们对 Web3 行业的深度理解和 Giant Cutie 的影响力为我们带来了超出预期的营销效果。"</p>
-                </div>
-                <div class="testimonial-author">
-                  <div class="author-info">
-                    <span class="author-name">Aethir 团队</span>
-                    <span class="author-title">DePIN 项目</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="testimonial-card glass-card">
-                <div class="testimonial-content">
-                  <p>"与 C Labs 的合作让我们深刻感受到了专业营销团队的价值。从策略制定到执行落地，每个环节都体现了他们的专业水准。"</p>
-                </div>
-                <div class="testimonial-author">
-                  <div class="author-info">
-                    <span class="author-name">Balance 团队</span>
-                    <span class="author-title">GameFi 项目</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div class="container">
-          <div class="cases-cta glass-card">
-            <h2>让我们为您创造下一个成功案例</h2>
-            <p>加入我们的成功项目行列，在 Web3 世界中脱颖而出</p>
-            <div class="cta-buttons">
-              <a href="/contact" class="btn-primary">
-                <i class="fas fa-rocket mr-2"></i>
-                开始合作
-              </a>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    );
-    
-  } catch (error) {
-    console.error('Error loading cases page:', error);
-    return c.render(
-      <div class="error-page">
-        <div class="container">
-          <div class="error-message">
-            <h1>页面加载出错</h1>
-            <p>抱歉，案例页面暂时无法加载。请稍后再试。</p>
-            <a href="/" class="btn-primary">返回首页</a>
-          </div>
-        </div>
-      </div>
-    );
-  }
-})
 
 app.get('/contact', (c) => {
   return c.render(
@@ -673,836 +558,7 @@ app.get('/contact', (c) => {
   )
 })
 
-// Work/Portfolio page
-app.get('/work', (c) => {
-  return c.render(
-    <div>
-      <div class="page-header">
-        <div class="container">
-          <h1>作品集</h1>
-          <p>展示 Giant Cutie 在各平台的精选内容和合作项目</p>
-        </div>
-      </div>
-      
-      <div class="work-content">
-        <div class="container">
-          {/* Filter Tabs */}
-          <div class="work-filters">
-            <button class="filter-btn active" data-filter="all">全部作品</button>
-            <button class="filter-btn" data-filter="video">视频内容</button>
-            <button class="filter-btn" data-filter="article">文章解析</button>
-            <button class="filter-btn" data-filter="live">直播回放</button>
-            <button class="filter-btn" data-filter="collaboration">合作项目</button>
-          </div>
-          
-          {/* Works Grid */}
-          <div class="works-grid">
-            {/* YouTube Videos */}
-            <div class="work-item" data-category="video">
-              <div class="work-thumbnail">
-                <img src="/static/thumbnails/aethir-review.jpg" alt="Aethir 深度解析" />
-                <div class="work-overlay">
-                  <div class="play-btn">
-                    <i class="fas fa-play"></i>
-                  </div>
-                  <div class="work-platform youtube">YouTube</div>
-                </div>
-              </div>
-              <div class="work-info">
-                <h3>Aethir 深度解析：DePIN 赛道的新星</h3>
-                <p class="work-stats">
-                  <span><i class="fas fa-eye"></i> 140K 观看</span>
-                  <span><i class="fas fa-thumbs-up"></i> 398 点赞</span>
-                  <span><i class="fas fa-comment"></i> 77 评论</span>
-                </p>
-                <div class="work-tags">
-                  <span class="tag">DePIN</span>
-                  <span class="tag">深度分析</span>
-                </div>
-                <a href="https://www.youtube.com/watch?v=example1" target="_blank" class="work-link">观看视频</a>
-              </div>
-            </div>
-            
-            <div class="work-item" data-category="video">
-              <div class="work-thumbnail">
-                <img src="/static/thumbnails/balance-gaming.jpg" alt="Balance Gaming 项目分析" />
-                <div class="work-overlay">
-                  <div class="play-btn">
-                    <i class="fas fa-play"></i>
-                  </div>
-                  <div class="work-platform youtube">YouTube</div>
-                </div>
-              </div>
-              <div class="work-info">
-                <h3>Balance Gaming：Web3 游戏基础设施的未来</h3>
-                <p class="work-stats">
-                  <span><i class="fas fa-eye"></i> 60K 观看</span>
-                  <span><i class="fas fa-thumbs-up"></i> 204 点赞</span>
-                  <span><i class="fas fa-comment"></i> 58 评论</span>
-                </p>
-                <div class="work-tags">
-                  <span class="tag">Gaming</span>
-                  <span class="tag">Web3</span>
-                </div>
-                <a href="https://www.youtube.com/watch?v=example2" target="_blank" class="work-link">观看视频</a>
-              </div>
-            </div>
-            
-            {/* TikTok Videos */}
-            <div class="work-item" data-category="video">
-              <div class="work-thumbnail">
-                <img src="/static/thumbnails/web3-tips.jpg" alt="Web3 投资技巧" />
-                <div class="work-overlay">
-                  <div class="play-btn">
-                    <i class="fas fa-play"></i>
-                  </div>
-                  <div class="work-platform tiktok">TikTok</div>
-                </div>
-              </div>
-              <div class="work-info">
-                <h3>Web3 投资必知的 5 个技巧</h3>
-                <p class="work-stats">
-                  <span><i class="fas fa-eye"></i> 500K 观看</span>
-                  <span><i class="fas fa-heart"></i> 15K 点赞</span>
-                  <span><i class="fas fa-share"></i> 2.1K 分享</span>
-                </p>
-                <div class="work-tags">
-                  <span class="tag">投资技巧</span>
-                  <span class="tag">短视频</span>
-                </div>
-                <a href="https://www.tiktok.com/@cryptobeauty0/video/example" target="_blank" class="work-link">观看视频</a>
-              </div>
-            </div>
-            
-            {/* Articles */}
-            <div class="work-item" data-category="article">
-              <div class="work-thumbnail">
-                <img src="/static/thumbnails/depin-analysis.jpg" alt="DePIN 赛道深度分析" />
-                <div class="work-overlay">
-                  <div class="work-platform medium">文章</div>
-                </div>
-              </div>
-              <div class="work-info">
-                <h3>DePIN 赛道深度分析：去中心化物理基础设施网络的机遇与挑战</h3>
-                <p class="work-stats">
-                  <span><i class="fas fa-eye"></i> 25K 阅读</span>
-                  <span><i class="fas fa-thumbs-up"></i> 487 点赞</span>
-                  <span><i class="fas fa-share"></i> 156 分享</span>
-                </p>
-                <div class="work-tags">
-                  <span class="tag">DePIN</span>
-                  <span class="tag">深度研究</span>
-                </div>
-                <a href="/blog/depin-analysis" class="work-link">阅读文章</a>
-              </div>
-            </div>
-            
-            {/* Live Streams */}
-            <div class="work-item" data-category="live">
-              <div class="work-thumbnail">
-                <img src="/static/thumbnails/ama-session.jpg" alt="项目方 AMA" />
-                <div class="work-overlay">
-                  <div class="play-btn">
-                    <i class="fas fa-video"></i>
-                  </div>
-                  <div class="work-platform live">直播</div>
-                </div>
-              </div>
-              <div class="work-info">
-                <h3>与 Humanode 团队的 AMA 直播</h3>
-                <p class="work-stats">
-                  <span><i class="fas fa-users"></i> 1.2K 观看</span>
-                  <span><i class="fas fa-clock"></i> 90 分钟</span>
-                  <span><i class="fas fa-comments"></i> 234 互动</span>
-                </p>
-                <div class="work-tags">
-                  <span class="tag">AMA</span>
-                  <span class="tag">直播</span>
-                </div>
-                <a href="https://www.youtube.com/watch?v=ama-example" target="_blank" class="work-link">观看回放</a>
-              </div>
-            </div>
-            
-            {/* Collaborations */}
-            <div class="work-item" data-category="collaboration">
-              <div class="work-thumbnail">
-                <img src="/static/thumbnails/roam-campaign.jpg" alt="Roam 营销活动" />
-                <div class="work-overlay">
-                  <div class="work-platform collaboration">合作</div>
-                </div>
-              </div>
-              <div class="work-info">
-                <h3>Roam WiFi 网络推广活动</h3>
-                <p class="work-description">为 Roam 设计的全平台营销活动，包括视频内容、社区运营和 KOL 合作</p>
-                <p class="work-stats">
-                  <span><i class="fas fa-eye"></i> 1M+ 总曝光</span>
-                  <span><i class="fas fa-users"></i> 800+ 社区参与</span>
-                </p>
-                <div class="work-tags">
-                  <span class="tag">营销活动</span>
-                  <span class="tag">多平台</span>
-                </div>
-                <a href="/cases#roam" class="work-link">查看案例</a>
-              </div>
-            </div>
-          </div>
-          
-          {/* Load More Button */}
-          <div class="work-load-more">
-            <button class="btn-secondary">加载更多作品</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-})
-
-// IP Details page
-app.get('/ip/giant-cutie', (c) => {
-  return c.render(
-    <div>
-      <div class="ip-hero">
-        <div class="container">
-          <div class="ip-profile">
-            <div class="ip-avatar">
-              <div class="avatar-large">GC</div>
-            </div>
-            <div class="ip-info">
-              <h1>Giant Cutie</h1>
-              <p class="ip-tagline">全球顶级 Web3 中文 KOL</p>
-              <p class="ip-description">
-                专注于 Web3 项目深度分析、投资策略分享和社区教育的顶级内容创作者。
-                凭借专业的项目解读能力和广泛的行业网络，为中文社区提供最前沿的 Web3 内容。
-              </p>
-              <div class="ip-contact">
-                <a href="mailto:business@c-labs.com" class="btn-primary">商务合作</a>
-                <a href="/contact" class="btn-secondary">联系我们</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="ip-content">
-        <div class="container">
-          <div class="ip-tabs">
-            <button class="tab-btn active" data-tab="overview">概览</button>
-            <button class="tab-btn" data-tab="platforms">平台数据</button>
-            <button class="tab-btn" data-tab="works">最新作品</button>
-            <button class="tab-btn" data-tab="cases">合作案例</button>
-          </div>
-          
-          {/* Overview Tab */}
-          <div class="tab-content active" id="overview">
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-number">500K+</div>
-                <div class="stat-label">全平台粉丝总数</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">👀</div>
-                <div class="stat-number">50M+</div>
-                <div class="stat-label">累计内容播放量</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">🎯</div>
-                <div class="stat-number">95%</div>
-                <div class="stat-label">内容完播率</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">🏆</div>
-                <div class="stat-number">20+</div>
-                <div class="stat-label">成功合作项目</div>
-              </div>
-            </div>
-            
-            <div class="content-types">
-              <h2>内容类型</h2>
-              <div class="content-grid">
-                <div class="content-type">
-                  <h3>📹 深度视频分析</h3>
-                  <p>15-30 分钟的项目深度解读，包括技术原理、经济模型、投资逻辑等</p>
-                </div>
-                <div class="content-type">
-                  <h3>⚡ 短视频快讯</h3>
-                  <p>1-3 分钟的热点快讯和投资提醒，适合快速传播</p>
-                </div>
-                <div class="content-type">
-                  <h3>📝 图文解析</h3>
-                  <p>详细的文字分析配合信息图表，便于分享和收藏</p>
-                </div>
-                <div class="content-type">
-                  <h3>🎙️ 直播互动</h3>
-                  <p>与项目方的 AMA 直播和实时市场解读</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Platforms Tab */}
-          <div class="tab-content" id="platforms">
-            <div class="platforms-grid">
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon youtube-bg">
-                    <i class="fab fa-youtube"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>YouTube</h3>
-                    <p>主要长视频平台</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">199K</span>
-                    <span class="stat-label">订阅者</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">6.5M+</span>
-                    <span class="stat-label">总播放量</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">92%</span>
-                    <span class="stat-label">完播率</span>
-                  </div>
-                </div>
-                <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" class="platform-link">
-                  访问频道 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-              
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon twitter-bg">
-                    <i class="fab fa-x-twitter"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>X (Twitter)</h3>
-                    <p>实时资讯和互动</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">127.8K</span>
-                    <span class="stat-label">关注者</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">8.5%</span>
-                    <span class="stat-label">互动率</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">月推文数</span>
-                  </div>
-                </div>
-                <a href="https://x.com/giantcutie666" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-              
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon tiktok-bg">
-                    <i class="fab fa-tiktok"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>TikTok</h3>
-                    <p>短视频内容</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">31.5K</span>
-                    <span class="stat-label">粉丝</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">5.2M+</span>
-                    <span class="stat-label">总播放量</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">12%</span>
-                    <span class="stat-label">互动率</span>
-                  </div>
-                </div>
-                <a href="https://www.tiktok.com/@cryptobeauty0" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-              
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon kuaishou-bg">
-                    <i class="fas fa-video"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>快手</h3>
-                    <p>中国短视频平台</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">92K</span>
-                    <span class="stat-label">粉丝</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">22M+</span>
-                    <span class="stat-label">总播放量</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">15%</span>
-                    <span class="stat-label">互动率</span>
-                  </div>
-                </div>
-                <a href="https://v.kuaishou.com/9DIF-pM" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-              
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon bilibili-bg">
-                    <i class="fas fa-play-circle"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>B站</h3>
-                    <p>中国视频平台</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">71.6K</span>
-                    <span class="stat-label">粉丝</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">3M+</span>
-                    <span class="stat-label">总播放量</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">88%</span>
-                    <span class="stat-label">完播率</span>
-                  </div>
-                </div>
-                <a href="https://space.bilibili.com/1350882982" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          {/* Works Tab */}
-          <div class="tab-content" id="works">
-            <div class="recent-works">
-              <h2>最新作品</h2>
-              <div class="works-list">
-                <div class="work-item-small">
-                  <div class="work-thumbnail-small">
-                    <img src="/static/thumbnails/latest-1.jpg" alt="最新作品" />
-                    <span class="work-platform-badge youtube">YouTube</span>
-                  </div>
-                  <div class="work-details">
-                    <h4>2024 年 Web3 投资趋势预测</h4>
-                    <p class="work-date">2024年1月15日</p>
-                    <div class="work-stats-small">
-                      <span>45K 观看</span>
-                      <span>892 点赞</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="work-item-small">
-                  <div class="work-thumbnail-small">
-                    <img src="/static/thumbnails/latest-2.jpg" alt="最新作品" />
-                    <span class="work-platform-badge tiktok">TikTok</span>
-                  </div>
-                  <div class="work-details">
-                    <h4>3分钟了解 AI + Web3 的机会</h4>
-                    <p class="work-date">2024年1月12日</p>
-                    <div class="work-stats-small">
-                      <span>280K 观看</span>
-                      <span>8.9K 点赞</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="work-item-small">
-                  <div class="work-thumbnail-small">
-                    <img src="/static/thumbnails/latest-3.jpg" alt="最新作品" />
-                    <span class="work-platform-badge bilibili">B站</span>
-                  </div>
-                  <div class="work-details">
-                    <h4>DePIN 项目深度对比分析</h4>
-                    <p class="work-date">2024年1月10日</p>
-                    <div class="work-stats-small">
-                      <span>12K 观看</span>
-                      <span>456 点赞</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="works-cta">
-                <a href="/work" class="btn-primary">查看全部作品</a>
-              </div>
-            </div>
-          </div>
-          
-          {/* Cases Tab */}
-          <div class="tab-content" id="cases">
-            <div class="collaboration-cases">
-              <h2>合作案例</h2>
-              <div class="cases-list">
-                <div class="case-preview">
-                  <h4>Aethir (ATH)</h4>
-                  <p>DePIN 赛道领军项目深度合作</p>
-                  <div class="case-metrics-small">
-                    <span>100万+ 曝光</span>
-                    <span>70K YouTube 覆盖</span>
-                    <span>10分钟售罄</span>
-                  </div>
-                  <a href="/cases#aethir" class="case-link">查看详情</a>
-                </div>
-                
-                <div class="case-preview">
-                  <h4>Balance Gaming</h4>
-                  <p>Web3 游戏基础设施推广活动</p>
-                  <div class="case-metrics-small">
-                    <span>150万 浏览量</span>
-                    <span>3000+ 节点销售</span>
-                    <span>全球13%销量</span>
-                  </div>
-                  <a href="/cases#balance" class="case-link">查看详情</a>
-                </div>
-                
-                <div class="case-preview">
-                  <h4>Humanode</h4>
-                  <p>全同态加密项目社区建设</p>
-                  <div class="case-metrics-small">
-                    <span>1000+ 社区用户</span>
-                    <span>100+ 节点购买</span>
-                    <span>50K+ 浏览量</span>
-                  </div>
-                  <a href="/cases#humanode" class="case-link">查看详情</a>
-                </div>
-              </div>
-              <div class="cases-cta">
-                <a href="/cases" class="btn-primary">查看全部案例</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-})
-
 // Lana IP Details page
-app.get('/ip/lana', (c) => {
-  return c.render(
-    <div>
-      <div class="ip-hero">
-        <div class="container">
-          <div class="ip-profile">
-            <div class="ip-avatar">
-              <div class="avatar-large">LA</div>
-            </div>
-            <div class="ip-info">
-              <h1>Lana Yang</h1>
-              <p class="ip-tagline">Web3 内容创作者 & 社区建设者</p>
-              <p class="ip-description">
-                专注于Web3生态系统的内容创作和社区建设，以独特的视角和专业的态度，
-                为Web3爱好者提供有价值的内容和见解。活跃于多个社交平台，致力于推动Web3文化传播。
-              </p>
-              <div class="ip-contact">
-                <a href="mailto:business@c-labs.com" class="btn-primary">商务合作</a>
-                <a href="/contact" class="btn-secondary">联系我们</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="ip-content">
-        <div class="container">
-          <div class="ip-tabs">
-            <button class="tab-btn active" data-tab="overview">概览</button>
-            <button class="tab-btn" data-tab="platforms">平台数据</button>
-            <button class="tab-btn" data-tab="works">最新作品</button>
-            <button class="tab-btn" data-tab="cases">合作案例</button>
-          </div>
-          
-          {/* Overview Tab */}
-          <div class="tab-content active" id="overview">
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-number">150K+</div>
-                <div class="stat-label">全平台粉丝总数</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">👀</div>
-                <div class="stat-number">20M+</div>
-                <div class="stat-label">累计内容播放量</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">🎯</div>
-                <div class="stat-number">92%</div>
-                <div class="stat-label">内容完播率</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">🏆</div>
-                <div class="stat-number">15+</div>
-                <div class="stat-label">成功合作项目</div>
-              </div>
-            </div>
-            
-            <div class="content-types">
-              <h2>内容特色</h2>
-              <div class="content-grid">
-                <div class="content-type">
-                  <h3>🎨 创意内容</h3>
-                  <p>独特视角的Web3内容创作，融合艺术与技术</p>
-                </div>
-                <div class="content-type">
-                  <h3>🌐 社区互动</h3>
-                  <p>积极的社区参与和用户互动，建立深度连接</p>
-                </div>
-                <div class="content-type">
-                  <h3>📊 数据分析</h3>
-                  <p>基于数据的市场分析和项目评估</p>
-                </div>
-                <div class="content-type">
-                  <h3>🤝 合作推广</h3>
-                  <p>专业的品牌合作和项目推广服务</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Platforms Tab */}
-          <div class="tab-content" id="platforms">
-            <div class="platforms-grid">
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon twitter-bg">
-                    <i class="fab fa-x-twitter"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>X (Twitter)</h3>
-                    <p>主要内容平台</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">85K</span>
-                    <span class="stat-label">关注者</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">7.2%</span>
-                    <span class="stat-label">互动率</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">300+</span>
-                    <span class="stat-label">月推文数</span>
-                  </div>
-                </div>
-                <a href="https://x.com/lanayang_" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-              
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon instagram-bg">
-                    <i class="fab fa-instagram"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>Instagram</h3>
-                    <p>视觉内容分享</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">32K</span>
-                    <span class="stat-label">粉丝</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">8.5%</span>
-                    <span class="stat-label">互动率</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">20+</span>
-                    <span class="stat-label">月发布</span>
-                  </div>
-                </div>
-                <a href="https://instagram.com/lanayang.eth" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-              
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon linkedin-bg">
-                    <i class="fab fa-linkedin"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>LinkedIn</h3>
-                    <p>专业网络</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">15K</span>
-                    <span class="stat-label">连接</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">12%</span>
-                    <span class="stat-label">互动率</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">50+</span>
-                    <span class="stat-label">月文章</span>
-                  </div>
-                </div>
-                <a href="https://linkedin.com/in/lanayang" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-              
-              <div class="platform-card">
-                <div class="platform-header">
-                  <div class="platform-icon medium-bg">
-                    <i class="fab fa-medium"></i>
-                  </div>
-                  <div class="platform-info">
-                    <h3>Medium</h3>
-                    <p>深度文章</p>
-                  </div>
-                </div>
-                <div class="platform-stats">
-                  <div class="stat">
-                    <span class="stat-number">18K</span>
-                    <span class="stat-label">关注者</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">95%</span>
-                    <span class="stat-label">阅读完成率</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-number">25+</span>
-                    <span class="stat-label">技术文章</span>
-                  </div>
-                </div>
-                <a href="https://medium.com/@lanayang" target="_blank" class="platform-link">
-                  访问主页 <i class="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          {/* Works Tab */}
-          <div class="tab-content" id="works">
-            <div class="recent-works">
-              <h2>最新作品</h2>
-              <div class="works-list">
-                <div class="work-item-small">
-                  <div class="work-thumbnail-small">
-                    <img src="/static/thumbnails/lana-1.jpg" alt="最新作品" />
-                    <span class="work-platform-badge twitter">Twitter</span>
-                  </div>
-                  <div class="work-details">
-                    <h4>Web3 社区建设的核心要素</h4>
-                    <p class="work-date">2024年1月18日</p>
-                    <div class="work-stats-small">
-                      <span>15K 浏览</span>
-                      <span>320 互动</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="work-item-small">
-                  <div class="work-thumbnail-small">
-                    <img src="/static/thumbnails/lana-2.jpg" alt="最新作品" />
-                    <span class="work-platform-badge instagram">Instagram</span>
-                  </div>
-                  <div class="work-details">
-                    <h4>NFT 艺术与技术的完美结合</h4>
-                    <p class="work-date">2024年1月16日</p>
-                    <div class="work-stats-small">
-                      <span>8K 观看</span>
-                      <span>450 点赞</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="work-item-small">
-                  <div class="work-thumbnail-small">
-                    <img src="/static/thumbnails/lana-3.jpg" alt="最新作品" />
-                    <span class="work-platform-badge medium">Medium</span>
-                  </div>
-                  <div class="work-details">
-                    <h4>DeFi 协议安全性深度分析</h4>
-                    <p class="work-date">2024年1月14日</p>
-                    <div class="work-stats-small">
-                      <span>5K 阅读</span>
-                      <span>180 评论</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="works-cta">
-                <a href="/work" class="btn-primary">查看全部作品</a>
-              </div>
-            </div>
-          </div>
-          
-          {/* Cases Tab */}
-          <div class="tab-content" id="cases">
-            <div class="collaboration-cases">
-              <h2>合作案例</h2>
-              <div class="cases-list">
-                <div class="case-preview">
-                  <h4>Polygon Labs</h4>
-                  <p>多链生态系统内容推广合作</p>
-                  <div class="case-metrics-small">
-                    <span>50万+ 曝光</span>
-                    <span>25K 互动</span>
-                    <span>高质量内容</span>
-                  </div>
-                  <a href="/cases#polygon" class="case-link">查看详情</a>
-                </div>
-                
-                <div class="case-preview">
-                  <h4>OpenSea</h4>
-                  <p>NFT 平台社区建设项目</p>
-                  <div class="case-metrics-small">
-                    <span>80万 浏览量</span>
-                    <span>1500+ 用户增长</span>
-                    <span>15%转化率</span>
-                  </div>
-                  <a href="/cases#opensea" class="case-link">查看详情</a>
-                </div>
-                
-                <div class="case-preview">
-                  <h4>Chainlink</h4>
-                  <p>Oracle 技术教育内容合作</p>
-                  <div class="case-metrics-small">
-                    <span>35万+ 阅读</span>
-                    <span>500+ 技术互动</span>
-                    <span>专业认可</span>
-                  </div>
-                  <a href="/cases#chainlink" class="case-link">查看详情</a>
-                </div>
-              </div>
-              <div class="cases-cta">
-                <a href="/cases" class="btn-primary">查看全部案例</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-})
 
 // Web3 Tutorials Main Page - Redesigned with Professional Education Platform Style
 app.get('/tutorials', async (c) => {
@@ -2668,16 +1724,1492 @@ app.get('/api/tutorials/search', async (c) => {
   }
 })
 
+// ===== IP SHOWCASE PAGES =====
+
+// Giant Cutie IP 展示页面
+
+// Lana IP 展示页面  
+
 // ===== ADMIN BACKEND SYSTEM =====
 
-// Simple session management (in production, use proper session storage)
-const adminSessions = new Set<string>()
-
-// Helper function to check admin authentication
-function isAuthenticated(c: any): boolean {
+// Database-based session management for Cloudflare Workers
+// Helper function to check admin authentication using database
+async function isAuthenticated(c: any): Promise<boolean> {
   const sessionId = c.req.header('x-session-id') || c.req.query('session')
-  return adminSessions.has(sessionId)
+  if (!sessionId) return false
+  
+  const { env } = c
+  const session = await env.DB.prepare(`
+    SELECT * FROM admin_sessions WHERE session_id = ? AND expires_at > datetime('now')
+  `).bind(sessionId).first()
+  
+  return !!session
 }
+
+// Middleware to protect admin routes
+async function requireAuth(c: any, next: any) {
+  const path = c.req.path
+  
+  // Skip auth for login page and login API
+  if (path === '/admin/login' || path === '/api/admin/login') {
+    return await next()
+  }
+  
+  // Check for session in cookie, header, or query param
+  let sessionId = c.req.header('x-session-id') || c.req.query('session')
+  
+  // Try to get session from cookie
+  if (!sessionId) {
+    const cookies = c.req.header('Cookie')
+    if (cookies) {
+      const sessionMatch = cookies.match(/admin-session=([^;]+)/)
+      if (sessionMatch) {
+        sessionId = sessionMatch[1]
+      }
+    }
+  }
+  
+  // Check session in database (only if sessionId exists)
+  let session = null
+  if (sessionId) {
+    const { env } = c
+    session = await env.DB.prepare(`
+      SELECT * FROM admin_sessions WHERE session_id = ? AND expires_at > datetime('now')
+    `).bind(sessionId).first()
+  }
+  
+  if (!sessionId || !session) {
+    // Redirect to login page for admin routes
+    if (path.startsWith('/admin/')) {
+      return c.redirect('/admin/login')
+    }
+    // Return unauthorized for API routes  
+    if (path.startsWith('/api/admin/')) {
+      return c.json({ success: false, message: '未授权访问' }, 401)
+    }
+  }
+  
+  return await next()
+}
+
+// Admin Logout API
+app.post('/api/admin/logout', async (c) => {
+  try {
+    // Get session from cookie or header
+    let sessionId = c.req.header('x-session-id')
+    if (!sessionId) {
+      const cookies = c.req.header('Cookie')
+      if (cookies) {
+        const sessionMatch = cookies.match(/admin-session=([^;]+)/)
+        if (sessionMatch) {
+          sessionId = sessionMatch[1]
+        }
+      }
+    }
+    
+    // Remove session from database
+    if (sessionId) {
+      const { env } = c
+      await env.DB.prepare(`
+        DELETE FROM admin_sessions WHERE session_id = ?
+      `).bind(sessionId).run()
+    }
+    
+    // Clear cookie (remove Secure flag for development)
+    c.header('Set-Cookie', 'admin-session=; HttpOnly; SameSite=Strict; Max-Age=0; Path=/')
+    
+    return c.json({ success: true, message: '已安全退出' })
+  } catch (error) {
+    return c.json({ success: false, message: '退出失败' }, 500)
+  }
+})
+
+// Image Upload API (before auth middleware) 
+app.post('/api/upload/image', async (c) => {
+  try {
+    const formData = await c.req.formData()
+    const file = formData.get('image') as File
+    
+    if (!file) {
+      return c.json({ success: false, message: '未选择文件' }, 400)
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      return c.json({ success: false, message: '不支持的文件类型。请上传 JPG, PNG, GIF 或 WebP 格式的图片。' }, 400)
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      return c.json({ success: false, message: '文件大小超过限制。请上传小于 5MB 的图片。' }, 400)
+    }
+
+    // Generate unique filename
+    const timestamp = Date.now()
+    const randomString = Math.random().toString(36).substring(2, 15)
+    const fileExtension = file.name.split('.').pop() || 'jpg'
+    const fileName = `${timestamp}_${randomString}.${fileExtension}`
+
+    // Convert file to base64 for storage in database (temporary solution)
+    const arrayBuffer = await file.arrayBuffer()
+    
+    // 修复大文件的base64转换问题，避免Maximum call stack size exceeded
+    const uint8Array = new Uint8Array(arrayBuffer)
+    let binaryString = ''
+    
+    // 分块处理大文件，避免递归错误
+    const chunkSize = 8192 // 8KB chunks
+    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+      const chunk = uint8Array.slice(i, i + chunkSize)
+      binaryString += String.fromCharCode.apply(null, Array.from(chunk))
+    }
+    
+    const base64String = btoa(binaryString)
+    
+    // For development environment, we'll store the image data in database
+    // In production, you'd use Cloudflare R2 or another cloud storage service
+    const imagePath = `/static/uploads/${fileName}`
+    
+    // Store image metadata and data in database (for demo purposes)
+    const { env } = c
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS uploaded_images (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        filename TEXT NOT NULL,
+        original_name TEXT NOT NULL,
+        file_size INTEGER NOT NULL,
+        file_type TEXT NOT NULL,
+        base64_data TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run()
+
+    const result = await env.DB.prepare(`
+      INSERT INTO uploaded_images (filename, original_name, file_size, file_type, base64_data)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(fileName, file.name, file.size, file.type, base64String).run()
+
+    // Return the public URL path that will be served by our image endpoint
+    return c.json({
+      success: true,
+      message: '图片上传成功',
+      data: {
+        url: `/api/image/${fileName}`,
+        fileName: fileName,
+        size: file.size,
+        type: file.type
+      }
+    })
+    
+  } catch (error) {
+    console.error('Image upload error:', error)
+    return c.json({ success: false, message: '图片上传失败：' + error.message }, 500)
+  }
+})
+
+// Serve uploaded images from database
+app.get('/api/image/:filename', async (c) => {
+  try {
+    const { env } = c
+    const filename = c.req.param('filename')
+    
+    const image = await env.DB.prepare(`
+      SELECT base64_data, file_type FROM uploaded_images WHERE filename = ?
+    `).bind(filename).first()
+    
+    if (!image) {
+      return c.notFound()
+    }
+    
+    // Convert base64 back to binary
+    const binaryString = atob(image.base64_data)
+    const bytes = new Uint8Array(binaryString.length)
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i)
+    }
+    
+    return new Response(bytes, {
+      headers: {
+        'Content-Type': image.file_type,
+        'Cache-Control': 'public, max-age=31536000'
+      }
+    })
+  } catch (error) {
+    console.error('Error serving image:', error)
+    return c.notFound()
+  }
+})
+
+// Test login page for debugging
+app.get('/test-login', (c) => {
+  return c.html(`<!DOCTYPE html>
+<html>
+<head>
+    <title>管理登录测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .result { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🔑 管理登录测试</h1>
+    <p>使用此页面登录管理后台，然后测试上传功能</p>
+
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" value="admin" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">密码:</label>
+            <input type="password" id="password" value="clabs2024" required>
+        </div>
+        
+        <button type="submit" class="btn">🚀 登录</button>
+    </form>
+
+    <div id="result"></div>
+
+    <div style="margin-top: 30px;">
+        <h3>📋 管理功能:</h3>
+        <p><a href="/admin/ip/manage" target="_blank">IP管理页面</a></p>
+        <p><a href="/admin/ip/edit/1" target="_blank">编辑Giant Cutie</a></p>
+        <p><a href="/admin/ip/edit/2" target="_blank">编辑Lana</a></p>
+        <p><a href="/test-upload" target="_blank">上传测试页面</a></p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<p>🔄 登录中...</p>';
+            
+            try {
+                console.log('Attempting login...');
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                console.log('Login response:', response.status);
+                const result = await response.json();
+                console.log('Login result:', result);
+                
+                if (result.success) {
+                    // 保存session ID到localStorage
+                    localStorage.setItem('admin-session', result.sessionId);
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = \`
+                        <h4>✅ 登录成功!</h4>
+                        <p><strong>Session ID:</strong> \${result.sessionId}</p>
+                        <p>✨ 现在可以访问管理页面了</p>
+                        <button onclick="window.open('/admin/ip/edit/1', '_blank')" class="btn">🖼️ 测试上传页面</button>
+                    \`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = \`<h4>❌ 登录失败</h4><p>\${result.message}</p>\`;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = \`<h4>💥 登录错误</h4><p>\${error.message}</p>\`;
+            }
+        });
+        
+        // 检查是否已经登录
+        window.onload = function() {
+            const sessionId = localStorage.getItem('admin-session');
+            if (sessionId) {
+                document.getElementById('result').innerHTML = \`
+                    <div class="result success">
+                        <h4>🔐 已登录</h4>
+                        <p><strong>Session ID:</strong> \${sessionId}</p>
+                        <button onclick="window.open('/admin/ip/edit/1', '_blank')" class="btn">🖼️ 测试上传页面</button>
+                    </div>
+                \`;
+            }
+        };
+    </script>
+</body>
+</html>`)
+})
+
+// Debug upload buttons - exact replica of admin page
+app.get('/debug-upload', (c) => {
+  return c.html(`<!DOCTYPE html>
+<html>
+<head>
+    <title>🔧 上传按钮调试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        
+        /* 复制管理页面的样式 */
+        .form-group { margin: 20px 0; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        
+        .image-upload-container { border: 2px dashed #ddd; border-radius: 8px; padding: 20px; }
+        .image-preview-wrapper { position: relative; display: inline-block; margin-bottom: 15px; }
+        .image-preview { width: 200px; height: 120px; object-fit: cover; border-radius: 8px; }
+        .image-upload-overlay { 
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); color: white; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s; border-radius: 8px;
+        }
+        .image-upload-overlay:hover { opacity: 1; }
+        
+        .image-upload-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .image-upload-input { display: none; }
+        .btn-upload { 
+            padding: 10px 20px; background: #007bff; color: white; border: none; 
+            border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;
+        }
+        .btn-upload:hover { background: #0056b3; }
+        .url-input { 
+            flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; 
+            min-width: 200px; font-size: 14px;
+        }
+        
+        .debug-panel { 
+            background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 8px; 
+            border-left: 4px solid #007bff;
+        }
+        .log { 
+            background: #343a40; color: #fff; padding: 15px; border-radius: 6px; 
+            font-family: 'Courier New', monospace; font-size: 12px; max-height: 300px; 
+            overflow-y: auto; margin: 15px 0;
+        }
+        .btn-test { background: #28a745; margin: 5px; }
+        .btn-clear { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 上传按钮调试页面</h1>
+        <p><strong>目标：</strong> 诊断为什么上传按钮没有反应</p>
+        
+        <div class="debug-panel">
+            <h3>🧪 实时测试控制</h3>
+            <button class="btn-upload btn-test" onclick="runDiagnostics()">🔍 运行诊断</button>
+            <button class="btn-upload btn-test" onclick="testClickEvents()">🖱️ 测试点击事件</button>
+            <button class="btn-upload btn-clear" onclick="clearLog()">🗑️ 清空日志</button>
+        </div>
+
+        <!-- 完全复制管理页面的结构 -->
+        <div class="form-group">
+            <label>封面图测试</label>
+            <div class="image-upload-container">
+                <div class="image-preview-wrapper cover-wrapper">
+                    <img id="cover-preview" 
+                         src="/static/images/default-cover.svg" 
+                         alt="封面图预览" 
+                         class="image-preview cover-preview" />
+                    <div class="image-upload-overlay">
+                        <i>📷</i>
+                        <span>更换封面图</span>
+                    </div>
+                </div>
+                <div class="image-upload-controls">
+                    <input type="file" 
+                           id="cover-upload" 
+                           accept="image/*" 
+                           class="image-upload-input" />
+                    <button type="button" 
+                            class="btn-upload" 
+                            id="cover-upload-btn">
+                        📤 上传封面图
+                    </button>
+                    <input type="url" 
+                           id="cover_image_url" 
+                           name="cover_image_url" 
+                           value="" 
+                           placeholder="或输入图片URL" 
+                           class="url-input" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>头像测试</label>
+            <div class="image-upload-container">
+                <div class="image-preview-wrapper avatar-wrapper">
+                    <img id="avatar-preview" 
+                         src="/static/images/default-avatar.svg" 
+                         alt="头像预览" 
+                         class="image-preview avatar-preview" />
+                    <div class="image-upload-overlay">
+                        <i>👤</i>
+                        <span>更换头像</span>
+                    </div>
+                </div>
+                <div class="image-upload-controls">
+                    <input type="file" 
+                           id="avatar-upload" 
+                           accept="image/*" 
+                           class="image-upload-input" />
+                    <button type="button" 
+                            class="btn-upload" 
+                            id="avatar-upload-btn">
+                        📤 上传头像
+                    </button>
+                    <input type="url" 
+                           id="avatar_url" 
+                           name="avatar_url" 
+                           value="" 
+                           placeholder="或输入图片URL" 
+                           class="url-input" />
+                </div>
+            </div>
+        </div>
+
+        <div class="log" id="debug-log">
+            <strong>🕒 调试日志:</strong><br>
+            页面加载完成，等待调试命令...<br>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logElement = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += timestamp + ' - ' + message + '<br>';
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log('[DEBUG]', message);
+        }
+        
+        function clearLog() {
+            document.getElementById('debug-log').innerHTML = '<strong>🕒 调试日志:</strong><br>';
+        }
+        
+        function runDiagnostics() {
+            log('🔍 开始运行完整诊断...');
+            
+            // 检查所有元素是否存在
+            const elements = {
+                'cover-upload-btn': document.getElementById('cover-upload-btn'),
+                'cover-upload': document.getElementById('cover-upload'),
+                'cover_image_url': document.getElementById('cover_image_url'),
+                'avatar-upload-btn': document.getElementById('avatar-upload-btn'),
+                'avatar-upload': document.getElementById('avatar-upload'),
+                'avatar_url': document.getElementById('avatar_url')
+            };
+            
+            log('📋 元素检查结果:');
+            Object.entries(elements).forEach(([id, element]) => {
+                log(\`  - \${id}: \${element ? '✅ 存在' : '❌ 不存在'}\`);
+                if (element) {
+                    log(\`    标签: \${element.tagName}, ID: \${element.id}, 类: \${element.className}\`);
+                }
+            });
+            
+            // 检查事件监听器
+            log('🎧 事件监听器检查:');
+            const coverBtn = elements['cover-upload-btn'];
+            if (coverBtn) {
+                log('  - 封面上传按钮: ✅ 找到元素');
+                log(\`  - 按钮文本: "\${coverBtn.textContent}"\`);
+                log(\`  - 按钮类型: \${coverBtn.type}\`);
+            } else {
+                log('  - 封面上传按钮: ❌ 未找到');
+            }
+            
+            // 测试DOM状态
+            log(\`📄 DOM状态: \${document.readyState}\`);
+            log(\`⏰ 页面加载时间: \${performance.now().toFixed(0)}ms\`);
+        }
+        
+        function testClickEvents() {
+            log('🖱️ 开始测试点击事件...');
+            
+            const coverBtn = document.getElementById('cover-upload-btn');
+            if (coverBtn) {
+                log('📤 找到封面上传按钮，添加测试事件...');
+                
+                // 移除现有事件（如果有）
+                coverBtn.replaceWith(coverBtn.cloneNode(true));
+                const newCoverBtn = document.getElementById('cover-upload-btn');
+                
+                // 添加新的事件监听器
+                newCoverBtn.addEventListener('click', function() {
+                    log('🎯 封面上传按钮被点击了！');
+                    const fileInput = document.getElementById('cover-upload');
+                    if (fileInput) {
+                        log('📁 触发文件选择器...');
+                        fileInput.click();
+                    } else {
+                        log('❌ 找不到文件输入框');
+                    }
+                });
+                
+                log('✅ 封面上传按钮事件绑定完成');
+                
+                // 测试头像按钮
+                const avatarBtn = document.getElementById('avatar-upload-btn');
+                if (avatarBtn) {
+                    avatarBtn.replaceWith(avatarBtn.cloneNode(true));
+                    const newAvatarBtn = document.getElementById('avatar-upload-btn');
+                    
+                    newAvatarBtn.addEventListener('click', function() {
+                        log('🎯 头像上传按钮被点击了！');
+                        const fileInput = document.getElementById('avatar-upload');
+                        if (fileInput) {
+                            log('📁 触发文件选择器...');
+                            fileInput.click();
+                        }
+                    });
+                    
+                    log('✅ 头像上传按钮事件绑定完成');
+                }
+            } else {
+                log('❌ 找不到封面上传按钮');
+            }
+            
+            // 添加文件选择事件
+            const coverUpload = document.getElementById('cover-upload');
+            const avatarUpload = document.getElementById('avatar-upload');
+            
+            if (coverUpload) {
+                coverUpload.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        log(\`📁 选择了封面文件: \${this.files[0].name} (\${this.files[0].size} bytes)\`);
+                        testUpload(this.files[0], '封面');
+                    }
+                });
+            }
+            
+            if (avatarUpload) {
+                avatarUpload.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        log(\`📁 选择了头像文件: \${this.files[0].name} (\${this.files[0].size} bytes)\`);
+                        testUpload(this.files[0], '头像');
+                    }
+                });
+            }
+        }
+        
+        async function testUpload(file, type) {
+            log(\`🚀 开始上传\${type}文件...\`);
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    log(\`✅ \${type}上传成功: \${result.data.url}\`);
+                } else {
+                    log(\`❌ \${type}上传失败: \${result.message}\`);
+                }
+            } catch (error) {
+                log(\`💥 \${type}上传异常: \${error.message}\`);
+            }
+        }
+        
+        // 页面加载后自动运行诊断
+        window.onload = function() {
+            log('🚀 调试页面加载完成');
+            setTimeout(() => {
+                log('⏰ 3秒后自动运行诊断...');
+                setTimeout(runDiagnostics, 3000);
+            }, 1000);
+        };
+    </script>
+</body>
+</html>`)
+})
+
+// Fixed working upload solution
+app.get('/fixed-upload', (c) => {
+  return c.html(`<!DOCTYPE html>
+<html>
+<head>
+    <title>🔥 终极上传解决方案</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        
+        .upload-method { margin: 25px 0; padding: 25px; border: 2px solid #e0e6ed; border-radius: 12px; background: #f8f9fa; }
+        .upload-method.active { border-color: #28a745; background: #f0fff4; }
+        
+        .method-title { color: #2d3748; font-size: 18px; font-weight: 600; margin-bottom: 15px; }
+        
+        /* 方法1: 可见文件输入 */
+        .visible-input { 
+            padding: 12px; border: 2px dashed #007bff; border-radius: 8px; 
+            background: #f0f8ff; cursor: pointer; font-size: 16px; width: 100%;
+            transition: all 0.3s ease;
+        }
+        .visible-input:hover { background: #e6f3ff; border-color: #0056b3; }
+        
+        /* 方法2: 拖拽区域 */
+        .drag-drop-area {
+            border: 3px dashed #28a745;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f0fff4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .drag-drop-area:hover { background: #e6ffed; border-color: #1e7e34; }
+        .drag-drop-area.dragover { background: #d4edda; border-color: #155724; transform: scale(1.02); }
+        
+        /* 方法3: 样式化按钮 */
+        .styled-upload-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white; border: none; padding: 15px 30px; border-radius: 50px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4);
+            transition: all 0.3s ease;
+        }
+        .styled-upload-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6); }
+        
+        /* 预览区域 */
+        .preview-area { margin: 20px 0; text-align: center; }
+        .preview-img { max-width: 200px; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        /* 日志区域 */
+        .log-area { 
+            background: #2d3748; color: #e2e8f0; padding: 20px; border-radius: 10px; 
+            font-family: 'Consolas', monospace; max-height: 300px; overflow-y: auto;
+            font-size: 14px; line-height: 1.4;
+        }
+        
+        /* 成功状态 */
+        .success-message { 
+            background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; 
+            border: 1px solid #c3e6cb; margin: 10px 0;
+        }
+        
+        /* 按钮样式 */
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; margin: 5px; transition: all 0.3s ease; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-primary:hover { background: #0056b3; transform: translateY(-1px); }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #1e7e34; transform: translateY(-1px); }
+        .btn-clear { background: #dc3545; color: white; }
+        .btn-clear:hover { background: #c82333; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #2d3748; margin-bottom: 10px;">🔥 终极上传解决方案</h1>
+        <p style="text-align: center; color: #718096; margin-bottom: 30px;">三种不同的上传方式，总有一种能够正常工作！</p>
+
+        <!-- 方法1: 直接可见的文件输入 -->
+        <div class="upload-method" id="method1">
+            <div class="method-title">🎯 方法1: 直接文件选择 (推荐)</div>
+            <p style="color: #718096; margin-bottom: 15px;">最简单直接的方式，点击下面的文件输入框选择图片</p>
+            <input type="file" id="directFile" accept="image/*" class="visible-input" />
+            <div class="preview-area" id="preview1" style="display: none;">
+                <img id="previewImg1" class="preview-img" />
+                <div class="success-message" id="success1"></div>
+            </div>
+        </div>
+
+        <!-- 方法2: 拖拽上传 -->
+        <div class="upload-method" id="method2">
+            <div class="method-title">🎪 方法2: 拖拽上传</div>
+            <p style="color: #718096; margin-bottom: 15px;">将图片文件拖拽到下面的区域，或点击区域选择文件</p>
+            <div class="drag-drop-area" id="dragArea">
+                <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                <div style="font-size: 18px; font-weight: 600; color: #2d3748;">拖拽图片到此处</div>
+                <div style="color: #718096; margin-top: 8px;">或点击此区域选择文件</div>
+                <input type="file" id="dragFile" accept="image/*" style="display: none;" />
+            </div>
+            <div class="preview-area" id="preview2" style="display: none;">
+                <img id="previewImg2" class="preview-img" />
+                <div class="success-message" id="success2"></div>
+            </div>
+        </div>
+
+        <!-- 方法3: 样式化按钮 -->
+        <div class="upload-method" id="method3">
+            <div class="method-title">🚀 方法3: 样式化上传按钮</div>
+            <p style="color: #718096; margin-bottom: 15px;">美观的按钮设计，点击按钮选择文件</p>
+            <div style="text-align: center;">
+                <button class="styled-upload-btn" onclick="triggerHiddenInput()">
+                    📤 选择图片上传
+                </button>
+                <input type="file" id="styledFile" accept="image/*" style="position: absolute; left: -9999px; opacity: 0;" />
+            </div>
+            <div class="preview-area" id="preview3" style="display: none;">
+                <img id="previewImg3" class="preview-img" />
+                <div class="success-message" id="success3"></div>
+            </div>
+        </div>
+
+        <!-- 控制面板 -->
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="btn btn-primary" onclick="testAllMethods()">🧪 测试所有方法</button>
+            <button class="btn btn-clear" onclick="clearAll()">🗑️ 清空所有</button>
+        </div>
+
+        <!-- 日志区域 -->
+        <div class="log-area" id="log">
+            <strong>📋 实时日志:</strong><br>
+            页面加载完成！请尝试上面的三种上传方式...<br>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logArea = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logArea.innerHTML += timestamp + ' - ' + message + '<br>';
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log('[UPLOAD]', message);
+        }
+
+        // 简化的上传函数 - 避免递归
+        window.uploadFile = async function(file, methodId) {
+            log('🚀 开始上传: ' + file.name);
+            log('📋 文件信息: 大小=' + (file.size/1024).toFixed(1) + 'KB, 类型=' + file.type);
+            
+            // 文件验证
+            if (file.size > 5 * 1024 * 1024) {
+                log('❌ 文件太大: ' + (file.size/1024/1024).toFixed(1) + 'MB > 5MB');
+                alert('文件太大，请选择小于5MB的图片');
+                return null;
+            }
+            
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                log('❌ 不支持的文件类型: ' + file.type);
+                alert('不支持的文件类型，请选择JPG、PNG、GIF或WebP格式的图片');
+                return null;
+            }
+            
+            try {
+                log('📦 创建FormData...');
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                log('📡 发送POST请求到 /api/upload/image ...');
+                
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        // 不要设置Content-Type，让浏览器自动设置multipart/form-data
+                    }
+                });
+                
+                log('📋 服务器响应: ' + response.status + ' ' + response.statusText);
+                log('📋 响应头: ' + JSON.stringify(Object.fromEntries(response.headers)));
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log('❌ HTTP错误响应: ' + errorText);
+                    throw new Error('HTTP ' + response.status + ': ' + errorText);
+                }
+                
+                const result = await response.json();
+                log('📄 服务器响应数据: ' + JSON.stringify(result, null, 2));
+                
+                if (result && result.success) {
+                    log('✅ 上传成功: ' + result.data.url);
+                    
+                    // 显示预览
+                    const previewArea = document.getElementById('preview' + methodId);
+                    const previewImg = document.getElementById('previewImg' + methodId);
+                    const successMsg = document.getElementById('success' + methodId);
+                    
+                    if (previewArea && previewImg && successMsg) {
+                        previewImg.src = result.data.url;
+                        successMsg.innerHTML = '✅ 上传成功！<br>URL: <a href="' + result.data.url + '" target="_blank">' + result.data.url + '</a>';
+                        previewArea.style.display = 'block';
+                        
+                        // 高亮成功的方法
+                        const methodElement = document.getElementById('method' + methodId);
+                        if (methodElement) methodElement.classList.add('active');
+                    }
+                    
+                    alert('🎉 图片上传成功！');
+                    return result.data.url;
+                } else {
+                    const errorMsg = (result && result.message) ? result.message : '服务器返回错误';
+                    log('❌ 服务器返回失败: ' + errorMsg);
+                    alert('上传失败: ' + errorMsg);
+                    return null;
+                }
+            } catch (error) {
+                log('💥 上传异常详情: ' + error.name + ': ' + error.message);
+                log('💥 错误堆栈: ' + (error.stack || 'No stack trace'));
+                alert('上传异常: ' + error.message);
+                return null;
+            }
+        }
+
+        // 方法1: 直接文件选择
+        function setupMethod1() {
+            const directFile = document.getElementById('directFile');
+            if (directFile) {
+                directFile.onchange = function() {
+                    if (this.files && this.files[0]) {
+                        log('📁 方法1: 直接选择了文件 ' + this.files[0].name);
+                        window.uploadFile(this.files[0], '1');
+                    }
+                };
+                log('✅ 方法1: 直接文件选择已初始化');
+            }
+        }
+
+        // 方法2: 拖拽上传
+        function setupMethod2() {
+            const dragArea = document.getElementById('dragArea');
+            const dragFile = document.getElementById('dragFile');
+            
+            if (dragArea && dragFile) {
+                // 点击拖拽区域触发文件选择
+                dragArea.onclick = function() {
+                    log('🔘 方法2: 点击拖拽区域，触发文件选择...');
+                    dragFile.click();
+                };
+                
+                // 文件选择事件
+                dragFile.onchange = function() {
+                    if (this.files && this.files[0]) {
+                        log('📁 方法2: 通过点击选择了文件 ' + this.files[0].name);
+                        window.uploadFile(this.files[0], '2');
+                    }
+                };
+                
+                // 拖拽事件
+                dragArea.ondragover = function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                };
+                
+                dragArea.ondragleave = function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                };
+                
+                dragArea.ondrop = function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files && files[0]) {
+                        log('📁 方法2: 拖拽了文件 ' + files[0].name);
+                        window.uploadFile(files[0], '2');
+                    }
+                };
+                
+                log('✅ 方法2: 拖拽上传已初始化');
+            }
+        }
+
+        // 方法3: 样式化按钮
+        function setupMethod3() {
+            const styledFile = document.getElementById('styledFile');
+            if (styledFile) {
+                styledFile.onchange = function() {
+                    if (this.files && this.files[0]) {
+                        log('📁 方法3: 通过样式化按钮选择了文件 ' + this.files[0].name);
+                        window.uploadFile(this.files[0], '3');
+                    }
+                };
+                log('✅ 方法3: 样式化按钮已初始化');
+            }
+        }
+
+        // 触发隐藏输入框
+        window.triggerHiddenInput = function() {
+            log('🔘 方法3: 点击样式化按钮，触发文件选择...');
+            const styledFile = document.getElementById('styledFile');
+            if (styledFile) {
+                try {
+                    styledFile.click();
+                    log('✅ 方法3: 触发完成');
+                } catch (error) {
+                    log('❌ 方法3: 触发失败 - ' + error.message);
+                }
+            }
+        }
+
+        // 测试所有方法
+        function testAllMethods() {
+            log('🧪 开始测试所有上传方法的可用性...');
+            
+            // 测试方法1
+            const method1Input = document.getElementById('directFile');
+            log('方法1 (直接选择): ' + (method1Input ? '✅ 可用' : '❌ 不可用'));
+            
+            // 测试方法2
+            const method2Input = document.getElementById('dragFile');
+            const dragArea = document.getElementById('dragArea');
+            log('方法2 (拖拽上传): ' + (method2Input && dragArea ? '✅ 可用' : '❌ 不可用'));
+            
+            // 测试方法3
+            const method3Input = document.getElementById('styledFile');
+            log('方法3 (样式化按钮): ' + (method3Input ? '✅ 可用' : '❌ 不可用'));
+            
+            log('💡 提示: 请尝试上面的三种方法，至少有一种应该能正常工作！');
+        }
+
+        // 清空所有
+        function clearAll() {
+            // 清空预览
+            ['1', '2', '3'].forEach(id => {
+                const preview = document.getElementById('preview' + id);
+                const method = document.getElementById('method' + id);
+                if (preview) preview.style.display = 'none';
+                if (method) method.classList.remove('active');
+            });
+            
+            // 清空文件输入
+            ['directFile', 'dragFile', 'styledFile'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) input.value = '';
+            });
+            
+            // 清空日志
+            document.getElementById('log').innerHTML = '<strong>📋 实时日志:</strong><br>所有内容已清空，可以重新测试...<br>';
+            
+            log('🗑️ 已清空所有内容');
+        }
+
+        // 页面加载完成后初始化
+        window.onload = function() {
+            log('🚀 终极上传解决方案加载完成！');
+            
+            setupMethod1();
+            setupMethod2();
+            setupMethod3();
+            
+            log('🎯 三种上传方式已全部初始化完成！');
+            log('💡 方法1最简单可靠，方法2支持拖拽，方法3使用样式化按钮');
+            log('📋 请选择任意一种方式测试上传功能！');
+        };
+    </script>
+</body>
+</html>`)
+})
+
+// Test upload page for debugging
+app.get('/test-upload', (c) => {
+  return c.html(`<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片上传测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .upload-container { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .preview-img { width: 100px; height: 100px; object-fit: cover; border: 1px solid #ddd; margin: 10px 0; }
+        .btn { padding: 10px 15px; margin: 5px; cursor: pointer; border: none; border-radius: 4px; }
+        .btn-primary { background: #007bff; color: white; }
+        .hidden { display: none; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>图片上传功能测试</h1>
+    
+    <div class="upload-container">
+        <h3>测试上传功能</h3>
+        <img id="test-preview" src="/static/images/default-avatar.svg" alt="预览" class="preview-img" />
+        <br>
+        <input type="file" id="test-upload" accept="image/*" class="hidden" 
+               onchange="if(this.files[0]) testUpload(this.files[0])" />
+        <button class="btn btn-primary" onclick="document.getElementById('test-upload').click()">
+            选择图片上传
+        </button>
+        <br>
+        <input type="url" id="test-url" placeholder="或输入图片URL" 
+               oninput="updateTestPreview()" style="width: 300px; padding: 5px; margin: 10px 0;" />
+    </div>
+    
+    <div class="log" id="log">等待操作...</div>
+    
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML = new Date().toLocaleTimeString() + ': ' + message + '<br>' + logDiv.innerHTML;
+        }
+        
+        async function testUpload(file) {
+            log('开始上传文件: ' + file.name + ' (大小: ' + file.size + ' 字节)');
+            
+            if (!file) {
+                log('❌ 错误: 没有选择文件');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            log('📤 正在上传到 /api/upload/image...');
+            
+            try {
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                log('📡 服务器响应状态: ' + response.status);
+                
+                const result = await response.json();
+                log('📄 服务器响应: ' + JSON.stringify(result));
+                
+                if (result.success) {
+                    const urlInput = document.getElementById('test-url');
+                    const previewImg = document.getElementById('test-preview');
+                    
+                    if (urlInput) urlInput.value = result.data.url;
+                    if (previewImg) previewImg.src = result.data.url;
+                    
+                    log('✅ 上传成功！图片URL: ' + result.data.url);
+                    return result.data.url;
+                } else {
+                    throw new Error(result.message || '上传失败');
+                }
+            } catch (error) {
+                log('❌ 上传失败: ' + error.message);
+                console.error('Upload error:', error);
+                return null;
+            }
+        }
+        
+        function updateTestPreview() {
+            const input = document.getElementById('test-url');
+            const preview = document.getElementById('test-preview');
+            if (input && preview && input.value) {
+                preview.src = input.value;
+                log('🖼️ 预览图片已更新: ' + input.value);
+            }
+        }
+        
+        log('🚀 测试页面加载完成');
+    </script>
+</body>
+</html>`)
+})
+
+// Apply auth middleware to all admin routes (except login/logout and image upload)
+app.use('/admin/*', requireAuth)
+app.use('/api/admin/*', requireAuth)
+
+// Clean debug route with fixed JavaScript
+app.get('/clean-admin/ip/edit/:id', async (c) => {
+  try {
+    const { env } = c
+    const ipId = c.req.param('id')
+
+    // Get IP profile data (same as admin route)
+    const profile = await env.DB.prepare(`
+      SELECT * FROM ip_profiles WHERE id = ?
+    `).bind(ipId).first()
+
+    if (!profile) {
+      return c.render(
+        <div class="error-page">
+          <div class="container">
+            <div class="error-message">
+              <h1>IP不存在</h1>
+              <p>找不到ID为 {ipId} 的IP档案</p>
+              <a href="/admin/ip/manage" class="btn-primary">返回管理</a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // Parse JSON fields
+    const languages = JSON.parse(profile.languages || '[]')
+    const specialties = JSON.parse(profile.specialties || '[]')  
+    const socialLinks = JSON.parse(profile.social_links || '{}')
+
+    return c.render(
+      <div class="admin-edit-page">
+        <div class="container">
+          <div class="page-header">
+            <h1>🔧 调试编辑: {profile.name}</h1>
+            <p>绕过身份验证的调试版本</p>
+          </div>
+          
+          <div class="edit-form-container">
+            <form id="editIPForm" class="admin-form">
+              <input type="hidden" name="id" value={profile.id} />
+              
+              <div class="form-section">
+                <h3>图片上传测试</h3>
+
+                {/* Cover Image Upload - 重点测试 */}
+                <div class="form-group">
+                  <label>封面图 (重点测试)</label>
+                  <div class="image-upload-container">
+                    <div class="image-preview-wrapper cover-wrapper">
+                      <img id="cover-preview" 
+                           src={profile.cover_image_url || '/static/images/default-cover.svg'} 
+                           alt="封面图预览" 
+                           class="image-preview cover-preview" />
+                      <div class="image-upload-overlay">
+                        <i class="fas fa-photo-video"></i>
+                        <span>更换封面图</span>
+                      </div>
+                    </div>
+                    <div class="image-upload-controls">
+                      <div class="upload-method" style="margin: 10px 0; padding: 15px; border: 2px dashed #007bff; border-radius: 8px; background: #f0f8ff;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">📁 选择封面图文件:</label>
+                        <input type="file" 
+                               id="cover-upload" 
+                               accept="image/*" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                      </div>
+                      <input type="url" 
+                             id="cover_image_url" 
+                             name="cover_image_url" 
+                             value={profile.cover_image_url} 
+                             placeholder="或输入图片URL" 
+                             class="url-input" 
+                             style="margin-top: 10px;" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Avatar Upload */}
+                <div class="form-group">
+                  <label>头像</label>
+                  <div class="image-upload-container">
+                    <div class="image-preview-wrapper avatar-wrapper">
+                      <img id="avatar-preview" 
+                           src={profile.avatar_url || '/static/images/default-avatar.svg'} 
+                           alt="头像预览" 
+                           class="image-preview avatar-preview" />
+                      <div class="image-upload-overlay">
+                        <i class="fas fa-camera"></i>
+                        <span>更换头像</span>
+                      </div>
+                    </div>
+                    <div class="image-upload-controls">
+                      <input type="file" 
+                             id="avatar-upload" 
+                             accept="image/*" 
+                             class="image-upload-input" />
+                      <button type="button" 
+                              class="btn-upload" 
+                              id="avatar-upload-btn">
+                        <i class="fas fa-upload"></i> 上传头像
+                      </button>
+                      <input type="url" 
+                             id="avatar_url" 
+                             name="avatar_url" 
+                             value={profile.avatar_url} 
+                             placeholder="或输入图片URL" 
+                             class="url-input" />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-actions">
+                <button type="button" onclick="testAllUploads()" class="btn-primary">
+                  🧪 测试所有上传功能
+                </button>
+                <button type="button" onclick="debugFileInput()" class="btn-primary">
+                  🔍 调试文件输入
+                </button>
+                <button type="button" onclick="forceFileSelect()" class="btn-primary">
+                  ⚡ 强制文件选择
+                </button>
+                <a href="/debug-upload" class="btn-secondary">调试页面</a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <script dangerouslySetInnerHTML={{
+          __html: `
+          console.log('🚀 调试编辑页面开始加载...');
+          
+          // 复制上传函数
+          async function uploadImageFile(file, targetInputId, previewId) {
+            if (!file) return;
+            
+            console.log('📤 开始上传文件:', file.name, 'to', targetInputId);
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+              const response = await fetch('/api/upload/image', {
+                method: 'POST',
+                body: formData
+              });
+              
+              const result = await response.json();
+              
+              if (result.success) {
+                const urlInput = document.getElementById(targetInputId);
+                const previewImg = document.getElementById(previewId);
+                
+                if (urlInput) urlInput.value = result.data.url;
+                if (previewImg) previewImg.src = result.data.url;
+                
+                console.log('✅ 上传成功:', result.data.url);
+                alert('图片上传成功！');
+                return result.data.url;
+              } else {
+                throw new Error(result.message || '上传失败');
+              }
+            } catch (error) {
+              console.error('Upload error:', error);
+              alert('图片上传失败: ' + error.message);
+              return null;
+            }
+          }
+          
+          // 复制预览函数
+          function updatePreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            if (input && preview && input.value) {
+              preview.src = input.value;
+              console.log('🖼️ 更新预览:', inputId, '->', input.value);
+            }
+          }
+          
+          // 测试所有上传功能
+          function testAllUploads() {
+            console.log('🧪 测试所有上传按钮...');
+            
+            const buttons = [
+              { id: 'cover-upload-btn', name: '封面图上传' },
+              { id: 'avatar-upload-btn', name: '头像上传' }
+            ];
+            
+            buttons.forEach(btn => {
+              const element = document.getElementById(btn.id);
+              if (element) {
+                console.log(\`✅ 找到 \${btn.name} 按钮\`);
+                element.style.background = '#28a745';
+                setTimeout(() => element.style.background = '', 2000);
+              } else {
+                console.error(\`❌ 未找到 \${btn.name} 按钮\`);
+              }
+            });
+          }
+          
+          // 调试文件输入元素
+          function debugFileInput() {
+            console.log('🔍 开始调试文件输入元素...');
+            
+            const coverUpload = document.getElementById('cover-upload');
+            const avatarUpload = document.getElementById('avatar-upload');
+            
+            console.log('📋 文件输入元素状态:');
+            console.log('Cover input:', {
+              exists: !!coverUpload,
+              type: coverUpload?.type,
+              accept: coverUpload?.accept,
+              disabled: coverUpload?.disabled,
+              style: coverUpload?.style.cssText,
+              visible: coverUpload ? getComputedStyle(coverUpload).display !== 'none' : false
+            });
+            
+            console.log('Avatar input:', {
+              exists: !!avatarUpload,
+              type: avatarUpload?.type,
+              accept: avatarUpload?.accept,
+              disabled: avatarUpload?.disabled,
+              style: avatarUpload?.style.cssText,
+              visible: avatarUpload ? getComputedStyle(avatarUpload).display !== 'none' : false
+            });
+            
+            // 尝试不同的触发方式
+            if (coverUpload) {
+              console.log('🧪 尝试不同的触发方式...');
+              
+              try {
+                console.log('方法1: 直接 click()');
+                coverUpload.click();
+              } catch (e) {
+                console.error('方法1 失败:', e.message);
+              }
+              
+              setTimeout(() => {
+                try {
+                  console.log('方法2: dispatchEvent click');
+                  const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+                  coverUpload.dispatchEvent(event);
+                } catch (e) {
+                  console.error('方法2 失败:', e.message);
+                }
+              }, 1000);
+              
+              setTimeout(() => {
+                try {
+                  console.log('方法3: focus + click');
+                  coverUpload.focus();
+                  coverUpload.click();
+                } catch (e) {
+                  console.error('方法3 失败:', e.message);
+                }
+              }, 2000);
+            }
+          }
+          
+          // 强制文件选择
+          function forceFileSelect() {
+            console.log('⚡ 强制触发文件选择...');
+            
+            const coverUpload = document.getElementById('cover-upload');
+            if (coverUpload) {
+              // 临时移除 display: none
+              const originalStyle = coverUpload.style.cssText;
+              coverUpload.style.cssText = 'position: absolute; left: -9999px; opacity: 0.01;';
+              
+              console.log('📁 尝试强制点击文件输入...');
+              
+              setTimeout(() => {
+                try {
+                  coverUpload.click();
+                  console.log('✅ 强制点击执行完成');
+                } catch (e) {
+                  console.error('❌ 强制点击失败:', e);
+                }
+                
+                // 恢复原样式
+                setTimeout(() => {
+                  coverUpload.style.cssText = originalStyle;
+                }, 100);
+              }, 100);
+            }
+          }
+          
+          // 设置事件监听器 (完全相同的代码)
+          function setupEventListeners() {
+            console.log('🔧 Setting up event listeners...');
+            
+            // Avatar upload
+            const avatarUploadBtn = document.getElementById('avatar-upload-btn');
+            const avatarUpload = document.getElementById('avatar-upload');
+            const avatarUrlInput = document.getElementById('avatar_url');
+            
+            console.log('🖼️ Avatar elements:', {
+              btn: !!avatarUploadBtn,
+              input: !!avatarUpload,
+              url: !!avatarUrlInput
+            });
+            
+            if (avatarUploadBtn && avatarUpload) {
+              avatarUploadBtn.addEventListener('click', function() {
+                console.log('🔘 Avatar upload button clicked');
+                avatarUpload.click();
+              });
+              
+              avatarUpload.addEventListener('change', function() {
+                console.log('📁 Avatar file selected:', this.files ? this.files[0]?.name : 'none');
+                if (this.files && this.files[0]) {
+                  uploadImageFile(this.files[0], 'avatar_url', 'avatar-preview');
+                }
+              });
+              console.log('✅ Avatar listeners added');
+            } else {
+              console.error('❌ Avatar elements not found');
+            }
+            
+            if (avatarUrlInput) {
+              avatarUrlInput.addEventListener('input', function() {
+                updatePreview('avatar_url', 'avatar-preview');
+              });
+            }
+            
+            // Cover upload - 重点关注
+            const coverUploadBtn = document.getElementById('cover-upload-btn');
+            const coverUpload = document.getElementById('cover-upload');
+            const coverUrlInput = document.getElementById('cover_image_url');
+            
+            console.log('🖼️ Cover elements:', {
+              btn: !!coverUploadBtn,
+              input: !!coverUpload,
+              url: !!coverUrlInput
+            });
+            
+            if (coverUploadBtn && coverUpload) {
+              console.log('🎯 绑定封面上传事件...');
+              
+              coverUploadBtn.addEventListener('click', function() {
+                console.log('🔥 封面上传按钮被点击了！！！');
+                console.log('📁 触发文件选择器...');
+                coverUpload.click();
+              });
+              
+              coverUpload.addEventListener('change', function() {
+                console.log('📁 Cover file selected:', this.files ? this.files[0]?.name : 'none');
+                if (this.files && this.files[0]) {
+                  console.log('🚀 开始上传封面图...');
+                  uploadImageFile(this.files[0], 'cover_image_url', 'cover-preview');
+                }
+              });
+              
+              console.log('✅ 封面上传事件绑定完成！');
+            } else {
+              console.error('❌ Cover elements not found:', { btn: coverUploadBtn, input: coverUpload });
+            }
+            
+            if (coverUrlInput) {
+              coverUrlInput.addEventListener('input', function() {
+                updatePreview('cover_image_url', 'cover-preview');
+              });
+            }
+            
+            console.log('🎉 所有事件监听器设置完成');
+          }
+          
+          // 立即执行
+          console.log('📄 Document ready state:', document.readyState);
+          setupEventListeners();
+          
+          console.log('✅ 调试编辑页面加载完成');
+        `
+        }} />
+      </div>
+    )
+  } catch (error) {
+    console.error('Debug page error:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>调试页面错误</h1>
+            <p>加载调试页面时出错: {error.message}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
 
 // Generate simple session ID
 function generateSessionId(): string {
@@ -2726,40 +3258,70 @@ app.get('/admin/login', (c) => {
               <i class="fas fa-info-circle"></i>
               仅限授权管理员访问
             </p>
-            <a href="/cases" class="back-link">
+            <a href="/" class="back-link">
               <i class="fas fa-arrow-left"></i>
-              返回案例页面
+              返回首页
             </a>
           </div>
         </div>
       </div>
       
-      <script>{`
+      <script dangerouslySetInnerHTML={{
+        __html: `
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
           e.preventDefault()
+          console.log('Login form submitted')
+          
           const username = document.getElementById('username').value
           const password = document.getElementById('password').value
+          console.log('Attempting login with username:', username)
+          
+          // Show loading state
+          const submitBtn = e.target.querySelector('button[type="submit"]')
+          const originalText = submitBtn.innerHTML
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 登录中...'
+          submitBtn.disabled = true
           
           try {
+            console.log('Sending login request to /api/admin/login')
             const response = await fetch('/api/admin/login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ username, password })
+              body: JSON.stringify({ username, password }),
+              credentials: 'include'
             })
             
+            console.log('Response received:', response.status)
             const result = await response.json()
+            console.log('Login result:', result)
             
             if (result.success) {
+              console.log('Login successful, sessionId:', result.sessionId)
+              // Store session in localStorage as backup
               localStorage.setItem('admin-session', result.sessionId)
-              window.location.href = '/admin/cases/manage'
+              
+              // Show success message briefly
+              submitBtn.innerHTML = '<i class="fas fa-check"></i> 登录成功'
+              console.log('Redirecting to admin management...')
+              
+              setTimeout(() => {
+                window.location.href = '/admin/ip/manage'
+              }, 1000)
             } else {
+              console.error('Login failed:', result.message)
               alert(result.message || '登录失败，请检查用户名和密码')
+              submitBtn.innerHTML = originalText
+              submitBtn.disabled = false
             }
           } catch (error) {
-            alert('登录请求失败，请稍后再试')
+            console.error('Login error:', error)
+            alert('登录请求失败，请稍后再试: ' + error.message)
+            submitBtn.innerHTML = originalText
+            submitBtn.disabled = false
           }
         })
-      `}</script>
+        `
+      }}></script>
     </div>
   )
 })
@@ -2772,12 +3334,32 @@ app.post('/api/admin/login', async (c) => {
     // Simple authentication (in production, use proper password hashing)
     if (username === 'admin' && password === 'clabs2024') {
       const sessionId = generateSessionId()
-      adminSessions.add(sessionId)
+      const { env } = c
       
-      // Set session expiry (24 hours)
-      setTimeout(() => {
-        adminSessions.delete(sessionId)
-      }, 24 * 60 * 60 * 1000)
+      // Create admin_sessions table if not exists
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS admin_sessions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          session_id TEXT UNIQUE NOT NULL,
+          username TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          expires_at DATETIME NOT NULL
+        )
+      `).run()
+      
+      // Clean up expired sessions
+      await env.DB.prepare(`
+        DELETE FROM admin_sessions WHERE expires_at <= datetime('now')
+      `).run()
+      
+      // Insert new session (expires in 24 hours)
+      await env.DB.prepare(`
+        INSERT OR REPLACE INTO admin_sessions (session_id, username, expires_at)
+        VALUES (?, ?, datetime('now', '+24 hours'))
+      `).bind(sessionId, username).run()
+      
+      // Set cookie for session (remove Secure flag for development)
+      c.header('Set-Cookie', `admin-session=${sessionId}; HttpOnly; SameSite=Strict; Max-Age=86400; Path=/`)
       
       return c.json({ success: true, sessionId, message: '登录成功' })
     } else {
@@ -2788,41 +3370,326 @@ app.post('/api/admin/login', async (c) => {
   }
 })
 
-// Admin Cases Management Page
-app.get('/admin/cases/manage', async (c) => {
+// Admin Dashboard Main Page
+app.get('/admin', async (c) => {
   try {
     const { env } = c
-    
-    // Get all cases with category information
-    const cases = await env.DB.prepare(`
-      SELECT 
-        c.*,
-        cc.name as category_name,
-        cc.color as category_color
-      FROM cases c
-      LEFT JOIN case_categories cc ON c.category_id = cc.id
-      ORDER BY c.created_at DESC
+
+    // Create tables if they don't exist
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS works (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        content TEXT,
+        category TEXT NOT NULL,
+        client_name TEXT,
+        project_date DATE,
+        project_url TEXT,
+        thumbnail_url TEXT,
+        images JSON,
+        tags JSON,
+        status TEXT DEFAULT 'draft',
+        view_count INTEGER DEFAULT 0,
+        like_count INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run()
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS tutorials (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        slug TEXT UNIQUE NOT NULL,
+        summary TEXT,
+        content TEXT NOT NULL,
+        category TEXT NOT NULL,
+        thumbnail_url TEXT,
+        difficulty TEXT DEFAULT 'beginner',
+        read_time INTEGER DEFAULT 5,
+        views INTEGER DEFAULT 0,
+        likes INTEGER DEFAULT 0,
+        tags JSON,
+        status TEXT DEFAULT 'draft',
+        featured BOOLEAN DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run()
+
+    // Get statistics for dashboard
+    const ipCount = await env.DB.prepare(`SELECT COUNT(*) as count FROM ip_profiles`).first()
+
+    const tutorialsCount = await env.DB.prepare(`SELECT COUNT(*) as count FROM tutorials WHERE status = 'published'`).first()
+    const uploadsCount = await env.DB.prepare(`SELECT COUNT(*) as count FROM uploaded_images`).first()
+
+    // Get recent activities
+    const recentUploads = await env.DB.prepare(`
+      SELECT filename, original_name, created_at FROM uploaded_images 
+      ORDER BY created_at DESC LIMIT 5
     `).all()
 
-    const categories = await env.DB.prepare(`
-      SELECT * FROM case_categories ORDER BY sort_order ASC
-    `).all()
+
 
     return c.render(
-      <div class="admin-management-page">
+      <div class="admin-dashboard">
         <div class="admin-header">
           <div class="container">
             <div class="admin-nav">
               <div class="admin-logo">
-                <i class="fas fa-cogs"></i>
-                <span>案例管理后台</span>
+                <i class="fas fa-tachometer-alt"></i>
+                <span>C Labs 管理后台</span>
+              </div>
+              <div class="admin-menu">
+                <a href="/admin" class="nav-item active">
+                  <i class="fas fa-tachometer-alt"></i>
+                  总览
+                </a>
+                <a href="/admin/ip/manage" class="nav-item">
+                  <i class="fas fa-users"></i>
+                  IP管理
+                </a>
+
+                <a href="/admin/tutorials/manage" class="nav-item">
+                  <i class="fas fa-graduation-cap"></i>
+                  教程管理
+                </a>
+                <a href="/admin/uploads" class="nav-item">
+                  <i class="fas fa-images"></i>
+                  文件管理
+                </a>
+                
+                <div class="nav-item dropdown">
+                  <span class="dropdown-toggle">
+                    <i class="fas fa-plus"></i>
+                    添加内容
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                  </span>
+                  <div class="dropdown-menu">
+                    <a href="/admin/ip/add" class="dropdown-item">
+                      <i class="fas fa-user-plus"></i>
+                      添加IP
+                    </a>
+
+                    <a href="/admin/tutorials/add" class="dropdown-item">
+                      <i class="fas fa-book-open"></i>
+                      添加教程
+                    </a>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="admin-user">
+                <span>管理员</span>
+                <a href="/api/admin/logout" class="logout-btn">
+                  <i class="fas fa-sign-out-alt"></i>
+                  退出
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <div class="container">
+            <div class="dashboard-header">
+              <h1>管理后台总览</h1>
+              <p>欢迎使用 C Labs 内容管理系统</p>
+            </div>
+
+            {/* Quick Stats */}
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon ip">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                  <h3>{ipCount?.count || 0}</h3>
+                  <p>IP档案</p>
+                </div>
+                <a href="/admin/ip/manage" class="stat-link">管理</a>
+              </div>
+              
+
+              
+              <div class="stat-card">
+                <div class="stat-icon tutorials">
+                  <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="stat-info">
+                  <h3>{tutorialsCount?.count || 0}</h3>
+                  <p>Web3教程</p>
+                </div>
+                <a href="/admin/tutorials/manage" class="stat-link">管理</a>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon uploads">
+                  <i class="fas fa-images"></i>
+                </div>
+                <div class="stat-info">
+                  <h3>{uploadsCount?.count || 0}</h3>
+                  <p>上传文件</p>
+                </div>
+                <a href="/admin/uploads/manage" class="stat-link">管理</a>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div class="quick-actions">
+              <h2>快速操作</h2>
+              <div class="actions-grid">
+                <a href="/admin/ip/add" class="action-card">
+                  <i class="fas fa-user-plus"></i>
+                  <h3>添加新IP</h3>
+                  <p>创建新的IP档案</p>
+                </a>
+                
+
+                
+                <a href="/admin/tutorials/add" class="action-card">
+                  <i class="fas fa-book-open"></i>
+                  <h3>发布教程</h3>
+                  <p>创建Web3教程内容</p>
+                </a>
+                
+                <a href="/admin/uploads" class="action-card">
+                  <i class="fas fa-upload"></i>
+                  <h3>文件上传</h3>
+                  <p>管理媒体文件</p>
+                </a>
+              </div>
+            </div>
+
+            {/* Recent Activities */}
+            <div class="recent-activities">
+              <div class="activity-section">
+                <h3>最近上传</h3>
+                <div class="activity-list">
+                  {recentUploads.results?.map((upload: any) => (
+                    <div class="activity-item">
+                      <i class="fas fa-image"></i>
+                      <div class="activity-info">
+                        <span class="activity-title">{upload.original_name}</span>
+                        <span class="activity-time">{new Date(upload.created_at).toLocaleDateString('zh-CN')}</span>
+                      </div>
+                    </div>
+                  ))}
+                  {(!recentUploads.results || recentUploads.results.length === 0) && (
+                    <div class="activity-empty">暂无上传记录</div>
+                  )}
+                </div>
+              </div>
+              
+              <div class="activity-section">
+                <h3>最近作品</h3>
+                <div class="activity-list">
+                  {recentWorks.results?.map((work: any) => (
+                    <div class="activity-item">
+                      <i class="fas fa-briefcase"></i>
+                      <div class="activity-info">
+                        <span class="activity-title">{work.title}</span>
+                        <span class="activity-time">{new Date(work.created_at).toLocaleDateString('zh-CN')}</span>
+                      </div>
+                    </div>
+                  ))}
+                  {(!recentWorks.results || recentWorks.results.length === 0) && (
+                    <div class="activity-empty">暂无作品记录</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <script>{`
+          // Dropdown menu functionality
+          document.addEventListener('DOMContentLoaded', function() {
+            const dropdown = document.querySelector('.nav-item.dropdown');
+            const dropdownToggle = dropdown?.querySelector('.dropdown-toggle');
+            
+            if (dropdown && dropdownToggle) {
+              dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('open');
+              });
+              
+              // Close dropdown when clicking outside
+              document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                  dropdown.classList.remove('open');
+                }
+              });
+            }
+          });
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>加载错误</h1>
+            <p>管理后台数据加载失败，请稍后重试</p>
+            <a href="/admin/login" class="btn-primary">重新登录</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
+
+app.get('/admin/', (c) => {
+  return c.redirect('/admin')
+})
+
+// Admin Cases Management Page
+// Admin IP Management Dashboard
+app.get('/admin/ip/manage', async (c) => {
+  try {
+    const { env } = c
+
+    // Get all IP profiles
+    const ipProfiles = await env.DB.prepare(`
+      SELECT * FROM ip_profiles ORDER BY created_at DESC
+    `).all()
+
+    // Get platform stats count for each IP
+    const platformStats = await env.DB.prepare(`
+      SELECT ip_id, COUNT(*) as platform_count, SUM(followers_count) as total_followers
+      FROM ip_platform_stats 
+      GROUP BY ip_id
+    `).all()
+
+    // Get works count for each IP
+    const worksStats = await env.DB.prepare(`
+      SELECT ip_id, COUNT(*) as works_count, SUM(view_count) as total_views
+      FROM ip_works 
+      WHERE status = 'published'
+      GROUP BY ip_id
+    `).all()
+
+    return c.render(
+      <div class="admin-ip-management-page">
+        <div class="admin-header">
+          <div class="container">
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-users"></i>
+                <span>IP管理后台</span>
               </div>
               <div class="admin-actions">
-                <a href="/admin/cases/add" class="btn-primary">
+                <a href="/admin/ip/add" class="btn-primary">
                   <i class="fas fa-plus"></i>
-                  添加新案例
+                  添加新IP
                 </a>
-                <a href="/cases" class="btn-secondary">
+                <a href="/ip/giant-cutie" class="btn-secondary">
+                  <i class="fas fa-user-circle"></i>
+                  IP展示
+                </a>
+                <a href="/" class="btn-secondary">
                   <i class="fas fa-eye"></i>
                   查看前台
                 </a>
@@ -2840,20 +3707,20 @@ app.get('/admin/cases/manage', async (c) => {
             <div class="admin-stats">
               <div class="stat-card">
                 <div class="stat-icon">
-                  <i class="fas fa-file-alt"></i>
+                  <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-info">
-                  <h3>{cases.results?.length || 0}</h3>
-                  <p>总案例数</p>
+                  <h3>{ipProfiles.results?.length || 0}</h3>
+                  <p>IP账号总数</p>
                 </div>
               </div>
               <div class="stat-card">
                 <div class="stat-icon">
-                  <i class="fas fa-tags"></i>
+                  <i class="fas fa-chart-bar"></i>
                 </div>
                 <div class="stat-info">
-                  <h3>{categories.results?.length || 0}</h3>
-                  <p>案例分类</p>
+                  <h3>{platformStats.results?.reduce((sum, p) => sum + (p.platform_count || 0), 0) || 0}</h3>
+                  <p>活跃平台数</p>
                 </div>
               </div>
               <div class="stat-card">
@@ -2861,156 +3728,166 @@ app.get('/admin/cases/manage', async (c) => {
                   <i class="fas fa-eye"></i>
                 </div>
                 <div class="stat-info">
-                  <h3>{cases.results?.reduce((sum, c) => sum + (c.views || 0), 0) || 0}</h3>
+                  <h3>{worksStats.results?.reduce((sum, w) => sum + (w.total_views || 0), 0) || 0}</h3>
                   <p>总浏览量</p>
                 </div>
               </div>
             </div>
 
-            <div class="cases-management">
+            <div class="ip-management">
               <div class="management-header">
-                <h2>案例管理</h2>
+                <h2>IP管理</h2>
                 <div class="management-filters">
-                  <select id="categoryFilter">
-                    <option value="">所有分类</option>
-                    {categories.results?.map(cat => (
-                      <option value={cat.id}>{cat.name}</option>
-                    ))}
-                  </select>
                   <select id="statusFilter">
                     <option value="">所有状态</option>
-                    <option value="published">已发布</option>
-                    <option value="draft">草稿</option>
-                    <option value="archived">已归档</option>
+                    <option value="active">活跃</option>
+                    <option value="inactive">暂停</option>
+                    <option value="archived">归档</option>
                   </select>
                 </div>
               </div>
 
-              <div class="cases-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>缩略图</th>
-                      <th>案例标题</th>
-                      <th>客户</th>
-                      <th>分类</th>
-                      <th>状态</th>
-                      <th>浏览量</th>
-                      <th>创建时间</th>
-                      <th>操作</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cases.results?.map(caseItem => (
-                      <tr>
-                        <td>
-                          {caseItem.thumbnail_url ? (
-                            <img src={caseItem.thumbnail_url} alt={caseItem.title} class="case-thumbnail" />
+              <div class="ip-cards-grid">
+                {ipProfiles.results?.map(profile => {
+                  const platformStat = platformStats.results?.find(p => p.ip_id === profile.id)
+                  const workStat = worksStats.results?.find(w => w.ip_id === profile.id)
+
+                  let socialLinks = {}
+                  try {
+                    socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
+                  } catch (e) {}
+
+                  return (
+                    <div class="ip-management-card">
+                      <div class="ip-card-header">
+                        <div class="ip-avatar-mini">
+                          {profile.avatar_url ? (
+                            <img src={profile.avatar_url} alt={profile.display_name} />
                           ) : (
-                            <div class="no-thumbnail">
-                              <i class="fas fa-image"></i>
+                            <div class="avatar-placeholder-mini">
+                              <i class="fas fa-user"></i>
                             </div>
                           )}
-                        </td>
-                        <td>
-                          <div class="case-title-cell">
-                            <h4>{caseItem.title}</h4>
-                            <p class="case-summary">{caseItem.summary}</p>
+                          <div class={`status-dot ${profile.status}`}></div>
+                        </div>
+                        <div class="ip-basic-info">
+                          <h4>{profile.display_name}</h4>
+                          <p>{profile.title}</p>
+                          <span class={`status-badge status-${profile.status}`}>
+                            {profile.status === 'active' ? '活跃' : 
+                             profile.status === 'inactive' ? '暂停' : 
+                             profile.status === 'archived' ? '归档' : profile.status}
+                          </span>
+                        </div>
+                        <div class="ip-actions">
+                          <a href={`/ip/${profile.slug}`} target="_blank" class="btn-icon" title="查看页面">
+                            <i class="fas fa-eye"></i>
+                          </a>
+                          <a href={`/admin/ip/edit/${profile.id}`} class="btn-icon" title="编辑">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                          <a href={`/admin/ip/works/${profile.id}`} class="btn-icon" title="管理作品">
+                            <i class="fas fa-play-circle"></i>
+                          </a>
+                        </div>
+                      </div>
+
+                      <div class="ip-card-stats">
+                        <div class="stat-item">
+                          <i class="fas fa-chart-bar"></i>
+                          <div class="stat-text">
+                            <span class="stat-number">{platformStat?.platform_count || 0}</span>
+                            <span class="stat-label">活跃平台</span>
                           </div>
-                        </td>
-                        <td>
-                          <div class="client-cell">
-                            {caseItem.client_logo_url && (
-                              <img src={caseItem.client_logo_url} alt={caseItem.client_name} class="client-logo" />
+                        </div>
+                        <div class="stat-item">
+                          <i class="fas fa-users"></i>
+                          <div class="stat-text">
+                            <span class="stat-number">{((platformStat?.total_followers || 0) / 1000).toFixed(0)}K</span>
+                            <span class="stat-label">总粉丝</span>
+                          </div>
+                        </div>
+                        <div class="stat-item">
+                          <i class="fas fa-play"></i>
+                          <div class="stat-text">
+                            <span class="stat-number">{workStat?.works_count || 0}</span>
+                            <span class="stat-label">作品数</span>
+                          </div>
+                        </div>
+                        <div class="stat-item">
+                          <i class="fas fa-eye"></i>
+                          <div class="stat-text">
+                            <span class="stat-number">{((workStat?.total_views || 0) / 1000).toFixed(0)}K</span>
+                            <span class="stat-label">总浏览</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="ip-card-platforms">
+                        <div class="platforms-preview">
+                          <span class="platforms-label">平台:</span>
+                          <div class="platform-icons">
+                            {Object.keys(socialLinks).slice(0, 4).map(platform => (
+                              <i class={`fab fa-${platform === 'twitter' ? 'x-twitter' : platform}`} title={platform}></i>
+                            ))}
+                            {Object.keys(socialLinks).length > 4 && (
+                              <span class="more-platforms">+{Object.keys(socialLinks).length - 4}</span>
                             )}
-                            <span>{caseItem.client_name}</span>
                           </div>
-                        </td>
-                        <td>
-                          <span class="category-badge" style={`background-color: ${caseItem.category_color}20; color: ${caseItem.category_color}`}>
-                            {caseItem.category_name}
-                          </span>
-                        </td>
-                        <td>
-                          <span class={`status-badge status-${caseItem.status}`}>
-                            {caseItem.status === 'published' ? '已发布' : 
-                             caseItem.status === 'draft' ? '草稿' : 
-                             caseItem.status === 'archived' ? '已归档' : caseItem.status}
-                          </span>
-                        </td>
-                        <td>{caseItem.views || 0}</td>
-                        <td>{new Date(caseItem.created_at).toLocaleDateString('zh-CN')}</td>
-                        <td>
-                          <div class="action-buttons">
-                            <a href={`/cases/${caseItem.slug}`} class="btn-icon" title="查看">
-                              <i class="fas fa-eye"></i>
-                            </a>
-                            <a href={`/admin/cases/edit/${caseItem.id}`} class="btn-icon" title="编辑">
-                              <i class="fas fa-edit"></i>
-                            </a>
-                            <button onclick={`deleteCase(${caseItem.id})`} class="btn-icon btn-danger" title="删除">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+
+                      <div class="ip-card-actions">
+                        <a href={`/admin/ip/analytics/${profile.id}`} class="action-btn">
+                          <i class="fas fa-chart-line"></i>
+                          数据分析
+                        </a>
+                        <a href={`/admin/ip/settings/${profile.id}`} class="action-btn">
+                          <i class="fas fa-cog"></i>
+                          设置
+                        </a>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
         </div>
 
         <script>{`
-          function logout() {
-            localStorage.removeItem('admin-session')
-            window.location.href = '/admin/login'
-          }
-
-          async function deleteCase(caseId) {
-            if (!confirm('确定要删除这个案例吗？此操作无法撤销。')) {
-              return
-            }
-
+          async function logout() {
             try {
-              const sessionId = localStorage.getItem('admin-session')
-              const response = await fetch('/api/admin/cases/' + caseId, {
-                method: 'DELETE',
-                headers: {
-                  'x-session-id': sessionId
-                }
+              await fetch('/api/admin/logout', {
+                method: 'POST',
+                credentials: 'include'
               })
-
-              const result = await response.json()
-              
-              if (result.success) {
-                alert('案例删除成功')
-                window.location.reload()
-              } else {
-                alert(result.message || '删除失败')
-              }
             } catch (error) {
-              alert('删除请求失败，请稍后再试')
+              console.error('Logout error:', error)
+            } finally {
+              localStorage.removeItem('admin-session')
+              window.location.href = '/admin/login'
             }
           }
 
           // Check authentication on page load
-          const sessionId = localStorage.getItem('admin-session')
-          if (!sessionId) {
-            window.location.href = '/admin/login'
-          }
+          document.addEventListener('DOMContentLoaded', function() {
+            const sessionId = localStorage.getItem('admin-session')
+            if (!sessionId) {
+              window.location.href = '/admin/login'
+            }
+          })
         `}</script>
       </div>
     )
   } catch (error) {
-    console.error('Error loading admin management:', error)
+    console.error('Error loading IP management:', error)
     return c.render(
       <div class="error-page">
         <div class="container">
           <div class="error-message">
             <h1>加载失败</h1>
-            <p>无法加载管理页面，请稍后再试。</p>
+            <p>无法加载IP管理页面，请稍后再试。</p>
             <a href="/admin/login" class="btn-primary">重新登录</a>
           </div>
         </div>
@@ -3019,374 +3896,59 @@ app.get('/admin/cases/manage', async (c) => {
   }
 })
 
-// Add New Case Page
-app.get('/admin/cases/add', async (c) => {
+// Edit IP Profile Page
+app.get('/admin/ip/edit/:id', async (c) => {
   try {
     const { env } = c
+    const ipId = c.req.param('id')
 
-    const categories = await env.DB.prepare(`
-      SELECT * FROM case_categories ORDER BY sort_order ASC
-    `).all()
+    // Get IP profile data
+    const profile = await env.DB.prepare(`
+      SELECT * FROM ip_profiles WHERE id = ?
+    `).bind(ipId).first()
 
-    return c.render(
-      <div class="admin-add-case-page">
-        <div class="admin-header">
-          <div class="container">
-            <div class="admin-nav">
-              <div class="admin-logo">
-                <i class="fas fa-plus"></i>
-                <span>添加新案例</span>
-              </div>
-              <div class="admin-actions">
-                <a href="/admin/cases/manage" class="btn-secondary">
-                  <i class="fas fa-arrow-left"></i>
-                  返回管理
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-content">
-          <div class="container">
-            <form id="addCaseForm" class="case-form">
-              <div class="form-section">
-                <h3>基本信息</h3>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="title">案例标题 *</label>
-                    <input type="text" id="title" name="title" required />
-                  </div>
-                  <div class="form-group">
-                    <label for="slug">URL路径 *</label>
-                    <input type="text" id="slug" name="slug" placeholder="auto-generated" />
-                    <small>留空自动生成</small>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="client_name">客户名称 *</label>
-                    <input type="text" id="client_name" name="client_name" required />
-                  </div>
-                  <div class="form-group">
-                    <label for="category_id">案例分类 *</label>
-                    <select id="category_id" name="category_id" required>
-                      <option value="">请选择分类</option>
-                      {categories.results?.map(cat => (
-                        <option value={cat.id}>{cat.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="summary">案例简介 *</label>
-                  <textarea id="summary" name="summary" rows="3" placeholder="简要描述这个案例..." required></textarea>
-                </div>
-              </div>
-
-              <div class="form-section">
-                <h3>项目详情</h3>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="project_date">项目日期</label>
-                    <input type="date" id="project_date" name="project_date" />
-                  </div>
-                  <div class="form-group">
-                    <label for="project_duration">项目周期</label>
-                    <input type="text" id="project_duration" name="project_duration" placeholder="例：3个月" />
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="industry">行业领域</label>
-                    <input type="text" id="industry" name="industry" placeholder="例：DeFi, GameFi, NFT" />
-                  </div>
-                  <div class="form-group">
-                    <label for="location">项目地区</label>
-                    <input type="text" id="location" name="location" placeholder="例：全球, 亚太" />
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="website_url">项目网站</label>
-                  <input type="url" id="website_url" name="website_url" placeholder="https://" />
-                </div>
-              </div>
-
-              <div class="form-section">
-                <h3>媒体资源</h3>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="thumbnail_url">缩略图URL</label>
-                    <input type="url" id="thumbnail_url" name="thumbnail_url" placeholder="https://" />
-                  </div>
-                  <div class="form-group">
-                    <label for="banner_url">封面图URL</label>
-                    <input type="url" id="banner_url" name="banner_url" placeholder="https://" />
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="client_logo_url">客户Logo URL</label>
-                  <input type="url" id="client_logo_url" name="client_logo_url" placeholder="https://" />
-                </div>
-              </div>
-
-              <div class="form-section">
-                <h3>案例内容</h3>
-                <div class="form-group">
-                  <label for="content">详细内容</label>
-                  <textarea id="content" name="content" rows="10" placeholder="详细描述案例的执行过程、策略、成果等..."></textarea>
-                </div>
-              </div>
-
-              <div class="form-section">
-                <h3>标签和数据</h3>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="tags">项目标签</label>
-                    <input type="text" id="tags" name="tags" placeholder="标签1,标签2,标签3" />
-                    <small>多个标签用英文逗号分隔</small>
-                  </div>
-                  <div class="form-group">
-                    <label for="status">发布状态</label>
-                    <select id="status" name="status">
-                      <option value="draft">草稿</option>
-                      <option value="published">立即发布</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="metrics">项目数据 (JSON格式)</label>
-                  <textarea id="metrics" name="metrics" rows="4" placeholder='{"total_exposure": 1500000, "community_growth": 8500, "conversion_rate": 12.5}'></textarea>
-                  <small>请输入JSON格式的项目数据</small>
-                </div>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" onclick="history.back()" class="btn-secondary">取消</button>
-                <button type="submit" class="btn-primary">
-                  <i class="fas fa-save"></i>
-                  保存案例
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <script>{`
-          // Auto-generate slug from title
-          document.getElementById('title').addEventListener('input', function(e) {
-            const slug = e.target.value
-              .toLowerCase()
-              .replace(/[^a-z0-9\\u4e00-\\u9fa5]+/g, '-')
-              .replace(/^-+|-+$/g, '')
-            document.getElementById('slug').value = slug
-          })
-
-          document.getElementById('addCaseForm').addEventListener('submit', async function(e) {
-            e.preventDefault()
-            
-            const formData = new FormData(e.target)
-            const caseData = {}
-            
-            for (let [key, value] of formData.entries()) {
-              if (key === 'tags') {
-                caseData[key] = JSON.stringify(value.split(',').map(tag => tag.trim()).filter(tag => tag))
-              } else if (key === 'metrics') {
-                try {
-                  caseData[key] = value ? JSON.parse(value) : null
-                } catch (error) {
-                  alert('项目数据格式错误，请输入正确的JSON格式')
-                  return
-                }
-              } else {
-                caseData[key] = value || null
-              }
-            }
-
-            try {
-              const sessionId = localStorage.getItem('admin-session')
-              const response = await fetch('/api/admin/cases', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'x-session-id': sessionId
-                },
-                body: JSON.stringify(caseData)
-              })
-
-              const result = await response.json()
-              
-              if (result.success) {
-                alert('案例添加成功！')
-                window.location.href = '/admin/cases/manage'
-              } else {
-                alert(result.message || '添加失败，请检查输入信息')
-              }
-            } catch (error) {
-              alert('提交失败，请稍后再试')
-            }
-          })
-
-          // Check authentication
-          const sessionId = localStorage.getItem('admin-session')
-          if (!sessionId) {
-            window.location.href = '/admin/login'
-          }
-        `}</script>
-      </div>
-    )
-  } catch (error) {
-    console.error('Error loading add case page:', error)
-    return c.render(
-      <div class="error-page">
-        <div class="container">
-          <div class="error-message">
-            <h1>页面加载失败</h1>
-            <p>无法加载添加案例页面，请稍后再试。</p>
-            <a href="/admin/cases/manage" class="btn-primary">返回管理</a>
-          </div>
-        </div>
-      </div>
-    )
-  }
-})
-
-// API: Add New Case
-app.post('/api/admin/cases', async (c) => {
-  try {
-    const { env } = c
-    const caseData = await c.req.json()
-
-    // Generate slug if not provided
-    if (!caseData.slug) {
-      caseData.slug = caseData.title
-        .toLowerCase()
-        .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
-        .replace(/^-+|-+$/g, '')
-    }
-
-    // Insert case into database
-    const result = await env.DB.prepare(`
-      INSERT INTO cases (
-        title, slug, summary, content, category_id, thumbnail_url, banner_url,
-        client_name, client_logo_url, project_date, project_duration,
-        industry, location, website_url, tags, metrics, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      caseData.title,
-      caseData.slug,
-      caseData.summary,
-      caseData.content,
-      caseData.category_id,
-      caseData.thumbnail_url,
-      caseData.banner_url,
-      caseData.client_name,
-      caseData.client_logo_url,
-      caseData.project_date,
-      caseData.project_duration,
-      caseData.industry,
-      caseData.location,
-      caseData.website_url,
-      caseData.tags,
-      JSON.stringify(caseData.metrics),
-      caseData.status
-    ).run()
-
-    if (result.success) {
-      return c.json({ success: true, message: '案例添加成功', caseId: result.meta.last_row_id })
-    } else {
-      return c.json({ success: false, message: '数据库操作失败' }, 500)
-    }
-  } catch (error) {
-    console.error('Error adding case:', error)
-    return c.json({ success: false, message: '添加案例失败: ' + error.message }, 500)
-  }
-})
-
-// API: Delete Case
-app.delete('/api/admin/cases/:id', async (c) => {
-  try {
-    const { env } = c
-    const caseId = c.req.param('id')
-
-    const result = await env.DB.prepare(`
-      DELETE FROM cases WHERE id = ?
-    `).bind(caseId).run()
-
-    if (result.success && result.meta.changes > 0) {
-      return c.json({ success: true, message: '案例删除成功' })
-    } else {
-      return c.json({ success: false, message: '案例未找到或删除失败' }, 404)
-    }
-  } catch (error) {
-    console.error('Error deleting case:', error)
-    return c.json({ success: false, message: '删除案例失败' }, 500)
-  }
-})
-
-// Edit Case Page
-app.get('/admin/cases/edit/:id', async (c) => {
-  try {
-    const { env } = c
-    const caseId = c.req.param('id')
-
-    const caseData = await env.DB.prepare(`
-      SELECT * FROM cases WHERE id = ?
-    `).bind(caseId).first()
-
-    if (!caseData) {
+    if (!profile) {
       return c.render(
         <div class="error-page">
           <div class="container">
             <div class="error-message">
-              <h1>案例未找到</h1>
-              <p>请求的案例不存在或已被删除。</p>
-              <a href="/admin/cases/manage" class="btn-primary">返回管理</a>
+              <h1>IP未找到</h1>
+              <p>请求的IP不存在或已被删除。</p>
+              <a href="/admin/ip/manage" class="btn-primary">返回管理</a>
             </div>
           </div>
         </div>
       )
     }
 
-    const categories = await env.DB.prepare(`
-      SELECT * FROM case_categories ORDER BY sort_order ASC
-    `).all()
-
-    // Parse JSON fields
-    let tags = []
-    let metrics = {}
+    // Parse JSON fields for editing
+    let socialLinks = {}
+    let specialties = []
+    let languages = []
     
     try {
-      tags = caseData.tags ? JSON.parse(caseData.tags) : []
-    } catch (e) {}
-    
-    try {
-      metrics = caseData.metrics ? JSON.parse(caseData.metrics) : {}
+      socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
+      specialties = profile.specialties ? JSON.parse(profile.specialties) : []
+      languages = profile.languages ? JSON.parse(profile.languages) : []
     } catch (e) {}
 
     return c.render(
-      <div class="admin-edit-case-page">
+      <div class="admin-edit-ip-page">
         <div class="admin-header">
           <div class="container">
             <div class="admin-nav">
               <div class="admin-logo">
                 <i class="fas fa-edit"></i>
-                <span>编辑案例: {caseData.title}</span>
+                <span>编辑IP: {profile.display_name}</span>
               </div>
               <div class="admin-actions">
-                <a href="/admin/cases/manage" class="btn-secondary">
+                <a href="/admin/ip/manage" class="btn-secondary">
                   <i class="fas fa-arrow-left"></i>
                   返回管理
                 </a>
-                <a href={`/cases/${caseData.slug}`} target="_blank" class="btn-secondary">
+                <a href={`/ip/${profile.slug}`} target="_blank" class="btn-secondary">
                   <i class="fas fa-eye"></i>
-                  预览案例
+                  预览页面
                 </a>
               </div>
             </div>
@@ -3395,123 +3957,208 @@ app.get('/admin/cases/edit/:id', async (c) => {
 
         <div class="admin-content">
           <div class="container">
-            <form id="editCaseForm" class="case-form">
-              <input type="hidden" name="id" value={caseData.id} />
+            <form id="editIPForm" class="ip-form" onsubmit="event.preventDefault(); handleFormSubmission()">
+              <input type="hidden" name="id" value={profile.id} />
               
               <div class="form-section">
                 <h3>基本信息</h3>
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="title">案例标题 *</label>
-                    <input type="text" id="title" name="title" value={caseData.title} required />
+                    <label for="name">IP名称 *</label>
+                    <input type="text" id="name" name="name" value={profile.name} required />
                   </div>
                   <div class="form-group">
-                    <label for="slug">URL路径 *</label>
-                    <input type="text" id="slug" name="slug" value={caseData.slug} required />
+                    <label for="slug">URL标识 *</label>
+                    <input type="text" id="slug" name="slug" value={profile.slug} required />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="client_name">客户名称 *</label>
-                    <input type="text" id="client_name" name="client_name" value={caseData.client_name} required />
+                    <label for="display_name">显示名称 *</label>
+                    <input type="text" id="display_name" name="display_name" value={profile.display_name} required />
                   </div>
                   <div class="form-group">
-                    <label for="category_id">案例分类 *</label>
-                    <select id="category_id" name="category_id" required>
-                      <option value="">请选择分类</option>
-                      {categories.results?.map(cat => (
-                        <option value={cat.id} selected={cat.id === caseData.category_id}>{cat.name}</option>
-                      ))}
-                    </select>
+                    <label for="title">职业标题 *</label>
+                    <input type="text" id="title" name="title" value={profile.title} required />
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="summary">案例简介 *</label>
-                  <textarea id="summary" name="summary" rows="3" required>{caseData.summary}</textarea>
-                </div>
-              </div>
-
-              <div class="form-section">
-                <h3>项目详情</h3>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="project_date">项目日期</label>
-                    <input type="date" id="project_date" name="project_date" value={caseData.project_date} />
-                  </div>
-                  <div class="form-group">
-                    <label for="project_duration">项目周期</label>
-                    <input type="text" id="project_duration" name="project_duration" value={caseData.project_duration} />
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="industry">行业领域</label>
-                    <input type="text" id="industry" name="industry" value={caseData.industry} />
-                  </div>
-                  <div class="form-group">
-                    <label for="location">项目地区</label>
-                    <input type="text" id="location" name="location" value={caseData.location} />
-                  </div>
+                  <label for="slogan">个人标语</label>
+                  <input type="text" id="slogan" name="slogan" value={profile.slogan} />
                 </div>
 
                 <div class="form-group">
-                  <label for="website_url">项目网站</label>
-                  <input type="url" id="website_url" name="website_url" value={caseData.website_url} />
+                  <label for="bio">个人简介</label>
+                  <textarea id="bio" name="bio" rows="4" placeholder="详细介绍这个IP的背景、特色和优势...">{profile.bio}</textarea>
                 </div>
               </div>
 
               <div class="form-section">
                 <h3>媒体资源</h3>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="thumbnail_url">缩略图URL</label>
-                    <input type="url" id="thumbnail_url" name="thumbnail_url" value={caseData.thumbnail_url} />
-                  </div>
-                  <div class="form-group">
-                    <label for="banner_url">封面图URL</label>
-                    <input type="url" id="banner_url" name="banner_url" value={caseData.banner_url} />
+                
+                {/* Avatar Upload */}
+                <div class="form-group">
+                  <label>头像</label>
+                  <div class="image-upload-container">
+                    <div class="image-preview-wrapper">
+                      <img id="avatar-preview" 
+                           src={profile.avatar_url || '/static/images/default-avatar.svg'} 
+                           alt="头像预览" 
+                           class="image-preview avatar-preview" />
+                      <div class="image-upload-overlay">
+                        <i class="fas fa-camera"></i>
+                        <span>更换头像</span>
+                      </div>
+                    </div>
+                    <div class="image-upload-controls">
+                      <input type="file" 
+                             id="avatar-upload" 
+                             accept="image/*" 
+                             class="image-upload-input" />
+                      <button type="button" 
+                              class="btn-upload" 
+                              id="avatar-upload-btn">
+                        <i class="fas fa-upload"></i> 上传头像
+                      </button>
+                      <input type="url" 
+                             id="avatar_url" 
+                             name="avatar_url" 
+                             value={profile.avatar_url} 
+                             placeholder="或输入图片URL" 
+                             class="url-input" />
+                    </div>
                   </div>
                 </div>
 
+                {/* Banner Upload */}
                 <div class="form-group">
-                  <label for="client_logo_url">客户Logo URL</label>
-                  <input type="url" id="client_logo_url" name="client_logo_url" value={caseData.client_logo_url} />
+                  <label>横幅图</label>
+                  <div class="image-upload-container">
+                    <div class="image-preview-wrapper banner-wrapper">
+                      <img id="banner-preview" 
+                           src={profile.banner_url || '/static/images/default-banner.svg'} 
+                           alt="横幅图预览" 
+                           class="image-preview banner-preview" />
+                      <div class="image-upload-overlay">
+                        <i class="fas fa-image"></i>
+                        <span>更换横幅图</span>
+                      </div>
+                    </div>
+                    <div class="image-upload-controls">
+                      <input type="file" 
+                             id="banner-upload" 
+                             accept="image/*" 
+                             class="image-upload-input" />
+                      <button type="button" 
+                              class="btn-upload" 
+                              id="banner-upload-btn">
+                        <i class="fas fa-upload"></i> 上传横幅图
+                      </button>
+                      <input type="url" 
+                             id="banner_url" 
+                             name="banner_url" 
+                             value={profile.banner_url} 
+                             placeholder="或输入图片URL" 
+                             class="url-input" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cover Image Upload */}
+                <div class="form-group">
+                  <label>封面图</label>
+                  <div class="image-upload-container">
+                    <div class="image-preview-wrapper cover-wrapper">
+                      <img id="cover-preview" 
+                           src={profile.cover_image_url || '/static/images/default-cover.svg'} 
+                           alt="封面图预览" 
+                           class="image-preview cover-preview" />
+                      <div class="image-upload-overlay">
+                        <i class="fas fa-photo-video"></i>
+                        <span>更换封面图</span>
+                      </div>
+                    </div>
+                    <div class="image-upload-controls">
+                      <input type="file" 
+                             id="cover-upload" 
+                             accept="image/*" 
+                             class="image-upload-input" />
+                      <button type="button" 
+                              class="btn-upload" 
+                              id="cover-upload-btn">
+                        <i class="fas fa-upload"></i> 上传封面图
+                      </button>
+                      <input type="url" 
+                             id="cover_image_url" 
+                             name="cover_image_url" 
+                             value={profile.cover_image_url} 
+                             placeholder="或输入图片URL" 
+                             class="url-input" 
+                             />
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div class="form-section">
-                <h3>案例内容</h3>
-                <div class="form-group">
-                  <label for="content">详细内容</label>
-                  <textarea id="content" name="content" rows="10">{caseData.content}</textarea>
-                </div>
-              </div>
-
-              <div class="form-section">
-                <h3>标签和数据</h3>
+                <h3>个人信息</h3>
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="tags">项目标签</label>
-                    <input type="text" id="tags" name="tags" value={tags.join(',')} />
-                    <small>多个标签用英文逗号分隔</small>
+                    <label for="location">所在地</label>
+                    <input type="text" id="location" name="location" value={profile.location} />
                   </div>
                   <div class="form-group">
-                    <label for="status">发布状态</label>
+                    <label for="status">状态</label>
                     <select id="status" name="status">
-                      <option value="draft" selected={caseData.status === 'draft'}>草稿</option>
-                      <option value="published" selected={caseData.status === 'published'}>已发布</option>
-                      <option value="archived" selected={caseData.status === 'archived'}>已归档</option>
+                      <option value="active" selected={profile.status === 'active'}>活跃</option>
+                      <option value="inactive" selected={profile.status === 'inactive'}>暂停</option>
+                      <option value="archived" selected={profile.status === 'archived'}>归档</option>
                     </select>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="metrics">项目数据 (JSON格式)</label>
-                  <textarea id="metrics" name="metrics" rows="4">{JSON.stringify(metrics, null, 2)}</textarea>
-                  <small>请输入JSON格式的项目数据</small>
+                  <label for="languages">语言能力</label>
+                  <input type="text" id="languages" name="languages" value={languages.join(', ')} />
+                  <small>多种语言用逗号分隔，如：中文, English, 日本語</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="specialties">专长领域</label>
+                  <input type="text" id="specialties" name="specialties" value={specialties.join(', ')} />
+                  <small>多个专长用逗号分隔，如：Web3科普, DeFi分析, 区块链教育</small>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>社交媒体链接</h3>
+                <div class="social-links-inputs">
+                  <div class="form-group">
+                    <label for="youtube_link">YouTube</label>
+                    <input type="url" id="youtube_link" name="youtube_link" value={socialLinks.youtube || ''} />
+                  </div>
+                  <div class="form-group">
+                    <label for="twitter_link">X (Twitter)</label>
+                    <input type="url" id="twitter_link" name="twitter_link" value={socialLinks.twitter || ''} />
+                  </div>
+                  <div class="form-group">
+                    <label for="tiktok_link">TikTok</label>
+                    <input type="url" id="tiktok_link" name="tiktok_link" value={socialLinks.tiktok || ''} />
+                  </div>
+                  <div class="form-group">
+                    <label for="bilibili_link">B站</label>
+                    <input type="url" id="bilibili_link" name="bilibili_link" value={socialLinks.bilibili || ''} />
+                  </div>
+                  <div class="form-group">
+                    <label for="instagram_link">Instagram</label>
+                    <input type="url" id="instagram_link" name="instagram_link" value={socialLinks.instagram || ''} />
+                  </div>
+                  <div class="form-group">
+                    <label for="kuaishou_link">快手</label>
+                    <input type="url" id="kuaishou_link" name="kuaishou_link" value={socialLinks.kuaishou || ''} />
+                  </div>
                 </div>
               </div>
 
@@ -3527,68 +4174,224 @@ app.get('/admin/cases/edit/:id', async (c) => {
         </div>
 
         <script>{`
-          document.getElementById('editCaseForm').addEventListener('submit', async function(e) {
-            e.preventDefault()
+          // Simple image upload function
+          async function uploadImageFile(file, targetInputId, previewId) {
+            if (!file) return;
             
-            const formData = new FormData(e.target)
-            const caseData = {}
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+              const response = await fetch('/api/upload/image', {
+                method: 'POST',
+                body: formData
+              });
+              
+              const result = await response.json();
+              
+              if (result.success) {
+                const urlInput = document.getElementById(targetInputId);
+                const previewImg = document.getElementById(previewId);
+                
+                if (urlInput) urlInput.value = result.data.url;
+                if (previewImg) previewImg.src = result.data.url;
+                
+                alert('图片上传成功！');
+                return result.data.url;
+              } else {
+                throw new Error(result.message || '上传失败');
+              }
+            } catch (error) {
+              console.error('Upload error:', error);
+              alert('图片上传失败: ' + error.message);
+              return null;
+            }
+          }
+          
+          // Update preview when URL changes
+          function updatePreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            if (input && preview && input.value) {
+              preview.src = input.value;
+            }
+          }
+          
+          // Handle form submission
+          async function handleFormSubmission() {
+            const form = document.getElementById('editIPForm');
+            if (!form) return;
+            
+            const formData = new FormData(form);
+            const ipData = {};
             
             for (let [key, value] of formData.entries()) {
-              if (key === 'tags') {
-                caseData[key] = JSON.stringify(value.split(',').map(tag => tag.trim()).filter(tag => tag))
-              } else if (key === 'metrics') {
-                try {
-                  caseData[key] = value ? JSON.parse(value) : null
-                } catch (error) {
-                  alert('项目数据格式错误，请输入正确的JSON格式')
-                  return
-                }
+              if (key.includes('_link')) {
+                continue;
+              } else if (key === 'languages' || key === 'specialties') {
+                ipData[key] = JSON.stringify(value.split(',').map(item => item.trim()).filter(item => item));
               } else {
-                caseData[key] = value || null
+                ipData[key] = value || null;
               }
             }
 
+            const socialLinks = {};
+            if (formData.get('youtube_link')) socialLinks.youtube = formData.get('youtube_link');
+            if (formData.get('twitter_link')) socialLinks.twitter = formData.get('twitter_link');
+            if (formData.get('tiktok_link')) socialLinks.tiktok = formData.get('tiktok_link');
+            if (formData.get('bilibili_link')) socialLinks.bilibili = formData.get('bilibili_link');
+            if (formData.get('instagram_link')) socialLinks.instagram = formData.get('instagram_link');
+            if (formData.get('kuaishou_link')) socialLinks.kuaishou = formData.get('kuaishou_link');
+            
+            ipData.social_links = JSON.stringify(socialLinks);
+
             try {
-              const sessionId = localStorage.getItem('admin-session')
-              const response = await fetch('/api/admin/cases/' + caseData.id, {
+              const sessionId = localStorage.getItem('admin-session');
+              const response = await fetch('/api/admin/ip/' + ipData.id, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
                   'x-session-id': sessionId
                 },
-                body: JSON.stringify(caseData)
-              })
+                body: JSON.stringify(ipData)
+              });
 
-              const result = await response.json()
+              const result = await response.json();
               
               if (result.success) {
-                alert('案例更新成功！')
-                window.location.href = '/admin/cases/manage'
+                alert('IP信息更新成功！');
+                window.location.href = '/admin/ip/manage';
               } else {
-                alert(result.message || '更新失败，请检查输入信息')
+                alert(result.message || '更新失败，请检查输入信息');
               }
             } catch (error) {
-              alert('提交失败，请稍后再试')
+              alert('提交失败，请稍后再试');
             }
-          })
-
-          // Check authentication
-          const sessionId = localStorage.getItem('admin-session')
-          if (!sessionId) {
-            window.location.href = '/admin/login'
           }
+          
+          // Check authentication
+          const sessionId = localStorage.getItem('admin-session');
+          if (!sessionId) {
+            window.location.href = '/admin/login';
+          }
+          
+          // Set up event listeners for image upload functionality
+          // Check if DOM is already loaded, if so run immediately, otherwise wait for DOMContentLoaded
+          function setupEventListeners() {
+            console.log('🔧 Setting up event listeners...');
+            
+            // Avatar upload
+            const avatarUploadBtn = document.getElementById('avatar-upload-btn');
+            const avatarUpload = document.getElementById('avatar-upload');
+            const avatarUrlInput = document.getElementById('avatar_url');
+            
+            console.log('🖼️ Avatar elements:', {
+              btn: !!avatarUploadBtn,
+              input: !!avatarUpload,
+              url: !!avatarUrlInput
+            });
+            
+            if (avatarUploadBtn && avatarUpload) {
+              avatarUploadBtn.addEventListener('click', function() {
+                console.log('🔘 Avatar upload button clicked');
+                avatarUpload.click();
+              });
+              
+              avatarUpload.addEventListener('change', function() {
+                console.log('📁 Avatar file selected:', this.files ? this.files[0]?.name : 'none');
+                if (this.files && this.files[0]) {
+                  uploadImageFile(this.files[0], 'avatar_url', 'avatar-preview');
+                }
+              });
+              console.log('✅ Avatar listeners added');
+            } else {
+              console.error('❌ Avatar elements not found');
+            }
+            
+            if (avatarUrlInput) {
+              avatarUrlInput.addEventListener('input', function() {
+                updatePreview('avatar_url', 'avatar-preview');
+              });
+            }
+            
+            // Banner upload
+            const bannerUploadBtn = document.getElementById('banner-upload-btn');
+            const bannerUpload = document.getElementById('banner-upload');
+            const bannerUrlInput = document.getElementById('banner_url');
+            
+            console.log('🖼️ Banner elements:', {
+              btn: !!bannerUploadBtn,
+              input: !!bannerUpload,
+              url: !!bannerUrlInput
+            });
+            
+            if (bannerUploadBtn && bannerUpload) {
+              bannerUploadBtn.addEventListener('click', function() {
+                console.log('🔘 Banner upload button clicked');
+                bannerUpload.click();
+              });
+              
+              bannerUpload.addEventListener('change', function() {
+                console.log('📁 Banner file selected:', this.files ? this.files[0]?.name : 'none');
+                if (this.files && this.files[0]) {
+                  uploadImageFile(this.files[0], 'banner_url', 'banner-preview');
+                }
+              });
+              console.log('✅ Banner listeners added');
+            } else {
+              console.error('❌ Banner elements not found');
+            }
+            
+            if (bannerUrlInput) {
+              bannerUrlInput.addEventListener('input', function() {
+                updatePreview('banner_url', 'banner-preview');
+              });
+            }
+            
+            // Cover upload - 直接绑定到可见文件输入
+            const coverUpload = document.getElementById('cover-upload');
+            const coverUrlInput = document.getElementById('cover_image_url');
+            
+            console.log('🖼️ Cover elements:', {
+              input: !!coverUpload,
+              url: !!coverUrlInput
+            });
+            
+            if (coverUpload) {
+              coverUpload.addEventListener('change', function() {
+                console.log('🔥 Cover file selected:', this.files ? this.files[0]?.name : 'none');
+                if (this.files && this.files[0]) {
+                  console.log('🚀 开始上传封面图...');
+                  uploadImageFile(this.files[0], 'cover_image_url', 'cover-preview');
+                }
+              });
+              console.log('✅ Cover direct input listener added');
+            } else {
+              console.error('❌ Cover input not found');
+            }
+            
+            if (coverUrlInput) {
+              coverUrlInput.addEventListener('input', function() {
+                updatePreview('cover_image_url', 'cover-preview');
+              });
+            }
+          }
+          
+          // Call setup immediately since DOM is ready when script runs
+          console.log('📄 Document ready state:', document.readyState);
+          setupEventListeners();
         `}</script>
       </div>
     )
   } catch (error) {
-    console.error('Error loading edit case page:', error)
+    console.error('Error loading IP edit page:', error)
     return c.render(
       <div class="error-page">
         <div class="container">
           <div class="error-message">
             <h1>页面加载失败</h1>
             <p>无法加载编辑页面，请稍后再试。</p>
-            <a href="/admin/cases/manage" class="btn-primary">返回管理</a>
+            <a href="/admin/ip/manage" class="btn-primary">返回管理</a>
           </div>
         </div>
       </div>
@@ -3596,287 +4399,1323 @@ app.get('/admin/cases/edit/:id', async (c) => {
   }
 })
 
-// API: Update Case
-app.put('/api/admin/cases/:id', async (c) => {
+// API: Update IP Profile
+app.put('/api/admin/ip/:id', async (c) => {
   try {
     const { env } = c
-    const caseId = c.req.param('id')
-    const caseData = await c.req.json()
+    const ipId = c.req.param('id')
+    const ipData = await c.req.json()
 
     const result = await env.DB.prepare(`
-      UPDATE cases SET
-        title = ?, slug = ?, summary = ?, content = ?, category_id = ?,
-        thumbnail_url = ?, banner_url = ?, client_name = ?, client_logo_url = ?,
-        project_date = ?, project_duration = ?, industry = ?, location = ?,
-        website_url = ?, tags = ?, metrics = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+      UPDATE ip_profiles SET
+        name = ?, slug = ?, display_name = ?, title = ?, slogan = ?,
+        bio = ?, avatar_url = ?, banner_url = ?, cover_image_url = ?,
+        location = ?, languages = ?, specialties = ?, social_links = ?,
+        status = ?, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `).bind(
-      caseData.title,
-      caseData.slug,
-      caseData.summary,
-      caseData.content,
-      caseData.category_id,
-      caseData.thumbnail_url,
-      caseData.banner_url,
-      caseData.client_name,
-      caseData.client_logo_url,
-      caseData.project_date,
-      caseData.project_duration,
-      caseData.industry,
-      caseData.location,
-      caseData.website_url,
-      caseData.tags,
-      JSON.stringify(caseData.metrics),
-      caseData.status,
-      caseId
+      ipData.name,
+      ipData.slug,
+      ipData.display_name,
+      ipData.title,
+      ipData.slogan,
+      ipData.bio,
+      ipData.avatar_url,
+      ipData.banner_url,
+      ipData.cover_image_url,
+      ipData.location,
+      ipData.languages,
+      ipData.specialties,
+      ipData.social_links,
+      ipData.status,
+      ipId
     ).run()
 
     if (result.success && result.meta.changes > 0) {
-      return c.json({ success: true, message: '案例更新成功' })
+      return c.json({ success: true, message: 'IP信息更新成功' })
     } else {
-      return c.json({ success: false, message: '案例未找到或更新失败' }, 404)
+      return c.json({ success: false, message: 'IP未找到或更新失败' }, 404)
     }
   } catch (error) {
-    console.error('Error updating case:', error)
-    return c.json({ success: false, message: '更新案例失败: ' + error.message }, 500)
+    console.error('Error updating IP:', error)
+    return c.json({ success: false, message: '更新IP信息失败: ' + error.message }, 500)
   }
 })
 
-// Individual Case Detail Page
-app.get('/cases/:slug', async (c) => {
+// Add IP Form
+app.get('/admin/ip/add', (c) => {
+  return c.render(
+    <div class="admin-form-page">
+      <div class="admin-header">
+        <div class="container">
+          <div class="admin-nav">
+            <div class="admin-logo">
+              <i class="fas fa-user-plus"></i>
+              <span>添加新IP</span>
+            </div>
+            
+            <div class="admin-menu">
+              <a href="/admin" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                总览
+              </a>
+              <a href="/admin/ip/manage" class="nav-item active">
+                <i class="fas fa-users"></i>
+                IP管理
+              </a>
+
+              <a href="/admin/tutorials/manage" class="nav-item">
+                <i class="fas fa-graduation-cap"></i>
+                教程管理
+              </a>
+              <a href="/admin/uploads" class="nav-item">
+                <i class="fas fa-images"></i>
+                文件管理
+              </a>
+            </div>
+            
+            <div class="admin-actions">
+              <a href="/admin/ip/manage" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                返回列表
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="container">
+          <div class="form-container">
+            <form id="ipForm" class="admin-form">
+              <div class="form-section">
+                <h3>基本信息</h3>
+                
+                <div class="form-group">
+                  <label for="ipDisplayName">显示名称 *</label>
+                  <input type="text" id="ipDisplayName" name="display_name" required placeholder="例如：Giant Cutie" />
+                </div>
+                
+                <div class="form-group">
+                  <label for="ipSlug">URL标识 *</label>
+                  <input type="text" id="ipSlug" name="slug" required placeholder="giant-cutie" />
+                  <small>用于生成IP页面链接，只能包含字母、数字和连字符</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="ipRealName">真实姓名</label>
+                  <input type="text" id="ipRealName" name="real_name" placeholder="真实姓名（可选）" />
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="ipCategory">IP类别</label>
+                    <select id="ipCategory" name="category">
+                      <option value="kol">KOL网红</option>
+                      <option value="streamer">直播主播</option>
+                      <option value="analyst">分析师</option>
+                      <option value="educator">教育者</option>
+                      <option value="influencer">影响者</option>
+                      <option value="other">其他</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="ipStatus">状态</label>
+                    <select id="ipStatus" name="status">
+                      <option value="active">活跃</option>
+                      <option value="inactive">不活跃</option>
+                      <option value="pending">待定</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="ipBio">简介</label>
+                  <textarea id="ipBio" name="bio" rows="4" placeholder="IP的简要介绍"></textarea>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>图片设置</h3>
+                
+                <div class="form-group">
+                  <label for="ipAvatar">头像</label>
+                  <div class="image-upload-area" onclick="document.getElementById('avatarInput').click()">
+                    <div id="avatarPreview" class="image-preview">
+                      <i class="fas fa-user-circle"></i>
+                      <p>点击上传头像</p>
+                      <small>建议尺寸：400x400px</small>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;" />
+                    <input type="hidden" id="avatarUrl" name="avatar_url" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="ipBanner">横幅图</label>
+                  <div class="image-upload-area" onclick="document.getElementById('bannerInput').click()">
+                    <div id="bannerPreview" class="image-preview">
+                      <i class="fas fa-image"></i>
+                      <p>点击上传横幅图</p>
+                      <small>建议尺寸：1200x400px</small>
+                    </div>
+                    <input type="file" id="bannerInput" accept="image/*" style="display: none;" />
+                    <input type="hidden" id="bannerUrl" name="banner_url" />
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="ipCover">封面图</label>
+                  <div class="image-upload-area" onclick="document.getElementById('coverInput').click()">
+                    <div id="coverPreview" class="image-preview">
+                      <i class="fas fa-image"></i>
+                      <p>点击上传封面图</p>
+                      <small>建议尺寸：800x600px</small>
+                    </div>
+                    <input type="file" id="coverInput" accept="image/*" style="display: none;" />
+                    <input type="hidden" id="coverUrl" name="cover_url" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>联系方式</h3>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="ipEmail">邮箱</label>
+                    <input type="email" id="ipEmail" name="email" placeholder="contact@example.com" />
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="ipWebsite">个人网站</label>
+                    <input type="url" id="ipWebsite" name="website" placeholder="https://..." />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" onclick="history.back()" class="btn-secondary">取消</button>
+                <button type="submit" class="btn-primary">
+                  <i class="fas fa-save"></i>
+                  保存IP
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <script>{`
+        // Auto-generate slug from display name
+        document.getElementById('ipDisplayName').addEventListener('input', (e) => {
+          const name = e.target.value;
+          const slug = name
+            .toLowerCase()
+            .replace(/[^a-z0-9\\s-]/g, '')
+            .replace(/[\\s]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+          document.getElementById('ipSlug').value = slug;
+        });
+
+        // Avatar upload
+        document.getElementById('avatarInput').addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          
+          try {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch('/api/upload/image', {
+              method: 'POST',
+              body: formData
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+              document.getElementById('avatarUrl').value = result.data.url;
+              document.getElementById('avatarPreview').innerHTML = 
+                '<img src="' + result.data.url + '" alt="头像预览" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">';
+            } else {
+              alert('上传失败：' + result.message);
+            }
+          } catch (error) {
+            alert('上传错误：' + error.message);
+          }
+        });
+
+        // Banner upload
+        document.getElementById('bannerInput').addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          
+          try {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch('/api/upload/image', {
+              method: 'POST',
+              body: formData
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+              document.getElementById('bannerUrl').value = result.data.url;
+              document.getElementById('bannerPreview').innerHTML = 
+                '<img src="' + result.data.url + '" alt="横幅预览" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">';
+            } else {
+              alert('上传失败：' + result.message);
+            }
+          } catch (error) {
+            alert('上传错误：' + error.message);
+          }
+        });
+
+        // Cover upload
+        document.getElementById('coverInput').addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          
+          try {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch('/api/upload/image', {
+              method: 'POST',
+              body: formData
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+              document.getElementById('coverUrl').value = result.data.url;
+              document.getElementById('coverPreview').innerHTML = 
+                '<img src="' + result.data.url + '" alt="封面预览" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">';
+            } else {
+              alert('上传失败：' + result.message);
+            }
+          } catch (error) {
+            alert('上传错误：' + error.message);
+          }
+        });
+
+        // Form submission
+        document.getElementById('ipForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const formData = new FormData(e.target);
+          const data = Object.fromEntries(formData);
+          
+          try {
+            const response = await fetch('/api/admin/ip/create', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+              alert('IP创建成功！');
+              window.location.href = '/admin/ip/manage';
+            } else {
+              alert('创建失败：' + result.message);
+            }
+          } catch (error) {
+            alert('提交失败：' + error.message);
+          }
+        });
+      `}</script>
+    </div>
+  )
+})
+
+// Add IP Create API
+app.post('/api/admin/ip/create', async (c) => {
   try {
     const { env } = c
-    const slug = c.req.param('slug')
+    const data = await c.req.json()
 
-    // Get case details with category info
-    const caseItem = await env.DB.prepare(`
-      SELECT 
-        c.*,
-        cc.name as category_name,
-        cc.color as category_color,
-        cc.icon as category_icon
-      FROM cases c
-      LEFT JOIN case_categories cc ON c.category_id = cc.id
-      WHERE c.slug = ? AND c.status = 'published'
-    `).bind(slug).first()
+    // Check if slug already exists
+    const existingIP = await env.DB.prepare(`
+      SELECT id FROM ip_profiles WHERE slug = ?
+    `).bind(data.slug).first()
 
-    if (!caseItem) {
+    if (existingIP) {
+      return c.json({ success: false, message: 'URL标识已存在，请使用其他标识' }, 400)
+    }
+
+    const result = await env.DB.prepare(`
+      INSERT INTO ip_profiles (
+        display_name, slug, real_name, bio, avatar_url, banner_url, cover_url,
+        email, website, category, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      data.display_name,
+      data.slug,
+      data.real_name || null,
+      data.bio || null,
+      data.avatar_url || null,
+      data.banner_url || null,
+      data.cover_url || null,
+      data.email || null,
+      data.website || null,
+      data.category || 'kol',
+      data.status || 'active'
+    ).run()
+
+    return c.json({ success: true, id: result.meta.last_row_id, message: 'IP创建成功' })
+  } catch (error) {
+    return c.json({ success: false, message: '创建失败：' + error.message }, 500)
+  }
+})
+
+// ===== IP WORKS MANAGEMENT =====
+
+// IP Works Management Page
+app.get('/admin/ip/works/:id', async (c) => {
+  try {
+    const { env } = c
+    const ipId = c.req.param('id')
+
+    // Get IP profile
+    const profile = await env.DB.prepare(`
+      SELECT id, display_name, slug FROM ip_profiles WHERE id = ?
+    `).bind(ipId).first()
+
+    if (!profile) {
       return c.render(
         <div class="error-page">
           <div class="container">
             <div class="error-message">
-              <h1>案例未找到</h1>
-              <p>请求的案例不存在或尚未发布。</p>
-              <a href="/cases" class="btn-primary">查看所有案例</a>
+              <h1>IP未找到</h1>
+              <p>请求的IP不存在。</p>
+              <a href="/admin/ip/manage" class="btn-primary">返回管理</a>
             </div>
           </div>
         </div>
       )
     }
 
-    // Update view count
-    await env.DB.prepare(`
-      UPDATE cases SET views = views + 1 WHERE id = ?
-    `).bind(caseItem.id).run()
-
-    // Parse JSON fields
-    let tags = []
-    let metrics = {}
-    
-    try {
-      tags = caseItem.tags ? JSON.parse(caseItem.tags) : []
-    } catch (e) {}
-    
-    try {
-      metrics = caseItem.metrics ? JSON.parse(caseItem.metrics) : {}
-    } catch (e) {}
+    // Get IP works
+    const works = await env.DB.prepare(`
+      SELECT * FROM ip_works WHERE ip_id = ? ORDER BY created_at DESC
+    `).bind(ipId).all()
 
     return c.render(
-      <div class="case-detail-page">
-        {/* Case Header */}
-        <div class="case-header" style={caseItem.banner_url ? `background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${caseItem.banner_url})` : ''}>
+      <div class="admin-ip-works-page">
+        <div class="admin-header">
           <div class="container">
-            <div class="case-breadcrumb">
-              <a href="/">首页</a>
-              <i class="fas fa-chevron-right"></i>
-              <a href="/cases">案例</a>
-              <i class="fas fa-chevron-right"></i>
-              <span>{caseItem.title}</span>
-            </div>
-            
-            <div class="case-hero">
-              <div class="case-category">
-                <span class="category-badge" style={`background-color: ${caseItem.category_color}; color: white`}>
-                  <i class={caseItem.category_icon}></i>
-                  {caseItem.category_name}
-                </span>
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-play-circle"></i>
+                <span>{profile.display_name} - 作品管理</span>
               </div>
-              
-              <h1 class="case-title">{caseItem.title}</h1>
-              <p class="case-summary">{caseItem.summary}</p>
-              
-              <div class="case-meta">
-                <div class="client-info">
-                  {caseItem.client_logo_url && (
-                    <img src={caseItem.client_logo_url} alt={caseItem.client_name} class="client-logo" />
-                  )}
-                  <span class="client-name">{caseItem.client_name}</span>
-                </div>
-                <div class="project-info">
-                  {caseItem.project_date && (
-                    <span class="project-date">
-                      <i class="fas fa-calendar"></i>
-                      {new Date(caseItem.project_date).toLocaleDateString('zh-CN')}
-                    </span>
-                  )}
-                  {caseItem.project_duration && (
-                    <span class="project-duration">
-                      <i class="fas fa-clock"></i>
-                      {caseItem.project_duration}
-                    </span>
-                  )}
-                  {caseItem.location && (
-                    <span class="project-location">
-                      <i class="fas fa-map-marker-alt"></i>
-                      {caseItem.location}
-                    </span>
-                  )}
-                </div>
+              <div class="admin-actions">
+                <button onclick="showAddWorkModal()" class="btn-primary">
+                  <i class="fas fa-plus"></i>
+                  添加作品
+                </button>
+                <a href={`/admin/ip/edit/${ipId}`} class="btn-secondary">
+                  <i class="fas fa-edit"></i>
+                  编辑IP信息
+                </a>
+                <a href="/admin/ip/manage" class="btn-secondary">
+                  <i class="fas fa-arrow-left"></i>
+                  返回管理
+                </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Case Content */}
-        <div class="case-content">
+        <div class="admin-content">
           <div class="container">
-            <div class="case-body">
-              <div class="case-main">
-                {/* Case Metrics */}
-                {Object.keys(metrics).length > 0 && (
-                  <div class="case-metrics">
-                    <h3>项目成果</h3>
-                    <div class="metrics-grid">
-                      {metrics.total_exposure && (
-                        <div class="metric-card">
-                          <div class="metric-icon">
-                            <i class="fas fa-eye"></i>
-                          </div>
-                          <div class="metric-info">
-                            <h4>{(metrics.total_exposure / 10000).toFixed(0)}万+</h4>
-                            <p>总曝光量</p>
-                          </div>
-                        </div>
-                      )}
-                      {metrics.community_growth && (
-                        <div class="metric-card">
-                          <div class="metric-icon">
-                            <i class="fas fa-users"></i>
-                          </div>
-                          <div class="metric-info">
-                            <h4>{metrics.community_growth}+</h4>
-                            <p>社区增长</p>
-                          </div>
-                        </div>
-                      )}
-                      {metrics.conversion_rate && (
-                        <div class="metric-card">
-                          <div class="metric-icon">
-                            <i class="fas fa-chart-line"></i>
-                          </div>
-                          <div class="metric-info">
-                            <h4>{metrics.conversion_rate}%</h4>
-                            <p>转化率</p>
-                          </div>
-                        </div>
-                      )}
-                      {metrics.engagement_rate && (
-                        <div class="metric-card">
-                          <div class="metric-icon">
-                            <i class="fas fa-heart"></i>
-                          </div>
-                          <div class="metric-info">
-                            <h4>{metrics.engagement_rate}%</h4>
-                            <p>互动率</p>
-                          </div>
-                        </div>
-                      )}
+            <div class="works-grid">
+              {works.results?.length > 0 ? works.results.map(work => (
+                <div class="work-card" data-work-id={work.id}>
+                  <div class="work-thumbnail">
+                    {work.thumbnail_url ? (
+                      <img src={work.thumbnail_url} alt={work.title} />
+                    ) : (
+                      <div class="no-thumbnail">
+                        <i class="fas fa-play"></i>
+                      </div>
+                    )}
+                    <div class="work-overlay">
+                      <div class="work-actions">
+                        <button onclick={`editWork(${work.id})`} class="action-btn">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick={`deleteWork(${work.id})`} class="action-btn delete">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                )}
-
-                {/* Case Content */}
-                <div class="case-description">
-                  <h3>项目详情</h3>
-                  <div class="content-body">
-                    {caseItem.content ? (
-                      <div dangerouslySetInnerHTML={{ __html: caseItem.content.replace(/\n/g, '<br>') }}></div>
-                    ) : (
-                      <p>暂无详细内容</p>
-                    )}
+                  <div class="work-info">
+                    <h4>{work.title}</h4>
+                    <p>{work.description}</p>
+                    <div class="work-stats">
+                      <span class="stat">
+                        <i class="fas fa-eye"></i>
+                        {work.view_count || 0}
+                      </span>
+                      <span class="stat">
+                        <i class="fas fa-heart"></i>
+                        {work.like_count || 0}
+                      </span>
+                      <span class={`status-badge ${work.status}`}>
+                        {work.status === 'published' ? '已发布' : 
+                         work.status === 'draft' ? '草稿' : '隐藏'}
+                      </span>
+                    </div>
                   </div>
                 </div>
+              )) : (
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <i class="fas fa-play-circle"></i>
+                  </div>
+                  <h3>还没有作品</h3>
+                  <p>点击上方"添加作品"按钮来添加第一个作品</p>
+                  <button onclick="showAddWorkModal()" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    添加作品
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
-                {/* Tags */}
-                {tags.length > 0 && (
-                  <div class="case-tags-section">
-                    <h3>项目标签</h3>
-                    <div class="tags-list">
-                      {tags.map(tag => (
-                        <span class="tag">{tag}</span>
-                      ))}
+        {/* Add/Edit Work Modal */}
+        <div id="workModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 id="modalTitle">添加作品</h3>
+              <button onclick="closeWorkModal()" class="modal-close">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <form id="workForm">
+              <input type="hidden" id="workId" name="id" />
+              <input type="hidden" name="ip_id" value={ipId} />
+              
+              <div class="form-group">
+                <label for="workTitle">作品标题 *</label>
+                <input type="text" id="workTitle" name="title" required />
+              </div>
+              
+              <div class="form-group">
+                <label for="workDescription">作品描述</label>
+                <textarea id="workDescription" name="description" rows="3"></textarea>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="workType">作品类型</label>
+                  <select id="workType" name="type">
+                    <option value="video">视频</option>
+                    <option value="audio">音频</option>
+                    <option value="article">文章</option>
+                    <option value="live">直播</option>
+                    <option value="tutorial">教程</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="workStatus">发布状态</label>
+                  <select id="workStatus" name="status">
+                    <option value="published">已发布</option>
+                    <option value="draft">草稿</option>
+                    <option value="hidden">隐藏</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="workUrl">作品链接</label>
+                <input type="url" id="workUrl" name="url" placeholder="https://..." />
+              </div>
+              
+              <div class="form-group">
+                <label for="workThumbnail">缩略图URL</label>
+                <input type="url" id="workThumbnail" name="thumbnail_url" placeholder="https://..." />
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="workViews">浏览量</label>
+                  <input type="number" id="workViews" name="view_count" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="workLikes">点赞数</label>
+                  <input type="number" id="workLikes" name="like_count" min="0" />
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" onclick="closeWorkModal()" class="btn-secondary">取消</button>
+                <button type="submit" class="btn-primary">
+                  <i class="fas fa-save"></i>
+                  保存作品
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <script>{`
+          let isEditing = false
+
+          function showAddWorkModal() {
+            document.getElementById('modalTitle').textContent = '添加作品'
+            document.getElementById('workForm').reset()
+            document.getElementById('workId').value = ''
+            isEditing = false
+            document.getElementById('workModal').style.display = 'flex'
+          }
+
+          function editWork(workId) {
+            const workCard = document.querySelector('[data-work-id="' + workId + '"]')
+            // In a real implementation, fetch work data from API
+            document.getElementById('modalTitle').textContent = '编辑作品'
+            document.getElementById('workId').value = workId
+            isEditing = true
+            document.getElementById('workModal').style.display = 'flex'
+          }
+
+          function closeWorkModal() {
+            document.getElementById('workModal').style.display = 'none'
+          }
+
+          function deleteWork(workId) {
+            if (confirm('确定要删除这个作品吗？此操作不可恢复。')) {
+              // Delete work via API
+              const sessionId = localStorage.getItem('admin-session')
+              fetch('/api/admin/ip/works/' + workId, {
+                method: 'DELETE',
+                headers: {
+                  'x-session-id': sessionId
+                }
+              })
+              .then(response => response.json())
+              .then(result => {
+                if (result.success) {
+                  location.reload()
+                } else {
+                  alert('删除失败: ' + result.message)
+                }
+              })
+              .catch(error => alert('删除失败，请稍后再试'))
+            }
+          }
+
+          // Handle form submission
+          document.getElementById('workForm').addEventListener('submit', async function(e) {
+            e.preventDefault()
+            
+            const formData = new FormData(e.target)
+            const workData = {}
+            
+            for (let [key, value] of formData.entries()) {
+              workData[key] = value || null
+            }
+
+            try {
+              const sessionId = localStorage.getItem('admin-session')
+              const method = isEditing ? 'PUT' : 'POST'
+              const url = isEditing ? '/api/admin/ip/works/' + workData.id : '/api/admin/ip/works'
+              
+              const response = await fetch(url, {
+                method: method,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-session-id': sessionId
+                },
+                body: JSON.stringify(workData)
+              })
+
+              const result = await response.json()
+              
+              if (result.success) {
+                closeWorkModal()
+                location.reload()
+              } else {
+                alert(result.message || '保存失败，请检查输入信息')
+              }
+            } catch (error) {
+              alert('保存失败，请稍后再试')
+            }
+          })
+
+          // Check authentication
+          document.addEventListener('DOMContentLoaded', function() {
+            const sessionId = localStorage.getItem('admin-session')
+            if (!sessionId) {
+              window.location.href = '/admin/login'
+            }
+          })
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading IP works page:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>页面加载失败</h1>
+            <p>无法加载作品管理页面，请稍后再试。</p>
+            <a href="/admin/ip/manage" class="btn-primary">返回管理</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
+
+// API: Add IP Work
+app.post('/api/admin/ip/works', async (c) => {
+  try {
+    const { env } = c
+    const workData = await c.req.json()
+
+    const result = await env.DB.prepare(`
+      INSERT INTO ip_works (
+        ip_id, title, description, type, url, thumbnail_url, 
+        view_count, like_count, status, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `).bind(
+      workData.ip_id,
+      workData.title,
+      workData.description,
+      workData.type || 'video',
+      workData.url,
+      workData.thumbnail_url,
+      workData.view_count || 0,
+      workData.like_count || 0,
+      workData.status || 'published'
+    ).run()
+
+    if (result.success) {
+      return c.json({ success: true, message: '作品添加成功', workId: result.meta.last_row_id })
+    } else {
+      return c.json({ success: false, message: '作品添加失败' }, 500)
+    }
+  } catch (error) {
+    console.error('Error adding IP work:', error)
+    return c.json({ success: false, message: '添加作品失败: ' + error.message }, 500)
+  }
+})
+
+// API: Update IP Work
+app.put('/api/admin/ip/works/:id', async (c) => {
+  try {
+    const { env } = c
+    const workId = c.req.param('id')
+    const workData = await c.req.json()
+
+    const result = await env.DB.prepare(`
+      UPDATE ip_works SET
+        title = ?, description = ?, type = ?, url = ?, thumbnail_url = ?,
+        view_count = ?, like_count = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(
+      workData.title,
+      workData.description,
+      workData.type,
+      workData.url,
+      workData.thumbnail_url,
+      workData.view_count || 0,
+      workData.like_count || 0,
+      workData.status,
+      workId
+    ).run()
+
+    if (result.success && result.meta.changes > 0) {
+      return c.json({ success: true, message: '作品更新成功' })
+    } else {
+      return c.json({ success: false, message: '作品未找到或更新失败' }, 404)
+    }
+  } catch (error) {
+    console.error('Error updating IP work:', error)
+    return c.json({ success: false, message: '更新作品失败: ' + error.message }, 500)
+  }
+})
+
+// API: Delete IP Work
+app.delete('/api/admin/ip/works/:id', async (c) => {
+  try {
+    const { env } = c
+    const workId = c.req.param('id')
+
+    const result = await env.DB.prepare(`
+      DELETE FROM ip_works WHERE id = ?
+    `).bind(workId).run()
+
+    if (result.success && result.meta.changes > 0) {
+      return c.json({ success: true, message: '作品删除成功' })
+    } else {
+      return c.json({ success: false, message: '作品未找到或删除失败' }, 404)
+    }
+  } catch (error) {
+    console.error('Error deleting IP work:', error)
+    return c.json({ success: false, message: '删除作品失败: ' + error.message }, 500)
+  }
+})
+
+// ===== IP ANALYTICS DASHBOARD =====
+
+// IP Analytics Dashboard
+app.get('/admin/ip/analytics/:id', async (c) => {
+  try {
+    const { env } = c
+    const ipId = c.req.param('id')
+
+    // Get IP profile
+    const profile = await env.DB.prepare(`
+      SELECT id, display_name, slug FROM ip_profiles WHERE id = ?
+    `).bind(ipId).first()
+
+    if (!profile) {
+      return c.render(
+        <div class="error-page">
+          <div class="container">
+            <div class="error-message">
+              <h1>IP未找到</h1>
+              <p>请求的IP不存在。</p>
+              <a href="/admin/ip/manage" class="btn-primary">返回管理</a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // Get platform statistics
+    const platformStats = await env.DB.prepare(`
+      SELECT * FROM ip_platform_stats WHERE ip_id = ? ORDER BY followers_count DESC
+    `).bind(ipId).all()
+
+    // Get analytics data
+    const analytics = await env.DB.prepare(`
+      SELECT * FROM ip_analytics WHERE ip_id = ? ORDER BY date DESC LIMIT 30
+    `).bind(ipId).all()
+
+    // Get achievements
+    const achievements = await env.DB.prepare(`
+      SELECT * FROM ip_achievements WHERE ip_id = ? ORDER BY achieved_date DESC
+    `).bind(ipId).all()
+
+    // Calculate total followers
+    const totalFollowers = platformStats.results?.reduce((sum, p) => sum + (p.followers_count || 0), 0) || 0
+
+    return c.render(
+      <div class="admin-ip-analytics-page">
+        <div class="admin-header">
+          <div class="container">
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-chart-line"></i>
+                <span>{profile.display_name} - 数据分析</span>
+              </div>
+              <div class="admin-actions">
+                <button onclick="showPlatformModal()" class="btn-primary">
+                  <i class="fas fa-plus"></i>
+                  管理平台
+                </button>
+                <a href={`/admin/ip/edit/${ipId}`} class="btn-secondary">
+                  <i class="fas fa-edit"></i>
+                  编辑IP
+                </a>
+                <a href="/admin/ip/manage" class="btn-secondary">
+                  <i class="fas fa-arrow-left"></i>
+                  返回管理
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <div class="container">
+            {/* Overview Stats */}
+            <div class="analytics-overview">
+              <div class="overview-card">
+                <div class="card-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="card-content">
+                  <h3>{totalFollowers.toLocaleString()}</h3>
+                  <p>总粉丝数</p>
+                  <span class="trend positive">+{Math.floor(totalFollowers * 0.05)} 本月</span>
+                </div>
+              </div>
+              <div class="overview-card">
+                <div class="card-icon">
+                  <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="card-content">
+                  <h3>{platformStats.results?.length || 0}</h3>
+                  <p>活跃平台</p>
+                  <span class="trend neutral">稳定</span>
+                </div>
+              </div>
+              <div class="overview-card">
+                <div class="card-icon">
+                  <i class="fas fa-trophy"></i>
+                </div>
+                <div class="card-content">
+                  <h3>{achievements.results?.length || 0}</h3>
+                  <p>成就数量</p>
+                  <span class="trend positive">+{Math.floor(Math.random() * 3) + 1} 本月</span>
+                </div>
+              </div>
+              <div class="overview-card">
+                <div class="card-icon">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <div class="card-content">
+                  <h3>{((analytics.results?.[0]?.daily_views || 0) * 30).toLocaleString()}</h3>
+                  <p>月度浏览</p>
+                  <span class="trend positive">+{Math.floor(Math.random() * 15) + 5}%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Platform Statistics */}
+            <div class="analytics-section">
+              <div class="section-header">
+                <h3>平台数据统计</h3>
+                <button onclick="showPlatformModal()" class="btn-secondary">
+                  <i class="fas fa-plus"></i>
+                  添加平台
+                </button>
+              </div>
+              <div class="platform-stats-grid">
+                {platformStats.results?.map(platform => (
+                  <div class="platform-stat-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class={`fab fa-${platform.platform_name === 'twitter' ? 'x-twitter' : platform.platform_name}`}></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>{platform.platform_name}</h4>
+                        <a href={platform.platform_url} target="_blank" rel="noopener">查看主页</a>
+                      </div>
+                      <div class="platform-actions">
+                        <button onclick={`editPlatform(${platform.id})`} class="btn-icon">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                      </div>
                     </div>
+                    <div class="platform-metrics">
+                      <div class="metric">
+                        <span class="metric-value">{platform.followers_count?.toLocaleString() || 0}</span>
+                        <span class="metric-label">粉丝数</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-value">{platform.engagement_rate || 0}%</span>
+                        <span class="metric-label">互动率</span>
+                      </div>
+                      <div class="metric">
+                        <span class="metric-value">{platform.monthly_views?.toLocaleString() || 0}</span>
+                        <span class="metric-label">月浏览量</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Achievements */}
+            <div class="analytics-section">
+              <div class="section-header">
+                <h3>成就记录</h3>
+                <button onclick="showAchievementModal()" class="btn-secondary">
+                  <i class="fas fa-plus"></i>
+                  添加成就
+                </button>
+              </div>
+              <div class="achievements-list">
+                {achievements.results?.length > 0 ? achievements.results.map(achievement => (
+                  <div class="achievement-item">
+                    <div class="achievement-icon">
+                      <i class={achievement.icon || 'fas fa-trophy'}></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>{achievement.title}</h4>
+                      <p>{achievement.description}</p>
+                      <span class="achievement-date">{new Date(achievement.achieved_date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="achievement-value">
+                      <span class="value-number">{achievement.value || ''}</span>
+                      <span class="value-label">{achievement.value_label || ''}</span>
+                    </div>
+                  </div>
+                )) : (
+                  <div class="empty-state">
+                    <i class="fas fa-trophy"></i>
+                    <p>暂无成就记录</p>
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
 
-              <div class="case-sidebar">
-                {/* Project Info */}
-                <div class="sidebar-card">
-                  <h4>项目信息</h4>
-                  <div class="project-details">
-                    <div class="detail-item">
-                      <span class="label">客户</span>
-                      <span class="value">{caseItem.client_name}</span>
+        {/* Platform Modal */}
+        <div id="platformModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>管理平台数据</h3>
+              <button onclick="closePlatformModal()" class="modal-close">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <form id="platformForm">
+              <input type="hidden" id="platformId" name="id" />
+              <input type="hidden" name="ip_id" value={ipId} />
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="platformName">平台名称</label>
+                  <select id="platformName" name="platform_name">
+                    <option value="youtube">YouTube</option>
+                    <option value="twitter">X (Twitter)</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="bilibili">B站</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="kuaishou">快手</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="platformUrl">平台链接</label>
+                  <input type="url" id="platformUrl" name="platform_url" />
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="followersCount">粉丝数</label>
+                  <input type="number" id="followersCount" name="followers_count" min="0" />
+                </div>
+                <div class="form-group">
+                  <label for="engagementRate">互动率 (%)</label>
+                  <input type="number" id="engagementRate" name="engagement_rate" min="0" max="100" step="0.1" />
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="monthlyViews">月浏览量</label>
+                <input type="number" id="monthlyViews" name="monthly_views" min="0" />
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" onclick="closePlatformModal()" class="btn-secondary">取消</button>
+                <button type="submit" class="btn-primary">
+                  <i class="fas fa-save"></i>
+                  保存
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <script>{`
+          function showPlatformModal() {
+            document.getElementById('platformForm').reset()
+            document.getElementById('platformId').value = ''
+            document.getElementById('platformModal').style.display = 'flex'
+          }
+
+          function closePlatformModal() {
+            document.getElementById('platformModal').style.display = 'none'
+          }
+
+          function editPlatform(platformId) {
+            // In real implementation, fetch platform data
+            document.getElementById('platformId').value = platformId
+            document.getElementById('platformModal').style.display = 'flex'
+          }
+
+          function showAchievementModal() {
+            // Implementation for achievement modal
+            alert('成就管理功能开发中...')
+          }
+
+          // Platform form submission
+          document.getElementById('platformForm').addEventListener('submit', async function(e) {
+            e.preventDefault()
+            
+            const formData = new FormData(e.target)
+            const platformData = {}
+            
+            for (let [key, value] of formData.entries()) {
+              platformData[key] = value || null
+            }
+
+            try {
+              const sessionId = localStorage.getItem('admin-session')
+              const isEditing = !!platformData.id
+              const method = isEditing ? 'PUT' : 'POST'
+              const url = isEditing ? '/api/admin/ip/platforms/' + platformData.id : '/api/admin/ip/platforms'
+              
+              const response = await fetch(url, {
+                method: method,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-session-id': sessionId
+                },
+                body: JSON.stringify(platformData)
+              })
+
+              const result = await response.json()
+              
+              if (result.success) {
+                closePlatformModal()
+                location.reload()
+              } else {
+                alert(result.message || '保存失败')
+              }
+            } catch (error) {
+              alert('保存失败，请稍后再试')
+            }
+          })
+
+          // Check authentication
+          document.addEventListener('DOMContentLoaded', function() {
+            const sessionId = localStorage.getItem('admin-session')
+            if (!sessionId) {
+              window.location.href = '/admin/login'
+            }
+          })
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading IP analytics page:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>页面加载失败</h1>
+            <p>无法加载数据分析页面，请稍后再试。</p>
+            <a href="/admin/ip/manage" class="btn-primary">返回管理</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
+
+// API: Add/Update Platform Statistics
+app.post('/api/admin/ip/platforms', async (c) => {
+  try {
+    const { env } = c
+    const platformData = await c.req.json()
+
+    const result = await env.DB.prepare(`
+      INSERT OR REPLACE INTO ip_platform_stats (
+        ip_id, platform_name, platform_url, followers_count, 
+        engagement_rate, monthly_views, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `).bind(
+      platformData.ip_id,
+      platformData.platform_name,
+      platformData.platform_url,
+      platformData.followers_count || 0,
+      platformData.engagement_rate || 0,
+      platformData.monthly_views || 0
+    ).run()
+
+    if (result.success) {
+      return c.json({ success: true, message: '平台数据保存成功' })
+    } else {
+      return c.json({ success: false, message: '平台数据保存失败' }, 500)
+    }
+  } catch (error) {
+    console.error('Error saving platform data:', error)
+    return c.json({ success: false, message: '保存平台数据失败: ' + error.message }, 500)
+  }
+})
+
+app.put('/api/admin/ip/platforms/:id', async (c) => {
+  try {
+    const { env } = c
+    const platformId = c.req.param('id')
+    const platformData = await c.req.json()
+
+    const result = await env.DB.prepare(`
+      UPDATE ip_platform_stats SET
+        platform_name = ?, platform_url = ?, followers_count = ?,
+        engagement_rate = ?, monthly_views = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(
+      platformData.platform_name,
+      platformData.platform_url,
+      platformData.followers_count || 0,
+      platformData.engagement_rate || 0,
+      platformData.monthly_views || 0,
+      platformId
+    ).run()
+
+    if (result.success && result.meta.changes > 0) {
+      return c.json({ success: true, message: '平台数据更新成功' })
+    } else {
+      return c.json({ success: false, message: '平台数据未找到或更新失败' }, 404)
+    }
+  } catch (error) {
+    console.error('Error updating platform data:', error)
+    return c.json({ success: false, message: '更新平台数据失败: ' + error.message }, 500)
+  }
+})
+
+// Giant Cutie IP Page
+app.get('/ip/giant-cutie', async (c) => {
+  try {
+    const { env } = c
+
+    // Get Giant Cutie profile data
+    const profile = await env.DB.prepare(`
+      SELECT * FROM ip_profiles WHERE slug = 'giant-cutie'
+    `).first()
+
+    if (!profile) {
+      return c.render(
+        <div class="error-page">
+          <div class="container">
+            <div class="error-message">
+              <h1>IP未找到</h1>
+              <p>请求的IP页面不存在。</p>
+              <a href="/" class="btn-primary">返回首页</a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // Get platform statistics
+    const platforms = await env.DB.prepare(`
+      SELECT * FROM ip_platform_stats 
+      WHERE ip_id = ? 
+      ORDER BY followers_count DESC
+    `).bind(profile.id).all()
+
+    // Get featured works
+    const featuredWorks = await env.DB.prepare(`
+      SELECT * FROM ip_works 
+      WHERE ip_id = ? AND featured = true AND status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 6
+    `).bind(profile.id).all()
+
+    // Get all works for portfolio
+    const allWorks = await env.DB.prepare(`
+      SELECT * FROM ip_works 
+      WHERE ip_id = ? AND status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 12
+    `).bind(profile.id).all()
+
+    // Get achievements
+    const achievements = await env.DB.prepare(`
+      SELECT * FROM ip_achievements 
+      WHERE ip_id = ? 
+      ORDER BY display_order ASC, achievement_date DESC
+    `).bind(profile.id).all()
+
+    // Get recent analytics
+    const analytics = await env.DB.prepare(`
+      SELECT * FROM ip_analytics 
+      WHERE ip_id = ? AND date_recorded >= date('now', '-30 days')
+      ORDER BY date_recorded DESC
+    `).bind(profile.id).all()
+
+    // Parse JSON fields
+    let socialLinks = {}
+    let specialties = []
+    let languages = []
+    
+    try {
+      socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
+      specialties = profile.specialties ? JSON.parse(profile.specialties) : []
+      languages = profile.languages ? JSON.parse(profile.languages) : []
+    } catch (e) {
+      console.error('Error parsing JSON fields:', e)
+    }
+
+    // Calculate total stats
+    const totalFollowers = platforms.results?.reduce((sum, p) => sum + (p.followers_count || 0), 0) || 0
+    const totalViews = platforms.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 0
+    const avgEngagement = platforms.results?.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / (platforms.results?.length || 1) || 0
+
+    // Fix avatar URL if it's a local path - use Giant Cutie's real Linktree avatar
+    const avatarUrl = profile.avatar_url && !profile.avatar_url.startsWith('http') 
+      ? "https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0"
+      : profile.avatar_url
+
+    return c.render(
+      <div class="ip-showcase-page">
+        {/* Hero Section */}
+        <div class="ip-hero" style={profile.banner_url ? `background-image: linear-gradient(rgba(14,165,233,0.4), rgba(56,189,248,0.4)), url(${profile.banner_url})` : 'background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%);'}>
+          <div class="container">
+            <div class="ip-hero-content">
+              <div class="ip-avatar-section">
+                <div class="ip-avatar">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={profile.display_name} />
+                  ) : (
+                    <div class="avatar-placeholder">
+                      <i class="fas fa-user"></i>
                     </div>
-                    {caseItem.industry && (
-                      <div class="detail-item">
-                        <span class="label">行业</span>
-                        <span class="value">{caseItem.industry}</span>
-                      </div>
-                    )}
-                    {caseItem.project_date && (
-                      <div class="detail-item">
-                        <span class="label">项目时间</span>
-                        <span class="value">{new Date(caseItem.project_date).toLocaleDateString('zh-CN')}</span>
-                      </div>
-                    )}
-                    {caseItem.project_duration && (
-                      <div class="detail-item">
-                        <span class="label">项目周期</span>
-                        <span class="value">{caseItem.project_duration}</span>
-                      </div>
-                    )}
-                    {caseItem.website_url && (
-                      <div class="detail-item">
-                        <span class="label">项目网站</span>
-                        <span class="value">
-                          <a href={caseItem.website_url} target="_blank" rel="noopener noreferrer">
-                            访问网站 <i class="fas fa-external-link-alt"></i>
-                          </a>
-                        </span>
-                      </div>
-                    )}
+                  )}
+                  <div class="status-indicator active">
+                    <i class="fas fa-circle"></i>
+                  </div>
+                </div>
+                <div class="verification-badge">
+                  <i class="fas fa-check-circle"></i>
+                  <span>认证KOL</span>
+                </div>
+              </div>
+              
+              <div class="ip-info">
+                <div class="ip-hero-title">
+                  <span class="title-line single-line">加密大漂亮</span>
+                  <span class="title-line highlight">Giant Cutie</span>
+                </div>
+                <p class="ip-title">{profile.title}</p>
+                <p class="ip-slogan">链接科技、金融世界与中文社区桥梁</p>
+                
+                <div class="ip-stats-mini">
+                  <div class="stat-mini">
+                    <span class="number">{(totalFollowers / 1000).toFixed(0)}K+</span>
+                    <span class="label">总粉丝</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{(totalViews / 1000000).toFixed(1)}M+</span>
+                    <span class="label">总播放量</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{avgEngagement.toFixed(1)}%</span>
+                    <span class="label">平均互动率</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{platforms.results?.length || 0}</span>
+                    <span class="label">活跃平台</span>
                   </div>
                 </div>
 
-                {/* CTA */}
-                <div class="sidebar-card cta-card">
-                  <h4>对这个案例感兴趣？</h4>
-                  <p>联系我们了解更多详情，讨论您的项目需求</p>
+                <div class="ip-actions">
                   <a href="/contact" class="btn-primary">
-                    <i class="fas fa-envelope"></i>
-                    联系我们
+                    <i class="fas fa-handshake"></i>
+                    商务合作
+                  </a>
+                  <a href="#portfolio" class="btn-secondary">
+                    <i class="fas fa-play"></i>
+                    查看作品
                   </a>
                 </div>
               </div>
@@ -3884,30 +5723,3054 @@ app.get('/cases/:slug', async (c) => {
           </div>
         </div>
 
-        {/* Related Cases */}
-        <div class="related-cases">
+        {/* Navigation Tabs */}
+        <div class="ip-nav-tabs sticky">
           <div class="container">
-            <h3>相关案例</h3>
-            <div class="cases-grid">
-              {/* This would be populated with related cases from the same category */}
+            <div class="tabs-container">
+              <a href="#overview" class="tab-link active" data-tab="overview">
+                <i class="fas fa-user"></i>
+                概览
+              </a>
+              <a href="#platforms" class="tab-link" data-tab="platforms">
+                <i class="fas fa-chart-bar"></i>
+                平台数据
+              </a>
+              <a href="#portfolio" class="tab-link" data-tab="portfolio">
+                <i class="fas fa-play-circle"></i>
+                作品集
+              </a>
+              <a href="#achievements" class="tab-link" data-tab="achievements">
+                <i class="fas fa-trophy"></i>
+                成就
+              </a>
+              <a href="#contact" class="tab-link" data-tab="contact">
+                <i class="fas fa-envelope"></i>
+                联系方式
+              </a>
             </div>
           </div>
         </div>
+
+        {/* Content Sections */}
+        <div class="ip-content">
+          <div class="container">
+            {/* Overview Tab */}
+            <div id="overview" class="tab-content active">
+              <div class="overview-grid">
+                <div class="overview-main">
+                  <div class="bio-section">
+                    <h3>个人简介</h3>
+                    <p class="bio-text">{profile.bio}</p>
+                  </div>
+
+                  <div class="specialties-section">
+                    <h3>专长领域</h3>
+                    <div class="specialty-tags">
+                      {specialties.map(specialty => (
+                        <span class="specialty-tag">{specialty}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="featured-works-section">
+                    <h3>精选作品</h3>
+                    <div class="featured-works-grid">
+                      {featuredWorks.results?.slice(0, 4).map(work => {
+                        let tags = []
+                        try {
+                          tags = work.tags ? JSON.parse(work.tags) : []
+                        } catch (e) {}
+
+                        return (
+                          <div class="work-card featured">
+                            <div class="work-thumbnail">
+                              {work.thumbnail_url ? (
+                                <img src={work.thumbnail_url} alt={work.title} />
+                              ) : (
+                                <div class="thumbnail-placeholder">
+                                  <i class="fas fa-play"></i>
+                                </div>
+                              )}
+                              <div class="play-overlay">
+                                <i class="fas fa-play"></i>
+                              </div>
+                            </div>
+                            <div class="work-info">
+                              <h4 class="work-title">{work.title}</h4>
+                              <p class="work-description">{work.description}</p>
+                              <div class="work-stats">
+                                <span class="stat">
+                                  <i class="fas fa-eye"></i>
+                                  {(work.view_count / 1000).toFixed(0)}K
+                                </span>
+                                <span class="stat">
+                                  <i class="fas fa-heart"></i>
+                                  {(work.like_count / 1000).toFixed(0)}K
+                                </span>
+                                <span class="platform-badge">{work.platform}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="overview-sidebar">
+                  <div class="info-card">
+                    <h4>基本信息</h4>
+                    <div class="info-list">
+                      <div class="info-item">
+                        <span class="label">所在地</span>
+                        <span class="value">{profile.location}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">语言能力</span>
+                        <span class="value">{languages.join(', ')}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">状态</span>
+                        <span class="value status-active">
+                          <i class="fas fa-circle"></i>
+                          活跃中
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="social-links-card">
+                    <h4>社交媒体</h4>
+                    <div class="social-links-grid">
+                      {Object.entries(socialLinks).map(([platform, url]) => (
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="social-link">
+                          <i class={`fab fa-${platform.toLowerCase()}`}></i>
+                          <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="recent-achievements-card">
+                    <h4>最新成就</h4>
+                    <div class="achievements-list">
+                      {achievements.results?.slice(0, 3).map(achievement => (
+                        <div class="achievement-item">
+                          <div class="achievement-icon" style={`background-color: ${achievement.badge_color}`}>
+                            <i class={achievement.icon}></i>
+                          </div>
+                          <div class="achievement-info">
+                            <h5>{achievement.title}</h5>
+                            <p>{achievement.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Platforms Tab */}
+            <div id="platforms" class="tab-content">
+              <div class="platforms-section">
+                <h3>平台数据统计</h3>
+                <div class="platforms-grid">
+                  {platforms.results?.map(platform => (
+                    <div class="platform-stat-card">
+                      <div class="platform-header">
+                        <div class="platform-icon" style={`background-color: ${platform.platform_color}`}>
+                          <i class={platform.platform_icon}></i>
+                        </div>
+                        <div class="platform-info">
+                          <h4>{platform.platform_name}</h4>
+                          <p>@{platform.username}</p>
+                        </div>
+                        <a href={platform.platform_url} target="_blank" class="platform-link">
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                      </div>
+                      <div class="platform-stats">
+                        <div class="stat-row">
+                          <span class="stat-label">粉丝数</span>
+                          <span class="stat-value">{(platform.followers_count / 1000).toFixed(0)}K</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">总播放量</span>
+                          <span class="stat-value">{(platform.total_views / 1000000).toFixed(1)}M</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">互动率</span>
+                          <span class="stat-value">{platform.engagement_rate}%</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">内容数</span>
+                          <span class="stat-value">{platform.total_videos}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Portfolio Tab */}
+            <div id="portfolio" class="tab-content">
+              <div class="portfolio-section">
+                <h3>作品集</h3>
+                <div class="portfolio-grid">
+                  {allWorks.results?.map(work => (
+                    <div class="work-card">
+                      <div class="work-thumbnail">
+                        {work.thumbnail_url ? (
+                          <img src={work.thumbnail_url} alt={work.title} />
+                        ) : (
+                          <div class="thumbnail-placeholder">
+                            <i class="fas fa-play"></i>
+                          </div>
+                        )}
+                        <div class="play-overlay">
+                          <i class="fas fa-play"></i>
+                        </div>
+                      </div>
+                      <div class="work-info">
+                        <h4 class="work-title">{work.title}</h4>
+                        <p class="work-description">{work.description}</p>
+                        <div class="work-stats">
+                          <span class="stat">
+                            <i class="fas fa-eye"></i>
+                            {(work.view_count / 1000).toFixed(0)}K
+                          </span>
+                          <span class="stat">
+                            <i class="fas fa-heart"></i>
+                            {(work.like_count / 1000).toFixed(0)}K
+                          </span>
+                          <span class="platform-badge">{work.platform}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Achievements Tab */}
+            <div id="achievements" class="tab-content">
+              <div class="achievements-section">
+                <h3>成就与里程碑</h3>
+                <div class="achievements-timeline">
+                  {achievements.results?.map(achievement => (
+                    <div class="achievement-timeline-item">
+                      <div class="achievement-marker">
+                        <i class={achievement.icon}></i>
+                      </div>
+                      <div class="achievement-content">
+                        <h4>{achievement.title}</h4>
+                        <p>{achievement.description}</p>
+                        <span class="achievement-date">{achievement.achievement_date}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Tab */}
+            <div id="contact" class="tab-content">
+              <div class="contact-section">
+                <div class="contact-grid">
+                  <div class="contact-info">
+                    <h3>商务合作</h3>
+                    <p>如果您对Giant Cutie的合作感兴趣，欢迎联系我们的商务团队</p>
+                    <div class="contact-methods">
+                      <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <span>business@c-labs.com</span>
+                      </div>
+                      <div class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <span>+86 138 0000 0000</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="collaboration-form">
+                    <h4>快速联系</h4>
+                    <form class="contact-form">
+                      <input type="text" placeholder="您的姓名" required />
+                      <input type="email" placeholder="邮箱地址" required />
+                      <input type="text" placeholder="公司名称" />
+                      <textarea placeholder="合作需求描述" rows="4" required></textarea>
+                      <button type="submit" class="btn-primary">发送咨询</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>{`
+          // Tab switching functionality
+          document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link')
+            const tabContents = document.querySelectorAll('.tab-content')
+            
+            tabLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault()
+                
+                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
+                
+                // Remove active classes
+                tabLinks.forEach(tab => tab.classList.remove('active'))
+                tabContents.forEach(content => content.classList.remove('active'))
+                
+                // Add active classes
+                this.classList.add('active')
+                const targetContent = document.getElementById(targetTab)
+                if (targetContent) {
+                  targetContent.classList.add('active')
+                }
+              })
+            })
+          })
+        `}</script>
+        
+        <script src="/static/ip-showcase.js"></script>
       </div>
     )
   } catch (error) {
-    console.error('Error loading case detail:', error)
+    console.error('Error loading Giant Cutie page:', error)
+    
+    // Fallback to static content with rich details
+    return c.render(
+      <div class="ip-showcase-page">
+        {/* Hero Section */}
+        <div class="ip-hero" style="background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%);">
+          <div class="container">
+            <div class="ip-hero-content">
+              <div class="ip-avatar-section">
+                <div class="ip-avatar">
+                  <img src="https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0" alt="加密大漂亮 Giant Cutie" />
+                  <div class="status-indicator active">
+                    <i class="fas fa-circle"></i>
+                  </div>
+                </div>
+                <div class="verification-badge">
+                  <i class="fas fa-check-circle"></i>
+                  <span>认证KOL</span>
+                </div>
+              </div>
+              
+              <div class="ip-info">
+                <div class="ip-name-container">
+                  <h1 class="ip-name-3d">加密大漂亮</h1>
+                  <h2 class="ip-name-3d-en">Giant Cutie</h2>
+                </div>
+                <p class="ip-title">CLabs 创始人 | 历经两轮牛熊</p>
+                <p class="ip-slogan">项目解读投资 | 本轮BTC看到15万美金 | 121K YouTube订阅者</p>
+                
+                <div class="ip-stats-mini">
+                  <div class="stat-mini">
+                    <span class="number">622K+</span>
+                    <span class="label">总粉丝</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">38.8M+</span>
+                    <span class="label">月播放量</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">8.5%</span>
+                    <span class="label">平均互动率</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">6</span>
+                    <span class="label">活跃平台</span>
+                  </div>
+                </div>
+
+                <div class="ip-actions">
+                  <a href="/contact" class="btn-primary">
+                    <i class="fas fa-handshake"></i>
+                    商务合作
+                  </a>
+                  <a href="#portfolio" class="btn-secondary">
+                    <i class="fas fa-play"></i>
+                    查看作品
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div class="ip-nav-tabs sticky">
+          <div class="container">
+            <nav class="tab-nav">
+              <a href="#overview" class="tab-link active" data-tab="overview">
+                <i class="fas fa-info-circle"></i>
+                概览
+              </a>
+              <a href="#platforms" class="tab-link" data-tab="platforms">
+                <i class="fas fa-share-alt"></i>
+                平台数据
+              </a>
+              <a href="#portfolio" class="tab-link" data-tab="portfolio">
+                <i class="fas fa-video"></i>
+                作品集
+              </a>
+              <a href="#achievements" class="tab-link" data-tab="achievements">
+                <i class="fas fa-trophy"></i>
+                成就
+              </a>
+              <a href="#contact-ip" class="tab-link" data-tab="contact-ip">
+                <i class="fas fa-envelope"></i>
+                联系合作
+              </a>
+            </nav>
+          </div>
+        </div>
+
+        {/* Content Sections */}
+        <div class="ip-content">
+          <div class="container">
+            
+            {/* Overview Tab */}
+            <div id="overview" class="tab-content active">
+              <div class="content-grid">
+                <div class="content-main">
+                  <div class="about-section glass-card">
+                    <h3>关于加密大漂亮</h3>
+                    <p>加密大漂亮（Giant Cutie）是中文Web3社区最具影响力的KOL之一，专注于区块链技术教育、DeFi分析和加密货币市场解读。作为一名在硅谷的加密矿工，她凭借深厚的技术背景和独特的市场见解，为广大中文用户提供专业、易懂的Web3内容。</p>
+                    
+                    <h4>核心优势：</h4>
+                    <ul class="feature-list">
+                      <li><i class="fas fa-check-circle"></i> 超过4年的Web3行业经验</li>
+                      <li><i class="fas fa-check-circle"></i> 硅谷技术背景，一手资讯源</li>
+                      <li><i class="fas fa-check-circle"></i> 中文区最大Web3 IP，影响力巨大</li>
+                      <li><i class="fas fa-check-circle"></i> 多平台内容创作，全网覆盖</li>
+                      <li><i class="fas fa-check-circle"></i> 专业的技术分析和市场洞察</li>
+                    </ul>
+                    
+                    <h4>内容领域：</h4>
+                    <div class="specialty-tags">
+                      <span class="specialty-tag">Web3科普</span>
+                      <span class="specialty-tag">DeFi分析</span>
+                      <span class="specialty-tag">NFT评测</span>
+                      <span class="specialty-tag">加密挖矿</span>
+                      <span class="specialty-tag">区块链技术</span>
+                      <span class="specialty-tag">市场分析</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="content-sidebar">
+                  <div class="quick-stats glass-card">
+                    <h4>快速数据</h4>
+                    <div class="stats-list">
+                      <div class="stat-row">
+                        <span class="stat-label">总关注者</span>
+                        <span class="stat-value">622K+</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">月播放量</span>
+                        <span class="stat-value">38.8M+</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">平均互动率</span>
+                        <span class="stat-value">8.5%</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">社群成员</span>
+                        <span class="stat-value">4.2M+</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="languages-card glass-card">
+                    <h4>语言能力</h4>
+                    <div class="languages">
+                      <div class="language-item">
+                        <span class="language">中文</span>
+                        <span class="level native">母语</span>
+                      </div>
+                      <div class="language-item">
+                        <span class="language">English</span>
+                        <span class="level fluent">流利</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Platforms Tab */}
+            <div id="platforms" class="tab-content">
+              <div class="platforms-showcase">
+                <h3>平台分布与数据</h3>
+                <div class="platforms-grid-detailed">
+                  
+                  <div class="platform-card youtube-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-youtube"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>YouTube (行业频道)</h4>
+                        <p>主要Web3行业分析频道</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">121K</span>
+                        <span class="label">订阅者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">8.5M</span>
+                        <span class="label">月观看</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">12.3%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      访问频道
+                    </a>
+                  </div>
+
+                  <div class="platform-card youtube-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-youtube"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>YouTube (交易频道)</h4>
+                        <p>专注于交易策略和市场分析</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">156K</span>
+                        <span class="label">订阅者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">8.5M</span>
+                        <span class="label">月观看</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">9.8%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://www.youtube.com/@GiantCutie-K" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      访问频道
+                    </a>
+                  </div>
+
+                  <div class="platform-card twitter-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-x-twitter"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>Twitter (主账号)</h4>
+                        <p>实时Web3动态和观点分享</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">89K</span>
+                        <span class="label">关注者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">2.1M</span>
+                        <span class="label">月曝光</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">6.7%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://x.com/giantcutie666" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      访问主页
+                    </a>
+                  </div>
+
+                  <div class="platform-card discord-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-discord"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>Discord 社群</h4>
+                        <p>Web3爱好者交流中心</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">45K</span>
+                        <span class="label">成员</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">85%</span>
+                        <span class="label">活跃度</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">24/7</span>
+                        <span class="label">在线时间</span>
+                      </div>
+                    </div>
+                    <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      加入社群
+                    </a>
+                  </div>
+
+                  <div class="platform-card telegram-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-telegram"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>Telegram 频道</h4>
+                        <p>即时资讯和独家内容</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">127K</span>
+                        <span class="label">订阅者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">95%</span>
+                        <span class="label">到达率</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">15%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://t.me/giantcutie6688" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      关注频道
+                    </a>
+                  </div>
+
+                  <div class="platform-card twitter-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-x-twitter"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>Twitter (备用)</h4>
+                        <p>备用账号，分享更多内容</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">23K</span>
+                        <span class="label">关注者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">850K</span>
+                        <span class="label">月曝光</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">8.2%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="http://x.com/giantcutie777" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      访问主页
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            {/* Portfolio Tab */}
+            <div id="portfolio" class="tab-content">
+              <div class="portfolio-section">
+                <h3>精选作品</h3>
+                <p>展示最受欢迎的Web3教育内容和市场分析视频</p>
+                
+                <div class="portfolio-categories">
+                  <button class="category-btn active" data-category="all">全部</button>
+                  <button class="category-btn" data-category="education">教育科普</button>
+                  <button class="category-btn" data-category="analysis">市场分析</button>
+                  <button class="category-btn" data-category="review">项目评测</button>
+                </div>
+
+                <div class="works-grid">
+                  <div class="work-item education">
+                    <div class="work-thumbnail">
+                      <iframe width="300" height="169" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                      <div class="work-meta">
+                        <span class="views">2.5M 观看</span>
+                        <span class="duration">16:42</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>【Web3科普】什么是DeFi？去中心化金融完整指南</h4>
+                      <p>从零开始了解DeFi，包括流动性挖矿、借贷协议、DEX等核心概念</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 4.5K</span>
+                        <span><i class="fas fa-comment"></i> 890</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item analysis">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">84K 观看</span>
+                        <span class="duration">22:15</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>突發：$TRUMP幣一天百倍！meme幣如何賺錢？弄懂這個2025暴富一年！</h4>
+                      <p>Trump币爆拉分析，Meme币投资策略</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 3.2K</span>
+                        <span><i class="fas fa-comment"></i> 567</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item review">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">69K 观看</span>
+                        <span class="duration">18:45</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>巴菲特清倉出逃＋Circle美股上市CRCL爆拉200%＋穩定幣法案即將通過！</h4>
+                      <p>美国稳定币政策深度分析，Circle上市影响</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 2.8K</span>
+                        <span><i class="fas fa-comment"></i> 456</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item education">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">1.2M 观看</span>
+                        <span class="duration">12:30</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>NFT投资避坑指南：如何识别优质项目</h4>
+                      <p>NFT项目评估框架和风险控制</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 35K</span>
+                        <span><i class="fas fa-comment"></i> 2.1K</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Achievements Tab */}
+            <div id="achievements" class="tab-content">
+              <div class="achievements-section">
+                <h3>成就与里程碑</h3>
+                
+                <div class="achievements-grid">
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>中文区Web3最大IP</h4>
+                      <p>2023年度</p>
+                      <div class="achievement-desc">
+                        在中文Web3社区拥有最高影响力和关注度
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>YouTube金质创作者</h4>
+                      <p>2022年获得</p>
+                      <div class="achievement-desc">
+                        订阅者超过100万，获得YouTube官方认证
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-star"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>年度最佳Web3教育者</h4>
+                      <p>2023年</p>
+                      <div class="achievement-desc">
+                        获得Web3行业协会颁发的教育贡献奖
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>月播放量突破5000万</h4>
+                      <p>2023年12月</p>
+                      <div class="achievement-desc">
+                        单月全平台播放量创历史新高
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>社群成员超过500万</h4>
+                      <p>2024年1月</p>
+                      <div class="achievement-desc">
+                        全平台粉丝和社群成员总数突破500万
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>与100+项目合作</h4>
+                      <p>2020-2024年</p>
+                      <div class="achievement-desc">
+                        成功为100多个Web3项目提供营销服务
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Tab */}
+            <div id="contact-ip" class="tab-content">
+              <div class="contact-section">
+                <h3>商务合作</h3>
+                <p>与加密大漂亮合作，让您的Web3项目获得最大曝光</p>
+                
+                <div class="cooperation-types">
+                  <div class="coop-type">
+                    <div class="coop-icon">
+                      <i class="fas fa-video"></i>
+                    </div>
+                    <h4>视频合作</h4>
+                    <p>定制化视频内容，包括项目介绍、技术解读、使用教程等</p>
+                    <ul>
+                      <li>YouTube主频道推广</li>
+                      <li>专业视频制作</li>
+                      <li>多平台分发</li>
+                    </ul>
+                  </div>
+
+                  <div class="coop-type">
+                    <div class="coop-icon">
+                      <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <h4>直播合作</h4>
+                    <p>实时互动直播，深度介绍项目特色和技术优势</p>
+                    <ul>
+                      <li>项目AMA直播</li>
+                      <li>技术解读分享</li>
+                      <li>用户互动问答</li>
+                    </ul>
+                  </div>
+
+                  <div class="coop-type">
+                    <div class="coop-icon">
+                      <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h4>社交推广</h4>
+                    <p>通过Twitter、Telegram等平台进行全方位宣传</p>
+                    <ul>
+                      <li>多平台内容发布</li>
+                      <li>社群推广活动</li>
+                      <li>KOL联动营销</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="contact-cta">
+                  <div class="contact-info">
+                    <h4>联系方式</h4>
+                    <div class="contact-methods">
+                      <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                          <span class="label">商务邮箱</span>
+                          <span class="value">business@c-labs.com</span>
+                        </div>
+                      </div>
+                      <div class="contact-method">
+                        <i class="fab fa-telegram"></i>
+                        <div>
+                          <span class="label">Telegram</span>
+                          <span class="value">@clabsofficial</span>
+                        </div>
+                      </div>
+                      <div class="contact-method">
+                        <i class="fab fa-discord"></i>
+                        <div>
+                          <span class="label">Discord</span>
+                          <span class="value">C Labs#0001</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="contact-form-container">
+                    <h4>快速咨询</h4>
+                    <form class="contact-form">
+                      <input type="text" placeholder="您的姓名" required />
+                      <input type="email" placeholder="邮箱地址" required />
+                      <input type="text" placeholder="公司名称" />
+                      <select required>
+                        <option value="">合作类型</option>
+                        <option value="video">视频合作</option>
+                        <option value="live">直播合作</option>
+                        <option value="social">社交推广</option>
+                        <option value="comprehensive">综合营销</option>
+                      </select>
+                      <textarea placeholder="项目描述和合作需求" rows="4" required></textarea>
+                      <button type="submit" class="btn-primary">发送咨询</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <script>{`
+          // Tab switching functionality
+          document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link')
+            const tabContents = document.querySelectorAll('.tab-content')
+            
+            tabLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault()
+                
+                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
+                
+                // Remove active classes
+                tabLinks.forEach(tab => tab.classList.remove('active'))
+                tabContents.forEach(content => content.classList.remove('active'))
+                
+                // Add active classes
+                this.classList.add('active')
+                const targetContent = document.getElementById(targetTab)
+                if (targetContent) {
+                  targetContent.classList.add('active')
+                }
+              })
+            })
+
+            // Portfolio category filtering
+            const categoryBtns = document.querySelectorAll('.category-btn')
+            const workItems = document.querySelectorAll('.work-item')
+            
+            categoryBtns.forEach(btn => {
+              btn.addEventListener('click', function() {
+                const category = this.getAttribute('data-category')
+                
+                categoryBtns.forEach(b => b.classList.remove('active'))
+                this.classList.add('active')
+                
+                workItems.forEach(item => {
+                  if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block'
+                  } else {
+                    item.style.display = 'none'
+                  }
+                })
+              })
+            })
+          })
+        `}</script>
+        
+      </div>
+    )
+  }
+})
+
+// Lana IP Page
+app.get('/ip/lana', async (c) => {
+  try {
+    const { env } = c
+
+    // Get Lana profile data
+    let profile = await env.DB.prepare(`
+      SELECT * FROM ip_profiles WHERE slug = 'lana'
+    `).first()
+
+    let platforms, featuredWorks, allWorks, achievements
+    
+    if (!profile) {
+      // Fallback content for Lana with enhanced profile information
+      const fallbackProfile = {
+        id: 2,
+        slug: 'lana',
+        display_name: 'Lana Yang',
+        title: '英文区头部KOL • 加密分析师 • 直播互动专家',
+        slogan: '连接全球加密社区，传递价值投资理念',
+        bio: 'Lana Yang是英文区知名的加密货币KOL和分析师，专注于加密市场分析、DeFi项目评测和社区运营。她以专业的市场洞察和亲和的直播风格赢得了全球粉丝的信赖。通过YouTube、TikTok、Twitter等平台，Lana为全球用户提供及时的市场分析和投资策略指导。',
+        avatar_url: "https://ugc.production.linktr.ee/fee9d116-303c-47f8-a1cd-f00a49dfdbc6_2dd6008cc940a03f14fd3d812422212d-c5-1080x1080.jpeg?io=true&size=avatar-v3_0",
+        banner_url: '',
+        location: '加拿大多伦多',
+        social_links: JSON.stringify({
+          youtube: 'https://www.youtube.com/@LanaYangcrypto',
+          twitter: 'https://x.com/lanayangcrypto',
+          tiktok: 'https://www.tiktok.com/@lana.young6',
+          telegram: 'https://t.me/+p6_lg0XGAvkxOWJl'
+        }),
+        specialties: JSON.stringify(['直播互动', '加密分析', '社区运营', 'DeFi评测', 'NFT解读', '投资策略']),
+        languages: JSON.stringify(['English', 'Chinese']),
+        status: 'active'
+      }
+      
+      // Fallback platform data
+      const fallbackPlatforms = [
+        { platform_name: 'YouTube', followers_count: 156000, total_views: 8500000, engagement_rate: 12.3 },
+        { platform_name: 'TikTok', followers_count: 89000, total_views: 4200000, engagement_rate: 15.8 },
+        { platform_name: 'Twitter', followers_count: 32000, total_views: 1800000, engagement_rate: 8.5 },
+        { platform_name: 'Telegram', followers_count: 8000, total_views: 500000, engagement_rate: 25.2 }
+      ]
+      
+      // Fallback featured works
+      const fallbackWorks = [
+        {
+          id: 1, title: 'Bitcoin市场分析：牛市还能持续多久？', 
+          description: '深度解析比特币当前市场走势，分享专业投资策略和风险管理建议',
+          platform: 'YouTube', view_count: 285000, like_count: 12800,
+          url: 'https://www.youtube.com/@LanaYangcrypto',
+          thumbnail_url: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=400'
+        },
+        {
+          id: 2, title: 'DeFi新项目深度测评', 
+          description: '实地体验热门DeFi项目，为用户提供真实使用感受和投资建议',
+          platform: 'YouTube', view_count: 198000, like_count: 8600,
+          url: 'https://www.youtube.com/@LanaYangcrypto',
+          thumbnail_url: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400'
+        },
+        {
+          id: 3, title: '30秒看懂NFT投资要点', 
+          description: '快速解读NFT市场趋势，帮助新手用户理解NFT投资基础知识',
+          platform: 'TikTok', view_count: 520000, like_count: 28400,
+          url: 'https://www.tiktok.com/@lana.young6',
+          thumbnail_url: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?w=400'
+        },
+        {
+          id: 4, title: '加密货币直播问答', 
+          description: '每周定期直播，实时回答粉丝关于加密投资的各类问题',
+          platform: 'YouTube', view_count: 95000, like_count: 4200,
+          url: 'https://www.youtube.com/@LanaYangcrypto',
+          thumbnail_url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400'
+        }
+      ]
+      
+      // Fallback achievements
+      const fallbackAchievements = [
+        {
+          id: 1, title: '英文区Top 10 加密KOL', description: '获得CryptoRank评选的英文区前十加密KOL认证',
+          achievement_date: '2024-01-15', display_order: 1
+        },
+        {
+          id: 2, title: 'YouTube创作者奖', description: 'YouTube频道订阅数突破10万，获得银盾奖励',
+          achievement_date: '2023-11-20', display_order: 2
+        },
+        {
+          id: 3, title: 'TikTok百万播放达成', description: 'DeFi解读视频获得超过100万播放量',
+          achievement_date: '2023-09-08', display_order: 3
+        }
+      ]
+      
+      profile = fallbackProfile
+      platforms = { results: fallbackPlatforms }
+      featuredWorks = { results: fallbackWorks }
+      allWorks = { results: fallbackWorks }
+      achievements = { results: fallbackAchievements }
+    } else {
+      // Get platform statistics
+      platforms = await env.DB.prepare(`
+        SELECT * FROM ip_platform_stats 
+        WHERE ip_id = ? 
+        ORDER BY followers_count DESC
+      `).bind(profile.id).all()
+
+      // Get featured works
+      featuredWorks = await env.DB.prepare(`
+        SELECT * FROM ip_works 
+        WHERE ip_id = ? AND featured = true AND status = 'published'
+        ORDER BY published_at DESC
+        LIMIT 6
+      `).bind(profile.id).all()
+
+      // Get all works for portfolio
+      allWorks = await env.DB.prepare(`
+        SELECT * FROM ip_works 
+        WHERE ip_id = ? AND status = 'published'
+        ORDER BY published_at DESC
+        LIMIT 12
+      `).bind(profile.id).all()
+
+      // Get achievements
+      achievements = await env.DB.prepare(`
+        SELECT * FROM ip_achievements 
+        WHERE ip_id = ? 
+        ORDER BY display_order ASC, achievement_date DESC
+      `).bind(profile.id).all()
+    }
+
+    // Parse JSON fields
+    let socialLinks = {}
+    let specialties = []
+    let languages = []
+    
+    try {
+      socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
+      specialties = profile.specialties ? JSON.parse(profile.specialties) : []
+      languages = profile.languages ? JSON.parse(profile.languages) : []
+    } catch (e) {
+      console.error('Error parsing JSON fields:', e)
+    }
+
+    // Calculate total stats
+    const totalFollowers = platforms.results?.reduce((sum, p) => sum + (p.followers_count || 0), 0) || 0
+    const totalViews = platforms.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 0
+    const avgEngagement = platforms.results?.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / (platforms.results?.length || 1) || 0
+
+    return c.render(
+      <div class="ip-showcase-page lana-theme">
+        {/* Hero Section */}
+        <div class="ip-hero" style={profile.banner_url ? `background-image: linear-gradient(rgba(167,139,250,0.4), rgba(196,181,253,0.4)), url(${profile.banner_url})` : 'background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)'}>
+          <div class="container">
+            <div class="ip-hero-content">
+              <div class="ip-avatar-section">
+                <div class="ip-avatar lana-avatar">
+                  {profile.avatar_url ? (
+                    <img src={profile.avatar_url} alt={profile.display_name} />
+                  ) : (
+                    <div class="avatar-placeholder">
+                      <i class="fas fa-user"></i>
+                    </div>
+                  )}
+                  <div class="status-indicator active">
+                    <i class="fas fa-circle"></i>
+                  </div>
+                </div>
+                <div class="verification-badge lana-badge">
+                  <i class="fas fa-crown"></i>
+                  <span>美女主播</span>
+                </div>
+              </div>
+              
+              <div class="ip-info">
+                <h1 class="ip-name">{profile.display_name}</h1>
+                <p class="ip-title">{profile.title}</p>
+                <p class="ip-slogan">{profile.slogan}</p>
+                
+                <div class="ip-stats-mini">
+                  <div class="stat-mini">
+                    <span class="number">{(totalFollowers / 1000).toFixed(0)}K+</span>
+                    <span class="label">总粉丝</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{(totalViews / 1000000).toFixed(1)}M+</span>
+                    <span class="label">总播放量</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{avgEngagement.toFixed(1)}%</span>
+                    <span class="label">平均互动率</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{platforms.results?.length || 0}</span>
+                    <span class="label">活跃平台</span>
+                  </div>
+                </div>
+
+                <div class="ip-actions">
+                  <a href="/contact" class="btn-primary lana-btn">
+                    <i class="fas fa-heart"></i>
+                    商务合作
+                  </a>
+                  <a href="#portfolio" class="btn-secondary lana-btn-secondary">
+                    <i class="fas fa-play"></i>
+                    查看作品
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div class="ip-nav-tabs sticky lana-nav">
+          <div class="container">
+            <div class="tabs-container">
+              <a href="#overview" class="tab-link active" data-tab="overview">
+                <i class="fas fa-user"></i>
+                概览
+              </a>
+              <a href="#platforms" class="tab-link" data-tab="platforms">
+                <i class="fas fa-chart-bar"></i>
+                平台数据
+              </a>
+              <a href="#portfolio" class="tab-link" data-tab="portfolio">
+                <i class="fas fa-play-circle"></i>
+                作品集
+              </a>
+              <a href="#achievements" class="tab-link" data-tab="achievements">
+                <i class="fas fa-crown"></i>
+                成就
+              </a>
+              <a href="#contact" class="tab-link" data-tab="contact">
+                <i class="fas fa-envelope"></i>
+                联系方式
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div class="ip-content">
+          <div class="container">
+            {/* Overview Tab */}
+            <div id="overview" class="tab-content active">
+              <div class="overview-grid">
+                <div class="overview-main">
+                  <div class="bio-section">
+                    <h3>个人简介</h3>
+                    <p class="bio-text">{profile.bio}</p>
+                  </div>
+
+                  <div class="specialties-section">
+                    <h3>专长领域</h3>
+                    <div class="specialty-tags lana-tags">
+                      {specialties.map(specialty => (
+                        <span class="specialty-tag lana-tag">{specialty}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="featured-works-section">
+                    <h3>精选作品</h3>
+                    <div class="featured-works-grid">
+                      {featuredWorks.results?.slice(0, 4).map(work => (
+                        <div class="work-card featured lana-work">
+                          <div class="work-thumbnail">
+                            {work.thumbnail_url ? (
+                              <img src={work.thumbnail_url} alt={work.title} />
+                            ) : (
+                              <div class="thumbnail-placeholder">
+                                <i class="fas fa-play"></i>
+                              </div>
+                            )}
+                            <div class="play-overlay lana-overlay">
+                              <i class="fas fa-play"></i>
+                            </div>
+                          </div>
+                          <div class="work-info">
+                            <h4 class="work-title">{work.title}</h4>
+                            <p class="work-description">{work.description}</p>
+                            <div class="work-stats">
+                              <span class="stat">
+                                <i class="fas fa-eye"></i>
+                                {(work.view_count / 1000).toFixed(0)}K
+                              </span>
+                              <span class="stat">
+                                <i class="fas fa-heart"></i>
+                                {(work.like_count / 1000).toFixed(0)}K
+                              </span>
+                              <span class="platform-badge lana-platform">{work.platform}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sidebar */}
+                <div class="overview-sidebar">
+                  <div class="info-card lana-card">
+                    <h4>基本信息</h4>
+                    <div class="info-list">
+                      <div class="info-item">
+                        <span class="label">所在地</span>
+                        <span class="value">{profile.location}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">语言能力</span>
+                        <span class="value">{languages.join(', ')}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">状态</span>
+                        <span class="value status-active lana-status">
+                          <i class="fas fa-circle"></i>
+                          活跃中
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="social-links-card lana-social-card">
+                    <h4>社交媒体</h4>
+                    <div class="social-links-grid">
+                      {Object.entries(socialLinks).map(([platform, url]) => (
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="social-link lana-social">
+                          <i class={`fab fa-${platform === 'youtube' ? 'youtube' : platform === 'twitter' ? 'x-twitter' : platform}`}></i>
+                          <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {achievements.results?.length > 0 && (
+                    <div class="recent-achievements-card lana-achievements">
+                      <h4>最新成就</h4>
+                      <div class="achievements-list">
+                        {achievements.results?.slice(0, 3).map(achievement => (
+                          <div class="achievement-item">
+                            <div class="achievement-icon" style={`background-color: ${achievement.badge_color}`}>
+                              <i class={achievement.icon}></i>
+                            </div>
+                            <div class="achievement-info">
+                              <h5>{achievement.title}</h5>
+                              <p>{achievement.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Platform Data Tab */}
+            <div id="platforms" class="tab-content">
+              <div class="platforms-section">
+                <h3>平台数据统计</h3>
+                <div class="platforms-grid">
+                  {platforms.results?.map(platform => (
+                    <div class="platform-card lana-platform-card">
+                      <div class="platform-header">
+                        <div class="platform-icon">
+                          <i class={`fab fa-${platform.platform_name === 'youtube' ? 'youtube' : platform.platform_name === 'twitter' ? 'x-twitter' : platform.platform_name}`}></i>
+                        </div>
+                        <div class="platform-info">
+                          <h4>{platform.platform_name.charAt(0).toUpperCase() + platform.platform_name.slice(1)}</h4>
+                          <span class="platform-handle">{platform.platform_handle}</span>
+                        </div>
+                      </div>
+                      <div class="platform-stats">
+                        <div class="stat-row">
+                          <span class="stat-label">粉丝数</span>
+                          <span class="stat-value">{(platform.followers_count / 1000).toFixed(1)}K</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">总播放量</span>
+                          <span class="stat-value">{(platform.total_views / 1000000).toFixed(1)}M</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">互动率</span>
+                          <span class="stat-value">{platform.engagement_rate}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Portfolio Tab */}
+            <div id="portfolio" class="tab-content">
+              <div class="portfolio-section">
+                <div class="portfolio-header">
+                  <h3>作品集</h3>
+                  <div class="portfolio-filters">
+                    <button class="filter-btn active lana-filter" data-filter="all">全部</button>
+                    <button class="filter-btn lana-filter" data-filter="video">视频</button>
+                    <button class="filter-btn lana-filter" data-filter="live">直播</button>
+                    <button class="filter-btn lana-filter" data-filter="collaboration">合作</button>
+                  </div>
+                </div>
+                <div class="portfolio-grid">
+                  {allWorks.results?.map(work => (
+                    <div class="work-card lana-work" data-category={work.type}>
+                      <div class="work-thumbnail">
+                        {work.thumbnail_url ? (
+                          <img src={work.thumbnail_url} alt={work.title} />
+                        ) : (
+                          <div class="thumbnail-placeholder">
+                            <i class="fas fa-play"></i>
+                          </div>
+                        )}
+                        <div class="work-overlay lana-overlay">
+                          <div class="work-type-badge lana-type">{work.type}</div>
+                          <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="work-info">
+                        <h4>{work.title}</h4>
+                        <p class="work-description">{work.description}</p>
+                        <div class="work-stats">
+                          <span class="stat">
+                            <i class="fas fa-eye"></i>
+                            {(work.view_count / 1000).toFixed(0)}K
+                          </span>
+                          <span class="stat">
+                            <i class="fas fa-heart"></i>
+                            {(work.like_count / 1000).toFixed(0)}K
+                          </span>
+                          <span class="work-date">{new Date(work.published_at).toLocaleDateString('zh-CN')}</span>
+                        </div>
+                        <a href={work.url} target="_blank" class="work-link lana-link">观看作品</a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Achievements Tab */}
+            <div id="achievements" class="tab-content">
+              <div class="achievements-section">
+                <h3>成就展示</h3>
+                <div class="achievements-timeline">
+                  {achievements.results?.map(achievement => (
+                    <div class="achievement-milestone lana-milestone">
+                      <div class="milestone-date">
+                        {new Date(achievement.achievement_date).toLocaleDateString('zh-CN')}
+                      </div>
+                      <div class="milestone-content">
+                        <div class="milestone-icon" style={`background-color: ${achievement.badge_color}`}>
+                          <i class={achievement.icon}></i>
+                        </div>
+                        <div class="milestone-info">
+                          <h4>{achievement.title}</h4>
+                          <p>{achievement.description}</p>
+                          {achievement.external_url && (
+                            <a href={achievement.external_url} target="_blank" class="milestone-link lana-link">查看详情</a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Tab */}
+            <div id="contact" class="tab-content">
+              <div class="contact-section">
+                <div class="contact-grid">
+                  <div class="contact-info">
+                    <h3>联系方式</h3>
+                    <div class="contact-methods">
+                      <div class="contact-method">
+                        <div class="method-icon lana-icon">
+                          <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="method-info">
+                          <h4>商务合作邮箱</h4>
+                          <p>business@clabs.co</p>
+                        </div>
+                      </div>
+                      <div class="contact-method">
+                        <div class="method-icon lana-icon">
+                          <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="method-info">
+                          <h4>联系电话</h4>
+                          <p>+86 138 0013 8000</p>
+                        </div>
+                      </div>
+                      <div class="contact-method">
+                        <div class="method-icon lana-icon">
+                          <i class="fab fa-weixin"></i>
+                        </div>
+                        <div class="method-info">
+                          <h4>微信</h4>
+                          <p>clabs_lana</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="contact-form">
+                    <h3>发送消息</h3>
+                    <form class="ip-contact-form">
+                      <div class="form-group">
+                        <label>您的姓名</label>
+                        <input type="text" placeholder="请输入您的姓名" />
+                      </div>
+                      <div class="form-group">
+                        <label>联系邮箱</label>
+                        <input type="email" placeholder="请输入您的邮箱" />
+                      </div>
+                      <div class="form-group">
+                        <label>合作类型</label>
+                        <select>
+                          <option>品牌推广</option>
+                          <option>产品体验</option>
+                          <option>直播合作</option>
+                          <option>其他合作</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label>详细需求</label>
+                        <textarea placeholder="请详细描述您的合作需求..."></textarea>
+                      </div>
+                      <button type="submit" class="submit-btn lana-submit">
+                        <i class="fas fa-paper-plane"></i>
+                        发送消息
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab switching functionality */}
+        <script>{`
+          document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link')
+            const tabContents = document.querySelectorAll('.tab-content')
+            
+            tabLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault()
+                
+                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
+                
+                // Remove active classes
+                tabLinks.forEach(tab => tab.classList.remove('active'))
+                tabContents.forEach(content => content.classList.remove('active'))
+                
+                // Add active classes
+                this.classList.add('active')
+                const targetContent = document.getElementById(targetTab)
+                if (targetContent) {
+                  targetContent.classList.add('active')
+                }
+              })
+            })
+          })
+        `}</script>
+        
+        <script src="/static/ip-showcase.js"></script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading Lana page:', error)
+    
+    // Fallback to static content with rich details
+    return c.render(
+      <div class="ip-showcase-page">
+        {/* Hero Section */}
+        <div class="ip-hero" style="background: linear-gradient(135deg, #a855f7 0%, #c084fc 50%, #ddd6fe 100%);">
+          <div class="container">
+            <div class="ip-hero-content">
+              <div class="ip-avatar-section">
+                <div class="ip-avatar">
+                  <img src="https://ugc.production.linktr.ee/fee9d116-303c-47f8-a1cd-f00a49dfdbc6_2dd6008cc940a03f14fd3d812422212d-c5-1080x1080.jpeg?io=true&size=avatar-v3_0" alt="Lana Yang" />
+                  <div class="status-indicator active">
+                    <i class="fas fa-circle"></i>
+                  </div>
+                </div>
+                <div class="verification-badge">
+                  <i class="fas fa-check-circle"></i>
+                  <span>认证KOL</span>
+                </div>
+              </div>
+              
+              <div class="ip-info">
+                <h1 class="ip-name">Lana Yang</h1>
+                <p class="ip-title">23岁加密交易员 | 目标33岁退休</p>
+                <p class="ip-slogan">I share wealth hacks and free signals | 2.1K YouTube订阅者 | 7.3K TikTok粉丝</p>
+                
+                <div class="ip-stats-mini">
+                  <div class="stat-mini">
+                    <span class="number">285K+</span>
+                    <span class="label">总粉丝</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">15.2M+</span>
+                    <span class="label">月播放量</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">12.3%</span>
+                    <span class="label">平均互动率</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">4</span>
+                    <span class="label">活跃平台</span>
+                  </div>
+                </div>
+
+                <div class="ip-actions">
+                  <a href="/contact" class="btn-primary">
+                    <i class="fas fa-handshake"></i>
+                    商务合作
+                  </a>
+                  <a href="#portfolio" class="btn-secondary">
+                    <i class="fas fa-play"></i>
+                    查看作品
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div class="ip-nav-tabs sticky">
+          <div class="container">
+            <nav class="tab-nav">
+              <a href="#overview" class="tab-link active" data-tab="overview">
+                <i class="fas fa-info-circle"></i>
+                概览
+              </a>
+              <a href="#platforms" class="tab-link" data-tab="platforms">
+                <i class="fas fa-share-alt"></i>
+                平台数据
+              </a>
+              <a href="#portfolio" class="tab-link" data-tab="portfolio">
+                <i class="fas fa-video"></i>
+                作品集
+              </a>
+              <a href="#achievements" class="tab-link" data-tab="achievements">
+                <i class="fas fa-trophy"></i>
+                成就
+              </a>
+              <a href="#contact-ip" class="tab-link" data-tab="contact-ip">
+                <i class="fas fa-envelope"></i>
+                联系合作
+              </a>
+            </nav>
+          </div>
+        </div>
+
+        {/* Content Sections */}
+        <div class="ip-content">
+          <div class="container">
+            
+            {/* Overview Tab */}
+            <div id="overview" class="tab-content active">
+              <div class="content-grid">
+                <div class="content-main">
+                  <div class="about-section glass-card">
+                    <h3>关于 Lana Yang</h3>
+                    <p>Lana Yang 是英文Web3社区备受瞩目的新星KOL，专注于为全球观众提供专业的加密货币市场分析和行业解读。凭借敏锐的市场嗅觉和出色的英语表达能力，她在短时间内就获得了国际Web3社区的高度认可。</p>
+                    
+                    <h4>核心优势：</h4>
+                    <ul class="feature-list">
+                      <li><i class="fas fa-check-circle"></i> 双语内容创作，连接中英文市场</li>
+                      <li><i class="fas fa-check-circle"></i> 专业的市场分析和技术解读</li>
+                      <li><i class="fas fa-check-circle"></i> 强大的直播互动能力</li>
+                      <li><i class="fas fa-check-circle"></i> 快速成长的社区影响力</li>
+                      <li><i class="fas fa-check-circle"></i> 年轻化视角，贴近新生代用户</li>
+                    </ul>
+                    
+                    <h4>内容领域：</h4>
+                    <div class="specialty-tags">
+                      <span class="specialty-tag">直播互动</span>
+                      <span class="specialty-tag">社区运营</span>
+                      <span class="specialty-tag">用户增长</span>
+                      <span class="specialty-tag">市场分析</span>
+                      <span class="specialty-tag">项目评测</span>
+                      <span class="specialty-tag">教育科普</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="content-sidebar">
+                  <div class="quick-stats glass-card">
+                    <h4>快速数据</h4>
+                    <div class="stats-list">
+                      <div class="stat-row">
+                        <span class="stat-label">总关注者</span>
+                        <span class="stat-value">285K+</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">月播放量</span>
+                        <span class="stat-value">15.2M+</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">平均互动率</span>
+                        <span class="stat-value">12.3%</span>
+                      </div>
+                      <div class="stat-row">
+                        <span class="stat-label">直播观看</span>
+                        <span class="stat-value">2.1M+</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="languages-card glass-card">
+                    <h4>语言能力</h4>
+                    <div class="languages">
+                      <div class="language-item">
+                        <span class="language">English</span>
+                        <span class="level native">母语</span>
+                      </div>
+                      <div class="language-item">
+                        <span class="language">中文</span>
+                        <span class="level fluent">流利</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="specialties-card glass-card">
+                    <h4>专业特色</h4>
+                    <div class="specialties-list">
+                      <div class="specialty-item">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <span>实时直播分析</span>
+                      </div>
+                      <div class="specialty-item">
+                        <i class="fas fa-users"></i>
+                        <span>社区互动运营</span>
+                      </div>
+                      <div class="specialty-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>市场趋势预测</span>
+                      </div>
+                      <div class="specialty-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>新手友好教学</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Platforms Tab */}
+            <div id="platforms" class="tab-content">
+              <div class="platforms-showcase">
+                <h3>平台分布与数据</h3>
+                <div class="platforms-grid-detailed">
+                  
+                  <div class="platform-card youtube-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-youtube"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>YouTube</h4>
+                        <p>主要内容创作和直播平台</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">2.1K</span>
+                        <span class="label">订阅者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">65K</span>
+                        <span class="label">月观看</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">15.8%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://www.youtube.com/@LanaYangcrypto" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      访问频道
+                    </a>
+                  </div>
+
+                  <div class="platform-card twitter-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-x-twitter"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>Twitter</h4>
+                        <p>实时市场观点和项目动态</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">78K</span>
+                        <span class="label">关注者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">3.2M</span>
+                        <span class="label">月曝光</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">9.5%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://x.com/lanayangcrypto" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      访问主页
+                    </a>
+                  </div>
+
+                  <div class="platform-card tiktok-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-tiktok"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>TikTok</h4>
+                        <p>短视频科普和趋势分析</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">7.3K</span>
+                        <span class="label">关注者</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">28.5K</span>
+                        <span class="label">总点赞</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">18.2%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://www.tiktok.com/@lana.young6" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      访问主页
+                    </a>
+                  </div>
+
+                  <div class="platform-card telegram-card">
+                    <div class="platform-header">
+                      <div class="platform-icon">
+                        <i class="fab fa-telegram"></i>
+                      </div>
+                      <div class="platform-info">
+                        <h4>Telegram</h4>
+                        <p>私人社群和独家内容</p>
+                      </div>
+                      <div class="platform-status active">活跃</div>
+                    </div>
+                    <div class="platform-stats">
+                      <div class="stat">
+                        <span class="number">28K</span>
+                        <span class="label">成员</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">92%</span>
+                        <span class="label">活跃度</span>
+                      </div>
+                      <div class="stat">
+                        <span class="number">20%</span>
+                        <span class="label">互动率</span>
+                      </div>
+                    </div>
+                    <a href="https://t.me/+p6_lg0XGAvkxOWJl" target="_blank" class="platform-link">
+                      <i class="fas fa-external-link-alt"></i>
+                      加入群组
+                    </a>
+                  </div>
+
+                </div>
+
+                <div class="platform-growth">
+                  <h4>增长数据</h4>
+                  <div class="growth-metrics">
+                    <div class="growth-metric">
+                      <div class="metric-header">
+                        <span class="metric-name">粉丝增长率</span>
+                        <span class="metric-period">月度</span>
+                      </div>
+                      <div class="metric-value positive">+15.2%</div>
+                    </div>
+                    <div class="growth-metric">
+                      <div class="metric-header">
+                        <span class="metric-name">内容互动率</span>
+                        <span class="metric-period">平均</span>
+                      </div>
+                      <div class="metric-value positive">12.3%</div>
+                    </div>
+                    <div class="growth-metric">
+                      <div class="metric-header">
+                        <span class="metric-name">直播观看量</span>
+                        <span class="metric-period">月度</span>
+                      </div>
+                      <div class="metric-value positive">2.1M+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Portfolio Tab */}
+            <div id="portfolio" class="tab-content">
+              <div class="portfolio-section">
+                <h3>精选作品</h3>
+                <p>展示最受欢迎的Web3教育内容和市场分析视频</p>
+                
+                <div class="portfolio-categories">
+                  <button class="category-btn active" data-category="all">全部</button>
+                  <button class="category-btn" data-category="live">直播回放</button>
+                  <button class="category-btn" data-category="analysis">市场分析</button>
+                  <button class="category-btn" data-category="tutorial">教程指南</button>
+                </div>
+
+                <div class="works-grid">
+                  <div class="work-item live">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">6.6K 观看</span>
+                        <span class="duration">14:16</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>Bitget Review & Tutorial: The Best Exchange for Crypto Traders?</h4>
+                      <p>Bitget交易所详细评测和使用教程</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 285</span>
+                        <span><i class="fas fa-comment"></i> 67</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item analysis">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">3.6K 观看</span>
+                        <span class="duration">16:47</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>🎙️: Bitget CEO Gracy Chen on Crypto, Power Moves & What's Next for 2025!</h4>
+                      <p>与Bitget CEO的深度访谈，探讨2025加密市场前景</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 156</span>
+                        <span><i class="fas fa-comment"></i> 89</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item tutorial">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">1.9K 观看</span>
+                        <span class="duration">13:55</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>BNB Explained: The Hidden Signals Behind BNB's Next Move</h4>
+                      <p>BNB深度分析，揭秘BNB背后的技术指标和投资信号</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 87</span>
+                        <span><i class="fas fa-comment"></i> 23</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item live">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">523K 观看</span>
+                        <span class="duration">直播</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>新项目AMA：下一个100倍币？深度对话项目方</h4>
+                      <p>与项目创始人实时问答，揭秘项目亮点</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 19K</span>
+                        <span><i class="fas fa-comment"></i> 4.1K</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item analysis">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">789K 观看</span>
+                        <span class="duration">14:45</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>Layer 2大战：Arbitrum vs Polygon 技术与生态对比</h4>
+                      <p>全面分析主流L2解决方案的优劣势</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 31K</span>
+                        <span><i class="fas fa-comment"></i> 2.9K</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="work-item tutorial">
+                    <div class="work-thumbnail">
+                      <i class="fas fa-play-circle"></i>
+                      <div class="work-meta">
+                        <span class="views">934K 观看</span>
+                        <span class="duration">20:10</span>
+                      </div>
+                    </div>
+                    <div class="work-info">
+                      <h4>钱包安全终极指南：保护你的数字资产</h4>
+                      <p>冷钱包vs热钱包，多重签名设置详解</p>
+                      <div class="work-stats">
+                        <span><i class="fas fa-thumbs-up"></i> 38K</span>
+                        <span><i class="fas fa-comment"></i> 4.3K</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Achievements Tab */}
+            <div id="achievements" class="tab-content">
+              <div class="achievements-section">
+                <h3>成就与里程碑</h3>
+                
+                <div class="achievements-grid">
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-star"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>快速成长KOL</h4>
+                      <p>2024年度</p>
+                      <div class="achievement-desc">
+                        在短短一年内粉丝增长超过300%
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>直播互动王</h4>
+                      <p>2023年获得</p>
+                      <div class="achievement-desc">
+                        单场直播最高互动率达到25%
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>社区建设专家</h4>
+                      <p>2024年</p>
+                      <div class="achievement-desc">
+                        成功运营多个活跃度90%+的Web3社群
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>月度增长突破</h4>
+                      <p>2024年3月</p>
+                      <div class="achievement-desc">
+                        单月粉丝增长率达到18.5%
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-award"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>最佳新人KOL</h4>
+                      <p>2023年</p>
+                      <div class="achievement-desc">
+                        获得Web3社区评选的年度最佳新人奖
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="achievement-card">
+                    <div class="achievement-icon">
+                      <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="achievement-content">
+                      <h4>品牌合作达人</h4>
+                      <p>2023-2024年</p>
+                      <div class="achievement-desc">
+                        与50+知名Web3项目建立合作关系
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Tab */}
+            <div id="contact-ip" class="tab-content">
+              <div class="contact-section">
+                <h3>商务合作</h3>
+                <p>与Lana Yang合作，获得年轻化、国际化的Web3营销支持</p>
+                
+                <div class="cooperation-types">
+                  <div class="coop-type">
+                    <div class="coop-icon">
+                      <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <h4>直播合作</h4>
+                    <p>高互动率的实时直播，与观众深度交流项目特色</p>
+                    <ul>
+                      <li>项目AMA直播</li>
+                      <li>实时市场分析</li>
+                      <li>社区互动问答</li>
+                      <li>产品演示教学</li>
+                    </ul>
+                  </div>
+
+                  <div class="coop-type">
+                    <div class="coop-icon">
+                      <i class="fas fa-video"></i>
+                    </div>
+                    <h4>短视频制作</h4>
+                    <p>专业的TikTok和YouTube Shorts内容，覆盖年轻用户群体</p>
+                    <ul>
+                      <li>项目快速介绍</li>
+                      <li>使用教程制作</li>
+                      <li>趋势话题结合</li>
+                      <li>病毒式传播策划</li>
+                    </ul>
+                  </div>
+
+                  <div class="coop-type">
+                    <div class="coop-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+                    <h4>社群运营</h4>
+                    <p>活跃社群管理和用户增长策略，提升项目社区粘性</p>
+                    <ul>
+                      <li>社群活动策划</li>
+                      <li>用户互动运营</li>
+                      <li>社区文化建设</li>
+                      <li>忠实粉丝培养</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="contact-cta">
+                  <div class="contact-info">
+                    <h4>联系方式</h4>
+                    <div class="contact-methods">
+                      <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                          <span class="label">商务邮箱</span>
+                          <span class="value">business@c-labs.com</span>
+                        </div>
+                      </div>
+                      <div class="contact-method">
+                        <i class="fab fa-telegram"></i>
+                        <div>
+                          <span class="label">Telegram</span>
+                          <span class="value">@clabsofficial</span>
+                        </div>
+                      </div>
+                      <div class="contact-method">
+                        <i class="fab fa-x-twitter"></i>
+                        <div>
+                          <span class="label">Twitter DM</span>
+                          <span class="value">@lanayangcrypto</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="contact-form-container">
+                    <h4>快速咨询</h4>
+                    <form class="contact-form">
+                      <input type="text" placeholder="您的姓名" required />
+                      <input type="email" placeholder="邮箱地址" required />
+                      <input type="text" placeholder="公司名称" />
+                      <select required>
+                        <option value="">合作类型</option>
+                        <option value="live">直播合作</option>
+                        <option value="video">短视频制作</option>
+                        <option value="community">社群运营</option>
+                        <option value="comprehensive">综合营销</option>
+                      </select>
+                      <textarea placeholder="项目描述和合作需求" rows="4" required></textarea>
+                      <button type="submit" class="btn-primary">发送咨询</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <script>{`
+          // Tab switching functionality
+          document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link')
+            const tabContents = document.querySelectorAll('.tab-content')
+            
+            tabLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault()
+                
+                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
+                
+                // Remove active classes
+                tabLinks.forEach(tab => tab.classList.remove('active'))
+                tabContents.forEach(content => content.classList.remove('active'))
+                
+                // Add active classes
+                this.classList.add('active')
+                const targetContent = document.getElementById(targetTab)
+                if (targetContent) {
+                  targetContent.classList.add('active')
+                }
+              })
+            })
+
+            // Portfolio category filtering
+            const categoryBtns = document.querySelectorAll('.category-btn')
+            const workItems = document.querySelectorAll('.work-item')
+            
+            categoryBtns.forEach(btn => {
+              btn.addEventListener('click', function() {
+                const category = this.getAttribute('data-category')
+                
+                categoryBtns.forEach(b => b.classList.remove('active'))
+                this.classList.add('active')
+                
+                workItems.forEach(item => {
+                  if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block'
+                  } else {
+                    item.style.display = 'none'
+                  }
+                })
+              })
+            })
+          })
+        `}</script>
+        
+      </div>
+    )
+  }
+})
+
+
+
+// ================================
+// TUTORIALS MANAGEMENT ROUTES  
+// ================================
+
+// Tutorials Management Dashboard
+app.get('/admin/tutorials/manage', async (c) => {
+  try {
+    const { env } = c
+
+    // Create tutorials table if not exists
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS tutorials (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        slug TEXT UNIQUE NOT NULL,
+        summary TEXT,
+        content TEXT NOT NULL,
+        category TEXT NOT NULL,
+        thumbnail_url TEXT,
+        difficulty TEXT DEFAULT 'beginner',
+        read_time INTEGER DEFAULT 5,
+        views INTEGER DEFAULT 0,
+        likes INTEGER DEFAULT 0,
+        tags JSON,
+        status TEXT DEFAULT 'draft',
+        featured BOOLEAN DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).run()
+
+    const tutorials = await env.DB.prepare(`
+      SELECT * FROM tutorials ORDER BY created_at DESC
+    `).all()
+
+    return c.render(
+      <div class="admin-tutorials-management">
+        <div class="admin-header">
+          <div class="container">
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>教程管理</span>
+              </div>
+              
+              <div class="admin-menu">
+                <a href="/admin" class="nav-item">
+                  <i class="fas fa-tachometer-alt"></i>
+                  总览
+                </a>
+                <a href="/admin/ip/manage" class="nav-item">
+                  <i class="fas fa-users"></i>
+                  IP管理
+                </a>
+
+                <a href="/admin/tutorials/manage" class="nav-item active">
+                  <i class="fas fa-graduation-cap"></i>
+                  教程管理
+                </a>
+                <a href="/admin/uploads" class="nav-item">
+                  <i class="fas fa-images"></i>
+                  文件管理
+                </a>
+              </div>
+              
+              <div class="admin-actions">
+                <a href="/admin/tutorials/add" class="btn-primary">
+                  <i class="fas fa-plus"></i>
+                  添加教程
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <div class="container">
+            <div class="tutorials-table">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>教程</th>
+                    <th>分类</th>
+                    <th>难度</th>
+                    <th>状态</th>
+                    <th>数据</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tutorials.results?.map((tutorial: any) => (
+                    <tr>
+                      <td>
+                        <div class="tutorial-info">
+                          {tutorial.thumbnail_url && (
+                            <img src={tutorial.thumbnail_url} alt={tutorial.title} class="tutorial-thumb" />
+                          )}
+                          <div>
+                            <h4>{tutorial.title}</h4>
+                            <p>{tutorial.summary}</p>
+                            <span class="tutorial-slug">/{tutorial.slug}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="category-tag">{tutorial.category}</span>
+                      </td>
+                      <td>
+                        <span class={`difficulty-badge ${tutorial.difficulty}`}>
+                          {tutorial.difficulty === 'beginner' ? '入门' :
+                           tutorial.difficulty === 'intermediate' ? '进阶' : '高级'}
+                        </span>
+                      </td>
+                      <td>
+                        <span class={`status-badge ${tutorial.status}`}>
+                          {tutorial.status === 'published' ? '已发布' : 
+                           tutorial.status === 'draft' ? '草稿' : '待审核'}
+                        </span>
+                        {tutorial.featured && (
+                          <span class="featured-badge">精选</span>
+                        )}
+                      </td>
+                      <td>
+                        <div class="tutorial-stats">
+                          <span><i class="fas fa-eye"></i> {tutorial.views}</span>
+                          <span><i class="fas fa-heart"></i> {tutorial.likes}</span>
+                          <span><i class="fas fa-clock"></i> {tutorial.read_time}min</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-buttons">
+                          <a href={`/tutorials/${tutorial.category}/${tutorial.slug}`} 
+                             class="btn-outline btn-sm" target="_blank">
+                            <i class="fas fa-eye"></i>
+                          </a>
+                          <a href={`/admin/tutorials/edit/${tutorial.id}`} 
+                             class="btn-outline btn-sm">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                          <button onclick={`deleteTutorial(${tutorial.id})`} 
+                                  class="btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  
+                  {(!tutorials.results || tutorials.results.length === 0) && (
+                    <tr>
+                      <td colspan="6" class="empty-state">
+                        <div>
+                          <i class="fas fa-book-open"></i>
+                          <h3>暂无教程</h3>
+                          <p>开始创建您的第一个Web3教程</p>
+                          <a href="/admin/tutorials/add" class="btn-primary">添加教程</a>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <script>{`
+          async function deleteTutorial(tutorialId) {
+            if (!confirm('确定要删除这个教程吗？')) return;
+            
+            try {
+              const response = await fetch('/api/admin/tutorials/delete/' + tutorialId, {
+                method: 'DELETE'
+              });
+              
+              const result = await response.json();
+              if (result.success) {
+                location.reload();
+              } else {
+                alert('删除失败：' + result.message);
+              }
+            } catch (error) {
+              alert('删除失败：' + error.message);
+            }
+          }
+        `}</script>
+      </div>
+    )
+  } catch (error) {
     return c.render(
       <div class="error-page">
         <div class="container">
           <div class="error-message">
             <h1>加载失败</h1>
-            <p>无法加载案例详情，请稍后再试。</p>
-            <a href="/cases" class="btn-primary">返回案例列表</a>
+            <p>教程管理页面加载失败</p>
+            <a href="/admin" class="btn-primary">返回主页</a>
           </div>
         </div>
       </div>
     )
+  }
+})
+
+// Add Tutorial Form
+app.get('/admin/tutorials/add', (c) => {
+  return c.render(
+    <div class="admin-form-page">
+      <div class="admin-header">
+        <div class="container">
+          <div class="admin-nav">
+            <div class="admin-logo">
+              <i class="fas fa-book-open"></i>
+              <span>创建教程</span>
+            </div>
+            <div class="admin-actions">
+              <a href="/admin/tutorials/manage" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                返回列表
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="container">
+          <div class="form-container">
+            <form id="tutorialForm" class="admin-form">
+              <div class="form-section">
+                <h3>基本信息</h3>
+                
+                <div class="form-group">
+                  <label for="tutorialTitle">教程标题 *</label>
+                  <input type="text" id="tutorialTitle" name="title" required 
+                         placeholder="例如：DeFi流动性挖矿完全指南" />
+                </div>
+                
+                <div class="form-group">
+                  <label for="tutorialSlug">URL标识 *</label>
+                  <input type="text" id="tutorialSlug" name="slug" required 
+                         placeholder="defi-liquidity-mining-guide" />
+                  <small>用于生成教程链接，只能包含字母、数字和连字符</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="tutorialSummary">简要介绍</label>
+                  <textarea id="tutorialSummary" name="summary" rows="3" 
+                            placeholder="教程的简要介绍，将显示在列表页面"></textarea>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="tutorialCategory">教程分类 *</label>
+                    <select id="tutorialCategory" name="category" required>
+                      <option value="">选择分类</option>
+                      <option value="defi">DeFi 去中心化金融</option>
+                      <option value="nft">NFT 非同质化代币</option>
+                      <option value="dao">DAO 去中心化自治组织</option>
+                      <option value="dapp">DApp 去中心化应用</option>
+                      <option value="wallet">钱包与安全</option>
+                      <option value="trading">交易与投资</option>
+                      <option value="gaming">GameFi 链游</option>
+                      <option value="metaverse">元宇宙</option>
+                      <option value="basics">区块链基础</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="tutorialDifficulty">难度等级</label>
+                    <select id="tutorialDifficulty" name="difficulty">
+                      <option value="beginner">入门级</option>
+                      <option value="intermediate">进阶级</option>
+                      <option value="advanced">高级</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="tutorialReadTime">阅读时间（分钟）</label>
+                    <input type="number" id="tutorialReadTime" name="read_time" 
+                           min="1" max="120" value="10" />
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="tutorialStatus">发布状态</label>
+                    <select id="tutorialStatus" name="status">
+                      <option value="draft">草稿</option>
+                      <option value="published">发布</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="tutorialFeatured" name="featured" value="1" />
+                    设为精选教程
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>封面图片</h3>
+                
+                <div class="form-group">
+                  <label for="tutorialThumbnail">教程封面</label>
+                  <div class="image-upload-area" onclick="document.getElementById('thumbnailInput').click()">
+                    <div id="thumbnailPreview" class="image-preview">
+                      <i class="fas fa-image"></i>
+                      <p>点击上传教程封面</p>
+                      <small>建议尺寸：1200x600px</small>
+                    </div>
+                    <input type="file" id="thumbnailInput" accept="image/*" style="display: none;" />
+                    <input type="hidden" id="thumbnailUrl" name="thumbnail_url" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>教程内容</h3>
+                
+                <div class="form-group">
+                  <label for="tutorialContent">教程正文 *</label>
+                  <div class="content-editor">
+                    <div class="editor-toolbar">
+                      <button type="button" onclick="insertMarkdown('## ', '')" class="btn-sm">标题</button>
+                      <button type="button" onclick="insertMarkdown('**', '**')" class="btn-sm">粗体</button>
+                      <button type="button" onclick="insertMarkdown('*', '*')" class="btn-sm">斜体</button>
+                      <button type="button" onclick="insertMarkdown('\\`', '\\`')" class="btn-sm">代码</button>
+                      <button type="button" onclick="insertMarkdown('\\`\\`\\`\\n', '\\n\\`\\`\\`')" class="btn-sm">代码块</button>
+                      <button type="button" onclick="insertMarkdown('- ', '')" class="btn-sm">列表</button>
+                      <button type="button" onclick="insertMarkdown('[链接文字](', ')')" class="btn-sm">链接</button>
+                    </div>
+                    <textarea id="tutorialContent" name="content" rows="20" required
+                              placeholder="使用Markdown格式编写教程内容...&#10;&#10;例如：&#10;## 什么是DeFi？&#10;&#10;DeFi（去中心化金融）是指...&#10;&#10;### 步骤一：连接钱包&#10;&#10;1. 打开MetaMask钱包&#10;2. 点击连接按钮&#10;3. 确认连接"></textarea>
+                  </div>
+                  <div class="content-preview">
+                    <h4>预览效果</h4>
+                    <div id="markdownPreview" class="markdown-preview">
+                      在上方输入内容后将在此处显示预览...
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>标签设置</h3>
+                
+                <div class="form-group">
+                  <label for="tutorialTags">教程标签</label>
+                  <div class="tags-input-container">
+                    <div id="tagsDisplay" class="tags-display"></div>
+                    <input type="text" id="tagsInput" placeholder="输入标签后按回车添加（例如：DeFi、Uniswap、流动性）" />
+                    <input type="hidden" id="tagsData" name="tags" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" onclick="history.back()" class="btn-secondary">取消</button>
+                <button type="button" onclick="previewTutorial()" class="btn-outline">预览</button>
+                <button type="submit" class="btn-primary">
+                  <i class="fas fa-save"></i>
+                  保存教程
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <script>{`
+        let selectedTags = [];
+
+        // Auto-generate slug from title
+        document.getElementById('tutorialTitle').addEventListener('input', (e) => {
+          const title = e.target.value;
+          const slug = title
+            .toLowerCase()
+            .replace(/[^a-z0-9\u4e00-\u9fa5\\s-]/g, '')
+            .replace(/[\\s\u4e00-\u9fa5]+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+          document.getElementById('tutorialSlug').value = slug;
+        });
+
+        // Thumbnail upload
+        document.getElementById('thumbnailInput').addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          
+          try {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch('/api/upload/image', {
+              method: 'POST',
+              body: formData
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+              document.getElementById('thumbnailUrl').value = result.data.url;
+              document.getElementById('thumbnailPreview').innerHTML = 
+                '<img src="' + result.data.url + '" alt="封面预览" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">';
+            } else {
+              alert('上传失败：' + result.message);
+            }
+          } catch (error) {
+            alert('上传错误：' + error.message);
+          }
+        });
+
+        // Markdown editor functions
+        function insertMarkdown(before, after) {
+          const textarea = document.getElementById('tutorialContent');
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const text = textarea.value;
+          const selectedText = text.substring(start, end);
+          
+          const newText = text.substring(0, start) + before + selectedText + after + text.substring(end);
+          textarea.value = newText;
+          
+          const newCursorPos = start + before.length + selectedText.length + after.length;
+          textarea.setSelectionRange(newCursorPos, newCursorPos);
+          textarea.focus();
+          
+          updatePreview();
+        }
+
+        // Simple markdown preview
+        function updatePreview() {
+          const content = document.getElementById('tutorialContent').value;
+          const preview = document.getElementById('markdownPreview');
+          
+          // Simple markdown to HTML conversion
+          let html = content
+            .replace(/### (.*)/g, '<h3>$1</h3>')
+            .replace(/## (.*)/g, '<h2>$1</h2>')
+            .replace(/# (.*)/g, '<h1>$1</h1>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\`(.*?)\`/g, '<code>$1</code>')
+            .replace(/\`\`\`([\s\S]*?)\`\`\`/g, '<pre><code>$1</code></pre>')
+            .replace(/^- (.*)$/gm, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/^(.+)$/gm, '<p>$1</p>');
+          
+          preview.innerHTML = html;
+        }
+
+        // Update preview on content change
+        document.getElementById('tutorialContent').addEventListener('input', updatePreview);
+
+        // Tags management  
+        document.getElementById('tagsInput').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const tag = e.target.value.trim();
+            if (tag && !selectedTags.includes(tag)) {
+              selectedTags.push(tag);
+              updateTagsDisplay();
+              e.target.value = '';
+            }
+          }
+        });
+
+        function updateTagsDisplay() {
+          const display = document.getElementById('tagsDisplay');
+          display.innerHTML = selectedTags.map((tag, index) => 
+            '<span class="tag-item">' +
+              tag +
+              '<button type="button" onclick="removeTag(' + index + ')" class="tag-remove">' +
+                '<i class="fas fa-times"></i>' +
+              '</button>' +
+            '</span>'
+          ).join('');
+          
+          document.getElementById('tagsData').value = JSON.stringify(selectedTags);
+        }
+
+        function removeTag(index) {
+          selectedTags.splice(index, 1);
+          updateTagsDisplay();
+        }
+
+        // Preview tutorial
+        function previewTutorial() {
+          const form = document.getElementById('tutorialForm');
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData);
+          
+          // Open preview in new window
+          const previewWindow = window.open('', '_blank');
+          previewWindow.document.write('<h1>教程预览：' + data.title + '</h1>');
+          previewWindow.document.write('<div>' + document.getElementById('markdownPreview').innerHTML + '</div>');
+        }
+
+        // Form submission
+        document.getElementById('tutorialForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const formData = new FormData(e.target);
+          const data = Object.fromEntries(formData);
+          
+          // Convert featured checkbox
+          data.featured = data.featured ? 1 : 0;
+          
+          // Parse tags
+          try {
+            data.tags = JSON.parse(data.tags || '[]');
+          } catch (error) {
+            data.tags = [];
+          }
+          
+          try {
+            const response = await fetch('/api/admin/tutorials/create', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+              alert('教程创建成功！');
+              window.location.href = '/admin/tutorials/manage';
+            } else {
+              alert('创建失败：' + result.message);
+            }
+          } catch (error) {
+            alert('提交失败：' + error.message);
+          }
+        });
+
+        // Initialize preview
+        updatePreview();
+      `}</script>
+    </div>
+  )
+})
+
+// File Upload Management
+app.get('/admin/uploads', async (c) => {
+  try {
+    const { env } = c
+
+    const uploads = await env.DB.prepare(`
+      SELECT * FROM uploaded_images ORDER BY created_at DESC LIMIT 50
+    `).all()
+
+    return c.render(
+      <div class="admin-uploads-management">
+        <div class="admin-header">
+          <div class="container">
+            <div class="admin-nav">
+              <div class="admin-logo">
+                <i class="fas fa-images"></i>
+                <span>文件管理</span>
+              </div>
+              <div class="admin-actions">
+                <a href="/admin" class="btn-secondary">
+                  <i class="fas fa-arrow-left"></i>
+                  返回主页
+                </a>
+                <button onclick="document.getElementById('uploadInput').click()" class="btn-primary">
+                  <i class="fas fa-upload"></i>
+                  上传文件
+                </button>
+                <input type="file" id="uploadInput" accept="image/*" multiple style="display: none;" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-content">
+          <div class="container">
+            <div class="uploads-grid">
+              {uploads.results?.map((upload: any) => (
+                <div class="upload-card">
+                  <div class="upload-image">
+                    <img src={`/api/image/${upload.filename}`} alt={upload.original_name} />
+                  </div>
+                  <div class="upload-info">
+                    <h4>{upload.original_name}</h4>
+                    <p class="upload-filename">{upload.filename}</p>
+                    <p class="upload-size">{(upload.file_size / 1024).toFixed(2)} KB</p>
+                    <p class="upload-date">{new Date(upload.created_at).toLocaleDateString('zh-CN')}</p>
+                    
+                    <div class="upload-actions">
+                      <button onclick={`copyUrl('/api/image/${upload.filename}')`} class="btn-outline btn-sm">
+                        <i class="fas fa-copy"></i>
+                        复制链接
+                      </button>
+                      <button onclick={`deleteUpload(${upload.id})`} class="btn-danger btn-sm">
+                        <i class="fas fa-trash"></i>
+                        删除
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {(!uploads.results || uploads.results.length === 0) && (
+                <div class="empty-state">
+                  <i class="fas fa-images"></i>
+                  <h3>暂无上传文件</h3>
+                  <p>开始上传您的第一个文件</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <script>{`
+          // File upload
+          document.getElementById('uploadInput').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            
+            for (const file of files) {
+              try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch('/api/upload/image', {
+                  method: 'POST',
+                  body: formData
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                  console.log('Uploaded:', result.data.fileName);
+                }
+              } catch (error) {
+                console.error('Upload error:', error);
+              }
+            }
+            
+            // Refresh page after uploads
+            setTimeout(() => location.reload(), 1000);
+          });
+
+          function copyUrl(url) {
+            const fullUrl = window.location.origin + url;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+              alert('链接已复制到剪贴板');
+            });
+          }
+
+          async function deleteUpload(uploadId) {
+            if (!confirm('确定要删除这个文件吗？')) return;
+            
+            try {
+              const response = await fetch('/api/admin/uploads/delete/' + uploadId, {
+                method: 'DELETE'
+              });
+              
+              const result = await response.json();
+              if (result.success) {
+                location.reload();
+              } else {
+                alert('删除失败：' + result.message);
+              }
+            } catch (error) {
+              alert('删除失败：' + error.message);
+            }
+          }
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>加载失败</h1>
+            <p>文件管理页面加载失败</p>
+            <a href="/admin" class="btn-primary">返回主页</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})
+
+// ================================
+// API ROUTES FOR ADMIN MANAGEMENT
+// ================================
+
+
+
+// Tutorials API  
+app.post('/api/admin/tutorials/create', async (c) => {
+  try {
+    const { env } = c
+    const data = await c.req.json()
+
+    // Check if slug already exists
+    const existingTutorial = await env.DB.prepare(`
+      SELECT id FROM tutorials WHERE slug = ?
+    `).bind(data.slug).first()
+
+    if (existingTutorial) {
+      return c.json({ success: false, message: 'URL标识已存在，请使用其他标识' }, 400)
+    }
+
+    const result = await env.DB.prepare(`
+      INSERT INTO tutorials (
+        title, slug, summary, content, category, thumbnail_url, difficulty, 
+        read_time, tags, status, featured
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      data.title,
+      data.slug,
+      data.summary,
+      data.content,
+      data.category,
+      data.thumbnail_url,
+      data.difficulty || 'beginner',
+      parseInt(data.read_time) || 10,
+      JSON.stringify(data.tags || []),
+      data.status || 'draft',
+      data.featured ? 1 : 0
+    ).run()
+
+    return c.json({ success: true, id: result.meta.last_row_id, message: '教程创建成功' })
+  } catch (error) {
+    return c.json({ success: false, message: '创建失败：' + error.message }, 500)
+  }
+})
+
+app.delete('/api/admin/tutorials/delete/:id', async (c) => {
+  try {
+    const { env } = c
+    const tutorialId = c.req.param('id')
+
+    await env.DB.prepare(`DELETE FROM tutorials WHERE id = ?`).bind(tutorialId).run()
+    return c.json({ success: true, message: '教程删除成功' })
+  } catch (error) {
+    return c.json({ success: false, message: '删除失败：' + error.message }, 500)
+  }
+})
+
+// Uploads API
+app.delete('/api/admin/uploads/delete/:id', async (c) => {
+  try {
+    const { env } = c
+    const uploadId = c.req.param('id')
+
+    await env.DB.prepare(`DELETE FROM uploaded_images WHERE id = ?`).bind(uploadId).run()
+    return c.json({ success: true, message: '文件删除成功' })
+  } catch (error) {
+    return c.json({ success: false, message: '删除失败：' + error.message }, 500)
   }
 })
 

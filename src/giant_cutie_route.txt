@@ -1,0 +1,574 @@
+app.get('/ip/giant-cutie', async (c) => {
+  try {
+    const { env } = c
+
+    // Get Giant Cutie profile data
+    const profile = await env.DB.prepare(`
+      SELECT * FROM ip_profiles WHERE slug = 'giant-cutie'
+    `).first()
+
+    if (!profile) {
+      return c.render(
+        <div class="error-page">
+          <div class="container">
+            <div class="error-message">
+              <h1>IP未找到</h1>
+              <p>请求的IP页面不存在。</p>
+              <a href="/" class="btn-primary">返回首页</a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // Get platform statistics
+    const platforms = await env.DB.prepare(`
+      SELECT * FROM ip_platform_stats 
+      WHERE ip_id = ? 
+      ORDER BY followers_count DESC
+    `).bind(profile.id).all()
+
+    // Get featured works
+    const featuredWorks = await env.DB.prepare(`
+      SELECT * FROM ip_works 
+      WHERE ip_id = ? AND featured = true AND status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 6
+    `).bind(profile.id).all()
+
+    // Get all works for portfolio
+    const allWorks = await env.DB.prepare(`
+      SELECT * FROM ip_works 
+      WHERE ip_id = ? AND status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 12
+    `).bind(profile.id).all()
+
+    // Get achievements
+    const achievements = await env.DB.prepare(`
+      SELECT * FROM ip_achievements 
+      WHERE ip_id = ? 
+      ORDER BY display_order ASC, achievement_date DESC
+    `).bind(profile.id).all()
+
+    // Get recent analytics
+    const analytics = await env.DB.prepare(`
+      SELECT * FROM ip_analytics 
+      WHERE ip_id = ? AND date_recorded >= date('now', '-30 days')
+      ORDER BY date_recorded DESC
+    `).bind(profile.id).all()
+
+    // Parse JSON fields
+    let socialLinks = {}
+    let specialties = []
+    let languages = []
+    
+    try {
+      socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
+      specialties = profile.specialties ? JSON.parse(profile.specialties) : []
+      languages = profile.languages ? JSON.parse(profile.languages) : []
+    } catch (e) {
+      console.error('Error parsing JSON fields:', e)
+    }
+
+    // Calculate total stats
+    const totalFollowers = platforms.results?.reduce((sum, p) => sum + (p.followers_count || 0), 0) || 0
+    const totalViews = platforms.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 0
+    const avgEngagement = platforms.results?.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / (platforms.results?.length || 1) || 0
+
+    return c.render(
+      <div class="ip-showcase-page">
+        {/* Hero Section */}
+        <div class="ip-hero" style={profile.banner_url ? `background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${profile.banner_url})` : ''}>
+          <div class="container">
+            <div class="ip-hero-content">
+              <div class="ip-avatar-section">
+                <div class="ip-avatar">
+                  {profile.avatar_url ? (
+                    <img src={profile.avatar_url} alt={profile.display_name} />
+                  ) : (
+                    <div class="avatar-placeholder">
+                      <i class="fas fa-user"></i>
+                    </div>
+                  )}
+                  <div class="status-indicator active">
+                    <i class="fas fa-circle"></i>
+                  </div>
+                </div>
+                <div class="verification-badge">
+                  <i class="fas fa-check-circle"></i>
+                  <span>认证KOL</span>
+                </div>
+              </div>
+              
+              <div class="ip-info">
+                <h1 class="ip-name">{profile.display_name}</h1>
+                <p class="ip-title">{profile.title}</p>
+                <p class="ip-slogan">{profile.slogan}</p>
+                
+                <div class="ip-stats-mini">
+                  <div class="stat-mini">
+                    <span class="number">{(totalFollowers / 1000).toFixed(0)}K+</span>
+                    <span class="label">总粉丝</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{(totalViews / 1000000).toFixed(1)}M+</span>
+                    <span class="label">总播放量</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{avgEngagement.toFixed(1)}%</span>
+                    <span class="label">平均互动率</span>
+                  </div>
+                  <div class="stat-mini">
+                    <span class="number">{platforms.results?.length || 0}</span>
+                    <span class="label">活跃平台</span>
+                  </div>
+                </div>
+
+                <div class="ip-actions">
+                  <a href="/contact" class="btn-primary">
+                    <i class="fas fa-handshake"></i>
+                    商务合作
+                  </a>
+                  <a href="#portfolio" class="btn-secondary">
+                    <i class="fas fa-play"></i>
+                    查看作品
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div class="ip-nav-tabs sticky">
+          <div class="container">
+            <div class="tabs-container">
+              <a href="#overview" class="tab-link active" data-tab="overview">
+                <i class="fas fa-user"></i>
+                概览
+              </a>
+              <a href="#platforms" class="tab-link" data-tab="platforms">
+                <i class="fas fa-chart-bar"></i>
+                平台数据
+              </a>
+              <a href="#portfolio" class="tab-link" data-tab="portfolio">
+                <i class="fas fa-play-circle"></i>
+                作品集
+              </a>
+              <a href="#achievements" class="tab-link" data-tab="achievements">
+                <i class="fas fa-trophy"></i>
+                成就
+              </a>
+              <a href="#contact" class="tab-link" data-tab="contact">
+                <i class="fas fa-envelope"></i>
+                联系方式
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Sections */}
+        <div class="ip-content">
+          <div class="container">
+            {/* Overview Tab */}
+            <div id="overview" class="tab-content active">
+              <div class="overview-grid">
+                <div class="overview-main">
+                  <div class="bio-section">
+                    <h3>个人简介</h3>
+                    <p class="bio-text">{profile.bio}</p>
+                  </div>
+
+                  <div class="specialties-section">
+                    <h3>专长领域</h3>
+                    <div class="specialty-tags">
+                      {specialties.map(specialty => (
+                        <span class="specialty-tag">{specialty}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="featured-works-section">
+                    <h3>精选作品</h3>
+                    <div class="featured-works-grid">
+                      {featuredWorks.results?.slice(0, 4).map(work => {
+                        let tags = []
+                        try {
+                          tags = work.tags ? JSON.parse(work.tags) : []
+                        } catch (e) {}
+
+                        return (
+                          <div class="work-card featured">
+                            <div class="work-thumbnail">
+                              {work.thumbnail_url ? (
+                                <img src={work.thumbnail_url} alt={work.title} />
+                              ) : (
+                                <div class="thumbnail-placeholder">
+                                  <i class="fas fa-play"></i>
+                                </div>
+                              )}
+                              <div class="play-overlay">
+                                <i class="fas fa-play"></i>
+                              </div>
+                            </div>
+                            <div class="work-info">
+                              <h4 class="work-title">{work.title}</h4>
+                              <p class="work-description">{work.description}</p>
+                              <div class="work-stats">
+                                <span class="stat">
+                                  <i class="fas fa-eye"></i>
+                                  {(work.view_count / 1000).toFixed(0)}K
+                                </span>
+                                <span class="stat">
+                                  <i class="fas fa-heart"></i>
+                                  {(work.like_count / 1000).toFixed(0)}K
+                                </span>
+                                <span class="platform-badge">{work.platform}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="overview-sidebar">
+                  <div class="info-card">
+                    <h4>基本信息</h4>
+                    <div class="info-list">
+                      <div class="info-item">
+                        <span class="label">所在地</span>
+                        <span class="value">{profile.location}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">语言能力</span>
+                        <span class="value">{languages.join(', ')}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="label">状态</span>
+                        <span class="value status-active">
+                          <i class="fas fa-circle"></i>
+                          活跃中
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="social-links-card">
+                    <h4>社交媒体</h4>
+                    <div class="social-links-grid">
+                      {Object.entries(socialLinks).map(([platform, url]) => (
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="social-link">
+                          <i class={`fab fa-${platform === 'youtube' ? 'youtube' : platform === 'twitter' ? 'x-twitter' : platform}`}></i>
+                          <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {achievements.results?.length > 0 && (
+                    <div class="recent-achievements-card">
+                      <h4>最新成就</h4>
+                      <div class="achievements-list">
+                        {achievements.results?.slice(0, 3).map(achievement => (
+                          <div class="achievement-item">
+                            <div class="achievement-icon" style={`background-color: ${achievement.badge_color}`}>
+                              <i class={achievement.icon}></i>
+                            </div>
+                            <div class="achievement-info">
+                              <h5>{achievement.title}</h5>
+                              <p>{achievement.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Platforms Tab */}
+            <div id="platforms" class="tab-content">
+              <div class="platforms-section">
+                <h3>平台数据统计</h3>
+                <div class="platforms-grid">
+                  {platforms.results?.map(platform => (
+                    <div class="platform-stat-card">
+                      <div class="platform-header">
+                        <div class="platform-icon" style={`background-color: ${platform.platform_color}`}>
+                          <i class={platform.platform_icon}></i>
+                        </div>
+                        <div class="platform-info">
+                          <h4>{platform.platform_name}</h4>
+                          <p>@{platform.username}</p>
+                        </div>
+                        <a href={platform.platform_url} target="_blank" class="platform-link">
+                          <i class="fas fa-external-link-alt"></i>
+                        </a>
+                      </div>
+                      <div class="platform-stats">
+                        <div class="stat-row">
+                          <span class="stat-label">粉丝数</span>
+                          <span class="stat-value">{(platform.followers_count / 1000).toFixed(0)}K</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">总播放量</span>
+                          <span class="stat-value">{(platform.total_views / 1000000).toFixed(1)}M</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">互动率</span>
+                          <span class="stat-value">{platform.engagement_rate}%</span>
+                        </div>
+                        <div class="stat-row">
+                          <span class="stat-label">内容数</span>
+                          <span class="stat-value">{platform.total_videos}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Portfolio Tab */}
+            <div id="portfolio" class="tab-content">
+              <div class="portfolio-section">
+                <div class="portfolio-header">
+                  <h3>作品集</h3>
+                  <div class="portfolio-filters">
+                    <button class="filter-btn active" data-filter="all">全部</button>
+                    <button class="filter-btn" data-filter="video">视频</button>
+                    <button class="filter-btn" data-filter="live">直播</button>
+                    <button class="filter-btn" data-filter="collaboration">合作项目</button>
+                  </div>
+                </div>
+
+                <div class="works-grid">
+                  {allWorks.results?.map(work => {
+                    let tags = []
+                    let collaborationInfo = {}
+                    try {
+                      tags = work.tags ? JSON.parse(work.tags) : []
+                      collaborationInfo = work.collaboration_info ? JSON.parse(work.collaboration_info) : {}
+                    } catch (e) {}
+
+                    return (
+                      <div class={`work-item ${work.category}`} data-category={work.category}>
+                        <div class="work-card">
+                          <div class="work-thumbnail">
+                            {work.thumbnail_url ? (
+                              <img src={work.thumbnail_url} alt={work.title} />
+                            ) : (
+                              <div class="thumbnail-placeholder">
+                                <i class="fas fa-play"></i>
+                              </div>
+                            )}
+                            <div class="work-overlay">
+                              <div class="play-button">
+                                <i class="fas fa-play"></i>
+                              </div>
+                              {work.external_url && (
+                                <a href={work.external_url} target="_blank" class="external-link">
+                                  <i class="fas fa-external-link-alt"></i>
+                                </a>
+                              )}
+                            </div>
+                            <div class="work-badges">
+                              <span class="platform-badge">{work.platform}</span>
+                              {collaborationInfo.client && (
+                                <span class="collaboration-badge">合作</span>
+                              )}
+                            </div>
+                          </div>
+                          <div class="work-details">
+                            <h4 class="work-title">{work.title}</h4>
+                            <p class="work-description">{work.description}</p>
+                            <div class="work-tags">
+                              {tags.slice(0, 3).map(tag => (
+                                <span class="tag">{tag}</span>
+                              ))}
+                            </div>
+                            <div class="work-metrics">
+                              <div class="metric">
+                                <i class="fas fa-eye"></i>
+                                <span>{(work.view_count / 1000).toFixed(0)}K</span>
+                              </div>
+                              <div class="metric">
+                                <i class="fas fa-heart"></i>
+                                <span>{(work.like_count / 1000).toFixed(0)}K</span>
+                              </div>
+                              <div class="metric">
+                                <i class="fas fa-comment"></i>
+                                <span>{work.comment_count}</span>
+                              </div>
+                              <div class="work-date">
+                                {new Date(work.published_at).toLocaleDateString('zh-CN')}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Achievements Tab */}
+            <div id="achievements" class="tab-content">
+              <div class="achievements-section">
+                <h3>成就与里程碑</h3>
+                <div class="achievements-timeline">
+                  {achievements.results?.map(achievement => (
+                    <div class="achievement-timeline-item">
+                      <div class="achievement-date">
+                        {new Date(achievement.achievement_date).toLocaleDateString('zh-CN')}
+                      </div>
+                      <div class="achievement-content">
+                        <div class="achievement-icon-large" style={`background-color: ${achievement.badge_color}`}>
+                          <i class={achievement.icon}></i>
+                        </div>
+                        <div class="achievement-text">
+                          <h4>{achievement.title}</h4>
+                          <p>{achievement.description}</p>
+                          <span class="achievement-type">{achievement.achievement_type}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Tab */}
+            <div id="contact" class="tab-content">
+              <div class="contact-section">
+                <h3>商务合作</h3>
+                <div class="contact-grid">
+                  <div class="contact-info">
+                    <div class="contact-card">
+                      <h4>合作咨询</h4>
+                      <p>如果您对Giant Cutie的合作感兴趣，欢迎联系我们的商务团队</p>
+                      <div class="contact-methods">
+                        <div class="contact-method">
+                          <i class="fas fa-envelope"></i>
+                          <span>business@c-labs.com</span>
+                        </div>
+                        <div class="contact-method">
+                          <i class="fas fa-phone"></i>
+                          <span>商务专线</span>
+                        </div>
+                      </div>
+                      <a href="/contact" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        发送合作咨询
+                      </a>
+                    </div>
+                  </div>
+                  <div class="cooperation-types">
+                    <h4>合作类型</h4>
+                    <div class="cooperation-list">
+                      <div class="cooperation-item">
+                        <i class="fas fa-video"></i>
+                        <span>项目评测视频</span>
+                      </div>
+                      <div class="cooperation-item">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <span>直播推广</span>
+                      </div>
+                      <div class="cooperation-item">
+                        <i class="fas fa-users"></i>
+                        <span>社区建设</span>
+                      </div>
+                      <div class="cooperation-item">
+                        <i class="fas fa-handshake"></i>
+                        <span>长期合作</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>{`
+          // Tab switching functionality
+          document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link')
+            const tabContents = document.querySelectorAll('.tab-content')
+
+            tabLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                e.preventDefault()
+                
+                // Remove active class from all tabs
+                tabLinks.forEach(l => l.classList.remove('active'))
+                tabContents.forEach(c => c.classList.remove('active'))
+                
+                // Add active class to clicked tab
+                this.classList.add('active')
+                const targetTab = this.getAttribute('data-tab')
+                const targetContent = document.getElementById(targetTab)
+                if (targetContent) {
+                  targetContent.classList.add('active')
+                }
+              })
+            })
+
+            // Portfolio filtering
+            const filterBtns = document.querySelectorAll('.filter-btn')
+            const workItems = document.querySelectorAll('.work-item')
+
+            filterBtns.forEach(btn => {
+              btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'))
+                this.classList.add('active')
+                
+                const filter = this.getAttribute('data-filter')
+                
+                workItems.forEach(item => {
+                  if (filter === 'all' || item.classList.contains(filter)) {
+                    item.style.display = 'block'
+                  } else {
+                    item.style.display = 'none'
+                  }
+                })
+              })
+            })
+
+            // Smooth scroll for tab navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+              anchor.addEventListener('click', function (e) {
+                e.preventDefault()
+                const target = document.querySelector(this.getAttribute('href'))
+                if (target) {
+                  target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                  })
+                }
+              })
+            })
+          })
+        `}</script>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading Giant Cutie page:', error)
+    return c.render(
+      <div class="error-page">
+        <div class="container">
+          <div class="error-message">
+            <h1>页面加载失败</h1>
+            <p>无法加载IP页面，请稍后再试。</p>
+            <a href="/" class="btn-primary">返回首页</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+})

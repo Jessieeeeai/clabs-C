@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理登录测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .result { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>管理登录测试</h1>
+    <p>使用此页面登录管理后台，然后测试上传功能</p>
+
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" value="admin" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">密码:</label>
+            <input type="password" id="password" value="clabs2024" required>
+        </div>
+        
+        <button type="submit" class="btn">登录</button>
+    </form>
+
+    <div id="result"></div>
+
+    <div style="margin-top: 30px;">
+        <h3>快捷链接:</h3>
+        <p><a href="/admin/ip/manage" target="_blank">IP管理页面</a></p>
+        <p><a href="/admin/ip/edit/1" target="_blank">编辑Giant Cutie</a></p>
+        <p><a href="/admin/ip/edit/2" target="_blank">编辑Lana</a></p>
+        <p><a href="/test-upload" target="_blank">上传测试页面</a></p>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<p>登录中...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 保存session ID到localStorage
+                    localStorage.setItem('admin-session', result.sessionId);
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h4>✅ 登录成功!</h4>
+                        <p>Session ID: ${result.sessionId}</p>
+                        <p>现在可以访问管理页面了</p>
+                        <button onclick="testUploadPage()">测试上传页面</button>
+                        <button onclick="window.open('/admin/ip/edit/1', '_blank')">打开编辑页面</button>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `<h4>❌ 登录失败</h4><p>${result.message}</p>`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h4>❌ 登录错误</h4><p>${error.message}</p>`;
+            }
+        });
+        
+        function testUploadPage() {
+            window.open('/admin/ip/edit/1', '_blank');
+        }
+        
+        // 检查是否已经登录
+        window.onload = function() {
+            const sessionId = localStorage.getItem('admin-session');
+            if (sessionId) {
+                document.getElementById('result').innerHTML = `
+                    <div class="result success">
+                        <h4>已登录</h4>
+                        <p>Session ID: ${sessionId}</p>
+                        <button onclick="window.open('/admin/ip/edit/1', '_blank')">打开编辑页面</button>
+                    </div>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员图片上传测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">管理员图片上传功能测试</h1>
+        
+        <!-- 上传区域 -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">图片上传测试</h2>
+            
+            <!-- 文件选择区域 -->
+            <div class="mb-4">
+                <input type="file" id="imageInput" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+            
+            <!-- 上传按钮 -->
+            <button id="uploadBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50" onclick="uploadImage()">
+                上传图片
+            </button>
+            
+            <!-- 进度提示 -->
+            <div id="progress" class="mt-4 hidden">
+                <div class="text-sm text-gray-600">上传中...</div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full animate-pulse" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 结果显示 -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">上传结果</h2>
+            <div id="result" class="text-gray-500">等待上传...</div>
+            <div id="imagePreview" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script>
+        async function uploadImage() {
+            const input = document.getElementById('imageInput');
+            const file = input.files[0];
+            
+            if (!file) {
+                document.getElementById('result').innerHTML = '<span class="text-red-600">请选择一个图片文件</span>';
+                return;
+            }
+            
+            // 显示进度
+            document.getElementById('progress').classList.remove('hidden');
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('result').innerHTML = '<span class="text-blue-600">正在上传...</span>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('result').innerHTML = `
+                        <div class="text-green-600">
+                            <strong>上传成功！</strong><br>
+                            文件名：${data.data.fileName}<br>
+                            大小：${(data.data.size / 1024).toFixed(2)} KB<br>
+                            类型：${data.data.type}<br>
+                            URL：${data.data.url}
+                        </div>
+                    `;
+                    
+                    // 显示图片预览
+                    document.getElementById('imagePreview').innerHTML = `
+                        <img src="${data.data.url}" alt="上传的图片" class="max-w-md h-auto rounded-lg shadow-md mt-4">
+                    `;
+                } else {
+                    document.getElementById('result').innerHTML = `
+                        <div class="text-red-600">
+                            <strong>上传失败：</strong>${data.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                document.getElementById('result').innerHTML = `
+                    <div class="text-red-600">
+                        <strong>上传异常：</strong>${error.message}
+                    </div>
+                `;
+            } finally {
+                // 隐藏进度，恢复按钮
+                document.getElementById('progress').classList.add('hidden');
+                document.getElementById('uploadBtn').disabled = false;
+            }
+        }
+        
+        // 文件选择时显示文件信息
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('result').innerHTML = `
+                    <div class="text-gray-700">
+                        已选择文件：${file.name}<br>
+                        大小：${(file.size / 1024).toFixed(2)} KB<br>
+                        类型：${file.type}
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

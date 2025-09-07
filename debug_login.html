@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录调试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; }
+        .container { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .log { background: #f9f9f9; padding: 10px; margin: 5px 0; font-family: monospace; font-size: 12px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        input[type="text"], input[type="password"] { width: 200px; padding: 8px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>登录功能调试</h1>
+    
+    <div class="container">
+        <h3>测试登录API</h3>
+        <input type="text" id="username" value="admin" placeholder="用户名" />
+        <input type="password" id="password" value="clabs2024" placeholder="密码" />
+        <br>
+        <button onclick="testLoginAPI()">测试登录API</button>
+        <button onclick="testManagePage()">测试管理页面访问</button>
+        <button onclick="clearLogs()">清空日志</button>
+    </div>
+    
+    <div class="container">
+        <h3>模拟登录表单提交</h3>
+        <button onclick="simulateFormSubmit()">模拟表单提交</button>
+        <button onclick="directRedirect()">直接跳转管理页面</button>
+    </div>
+    
+    <div class="container">
+        <h3>调试日志</h3>
+        <div id="logs"></div>
+    </div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log ${type}`;
+            logDiv.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logs.appendChild(logDiv);
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+        
+        async function testLoginAPI() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            log(`开始登录测试 - 用户名: ${username}`);
+            
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include'
+                });
+                
+                log(`登录API响应状态: ${response.status}`);
+                log(`响应Headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                const result = await response.json();
+                log(`登录API响应: ${JSON.stringify(result)}`);
+                
+                if (result.success) {
+                    log(`登录成功！会话ID: ${result.sessionId}`, 'success');
+                    
+                    // 保存到localStorage
+                    localStorage.setItem('admin-session', result.sessionId);
+                    log('会话已保存到localStorage', 'success');
+                    
+                    // 检查cookie
+                    log(`当前页面cookies: ${document.cookie}`);
+                    
+                } else {
+                    log(`登录失败: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                log(`登录API错误: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testManagePage() {
+            log('测试管理页面访问...');
+            
+            try {
+                const response = await fetch('/admin/ip/manage', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                log(`管理页面响应状态: ${response.status}`);
+                
+                if (response.ok) {
+                    log('管理页面访问成功！', 'success');
+                    const text = await response.text();
+                    log(`页面内容长度: ${text.length} 字符`);
+                    
+                    // 检查是否是登录页面重定向
+                    if (text.includes('admin-login-page') || text.includes('登录管理后台')) {
+                        log('⚠️  页面被重定向到登录页面', 'error');
+                    } else {
+                        log('✓ 返回的是管理页面内容', 'success');
+                    }
+                } else if (response.status === 302 || response.status === 301) {
+                    log(`页面重定向: ${response.headers.get('Location')}`, 'error');
+                } else {
+                    log(`管理页面访问失败: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                log(`管理页面访问错误: ${error.message}`, 'error');
+            }
+        }
+        
+        function simulateFormSubmit() {
+            log('模拟登录表单提交...');
+            
+            // 模拟完整的登录流程
+            testLoginAPI().then(() => {
+                log('登录完成，2秒后跳转到管理页面...');
+                setTimeout(() => {
+                    log('执行页面跳转...');
+                    window.location.href = '/admin/ip/manage';
+                }, 2000);
+            });
+        }
+        
+        function directRedirect() {
+            log('直接跳转到管理页面（测试认证中间件）...');
+            window.location.href = '/admin/ip/manage';
+        }
+        
+        // 页面加载时显示当前状态
+        document.addEventListener('DOMContentLoaded', function() {
+            log('页面加载完成');
+            log(`当前URL: ${window.location.href}`);
+            log(`localStorage中的会话: ${localStorage.getItem('admin-session')}`);
+            log(`当前cookies: ${document.cookie}`);
+        });
+    </script>
+</body>
+</html>
