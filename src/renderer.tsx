@@ -75,7 +75,6 @@ export const renderer = jsxRenderer(({ children }) => {
               
               <div class="hidden md:flex items-center space-x-8">
                 <a href="/" class="nav-link">首页</a>
-                <a href="/work" class="nav-link">作品集</a>
                 <a href="/tutorials" class="nav-link">Web3教程</a>
                 <a href="/ip/giant-cutie" class="nav-link">Giant Cutie</a>
                 <a href="/ip/lana" class="nav-link">Lana</a>
@@ -100,7 +99,6 @@ export const renderer = jsxRenderer(({ children }) => {
             <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
               <div class="flex flex-col space-y-2">
                 <a href="/" class="mobile-nav-link">首页</a>
-                <a href="/work" class="mobile-nav-link">作品集</a>
                 <a href="/tutorials" class="mobile-nav-link">Web3教程</a>
                 <a href="/ip/giant-cutie" class="mobile-nav-link">Giant Cutie</a>
                 <a href="/ip/lana" class="mobile-nav-link">Lana</a>
@@ -143,7 +141,6 @@ export const renderer = jsxRenderer(({ children }) => {
                 <ul class="space-y-2 text-gray-400">
                   <li><a href="/ip/giant-cutie" class="hover:text-white transition-colors">Giant Cutie</a></li>
                   <li><a href="/ip/lana" class="hover:text-white transition-colors">Lana</a></li>
-                  <li><a href="/work" class="hover:text-white transition-colors">作品集</a></li>
                   <li><a href="/tutorials" class="hover:text-white transition-colors">Web3教程</a></li>
                 </ul>
               </div>
