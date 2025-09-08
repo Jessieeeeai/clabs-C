@@ -842,14 +842,13 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           </div>
                         </div>
                         <div class="registration-preview">
-                          <div class="preview-placeholder bg-white p-4 rounded border-2 border-dashed border-blue-200">
-                            <div class="flex items-center justify-center h-24">
-                              <div class="text-center">
-                                <i class="fas fa-image text-blue-400 text-2xl mb-2"></i>
-                                <p class="text-sm text-blue-600">注册页面示例</p>
-                                <p class="text-xs text-blue-500">查看邀请码填写位置</p>
-                              </div>
-                            </div>
+                          <div class="bg-white p-4 rounded border border-blue-200">
+                            <img 
+                              src="/static/images/tutorials/okx/registration-steps.png" 
+                              alt="OKX注册页面，显示邀请码填写步骤" 
+                              class="w-full h-auto rounded-lg shadow-sm"
+                            />
+                            <p class="text-xs text-blue-600 text-center mt-2">注册页面邀请码填写示例</p>
                           </div>
                         </div>
                       </div>
@@ -865,13 +864,12 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           </div>
                         </div>
                         <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-link text-blue-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-blue-600">OKX注册页面</p>
-                              <p class="text-xs text-blue-500">确认URL包含 /join/GC8888</p>
-                            </div>
-                          </div>
+                          <img 
+                            src="/static/images/tutorials/okx/registration-steps.png" 
+                            alt="OKX注册页面完整流程" 
+                            class="w-full h-auto rounded-lg border shadow-sm"
+                          />
+                          <p class="text-xs text-blue-600 text-center mt-2">完整注册流程：选择居住地 → 输入邮箱 → 确认邀请码</p>
                         </div>
                       </div>
                       
@@ -896,13 +894,14 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           </div>
                         </div>
                         <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-edit text-blue-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-blue-600">邀请码输入框</p>
-                              <p class="text-xs text-blue-500">确认显示 "GC8888"</p>
-                            </div>
-                          </div>
+                          <img 
+                            src="/static/images/tutorials/okx/registration-steps.png" 
+                            alt="OKX注册邀请码确认步骤" 
+                            class="w-full h-auto rounded-lg border shadow-sm"
+                          />
+                          <p class="text-xs text-blue-600 text-center mt-2">
+                            <strong>重要：</strong>确保邀请码字段显示"GC8888"，如图右侧步骤所示
+                          </p>
                         </div>
                       </div>
                       
@@ -998,13 +997,14 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           </div>
                         </div>
                         <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-shield-alt text-gray-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-gray-500">安全设置页面</p>
-                              <p class="text-xs text-gray-400">允许未知来源应用安装</p>
-                            </div>
-                          </div>
+                          <img 
+                            src="/static/images/tutorials/okx/android-installation-guide.png" 
+                            alt="安卓设备下载平台App操作指南" 
+                            class="w-full h-auto rounded-lg border shadow-sm"
+                          />
+                          <p class="text-xs text-gray-600 text-center mt-2">
+                            不同品牌手机的安装设置方法：华为、OPPO、小米等详细步骤
+                          </p>
                         </div>
                       </div>
 
@@ -1085,13 +1085,14 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           </div>
                         </div>
                         <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fab fa-apple text-gray-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-gray-500">Apple ID注册页面</p>
-                              <p class="text-xs text-gray-400">选择海外地区（美国/香港）</p>
-                            </div>
-                          </div>
+                          <img 
+                            src="/static/images/tutorials/okx/ios-security-settings.png" 
+                            alt="iOS Apple ID安全设置和身份验证" 
+                            class="w-full h-auto rounded-lg border shadow-sm"
+                          />
+                          <p class="text-xs text-gray-600 text-center mt-2">
+                            Apple ID安全设置：身份验证和iCloud账户管理
+                          </p>
                         </div>
                       </div>
                       
@@ -1104,13 +1105,14 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           </div>
                         </div>
                         <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-store text-gray-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-gray-500">App Store登录界面</p>
-                              <p class="text-xs text-gray-400">输入海外Apple ID账户</p>
-                            </div>
-                          </div>
+                          <img 
+                            src="/static/images/tutorials/okx/ios-appstore-detailed.png" 
+                            alt="iOS App Store操作详细步骤" 
+                            class="w-full h-auto rounded-lg border shadow-sm"
+                          />
+                          <p class="text-xs text-gray-600 text-center mt-2">
+                            App Store完整操作流程：点击右上角账户 → 滑到底部 → 重新登录账户
+                          </p>
                         </div>
                       </div>
                       
@@ -1123,13 +1125,14 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           </div>
                         </div>
                         <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-search text-gray-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-gray-500">App Store搜索结果</p>
-                              <p class="text-xs text-gray-400">OKX官方应用下载页面</p>
-                            </div>
-                          </div>
+                          <img 
+                            src="/static/images/tutorials/okx/ios-appstore.png" 
+                            alt="iOS App Store中搜索OKX应用" 
+                            class="w-full h-auto rounded-lg border shadow-sm"
+                          />
+                          <p class="text-xs text-gray-600 text-center mt-2">
+                            <strong>重要提醒：</strong>请点击邀请用户下载这个（红框标注的OKX应用）
+                          </p>
                         </div>
                       </div>
                     </div>
