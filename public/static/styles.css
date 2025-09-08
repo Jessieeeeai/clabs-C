@@ -310,6 +310,18 @@ nav {
   margin-right: auto !important;
 }
 
+/* 副标题容器 - 确保独占一行并居中 */
+.hero-subtitle-container {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 2rem 0 4rem 0 !important;
+  clear: both !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
 .hero-logo .logo {
   width: 6rem;
   height: 6rem;
@@ -562,10 +574,10 @@ nav {
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* 数据统计下方的副标题样式 - 最高特异性 + 强制换行 */
-body .hero-section .hero-content .hero-subtitle-below.hero-subtitle-below {
+/* 数据统计下方的副标题样式 - 简化布局，让容器控制位置 */
+.hero-subtitle-container .hero-subtitle-below.hero-subtitle-below {
   color: rgba(255, 255, 255, 0.4) !important; /* 60% 透明度 */
-  margin: 2rem auto 4rem auto !important; /* 调整上下边距 */
+  margin: 0 !important; /* 移除边距，让容器控制 */
   font-weight: 300 !important; /* 更轻的字重 */
   opacity: 1 !important; /* 移除额外透明度，在color中控制 */
   background: 
@@ -580,25 +592,22 @@ body .hero-section .hero-content .hero-subtitle-below.hero-subtitle-below {
     0 4px 16px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
   
-  /* 最强力的布局控制 - 确保独占一行并垂直居中 */
+  /* 简化的样式控制 */
   display: block !important;
   width: fit-content !important;
   max-width: 50rem !important;
   position: relative !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  clear: both !important;
-  float: none !important;
-  
-  /* 强制换行 - 确保不与其他元素并列 */
-  flex-basis: 100% !important;
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-  
-  /* 确保垂直布局 */
   z-index: 2 !important;
+  
+  /* 继承基础样式 */
+  font-size: clamp(1.1rem, 3vw, 1.4rem) !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+  backdrop-filter: blur(20px) !important;
+  padding: 1rem 2rem !important;
+  border-radius: 32px !important;
+  letter-spacing: 0.01em !important;
+  white-space: nowrap !important;
 }
 
 /* 响应式处理：小屏幕上允许换行 */
