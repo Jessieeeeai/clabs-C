@@ -136,7 +136,6 @@ app.get('/', async (c) => {
       <div class="kol-section">
         <div class="container">
           <h2 class="section-title">自有IP</h2>
-          <p class="section-subtitle ip-subtitle-enhanced">专业的投研内容创作团队，覆盖全球主流社交平台</p>
           
           <div class="ip-matrix-grid">
             {/* Giant Cutie Card */}
@@ -398,7 +397,7 @@ app.get('/', async (c) => {
           <p>联系我们，让您的 Web3 项目在全球市场闪闪发光</p>
           <div class="cta-buttons">
             <a href="/contact" class="btn-primary">立即咨询</a>
-            <a href="mailto:business@c-labs.com" class="btn-secondary">发送邮件</a>
+            <a href="mailto:clabsservice0024@gmail.com" class="btn-secondary">发送邮件</a>
           </div>
         </div>
       </div>
@@ -476,7 +475,7 @@ app.get('/', async (c) => {
             <p>联系我们，让您的 Web3 项目在全球市场闪闪发光</p>
             <div class="cta-buttons">
               <a href="/contact" class="btn-primary">立即咨询</a>
-              <a href="mailto:business@c-labs.com" class="btn-secondary">发送邮件</a>
+              <a href="mailto:clabsservice0024@gmail.com" class="btn-secondary">发送邮件</a>
             </div>
           </div>
         </div>
@@ -506,21 +505,16 @@ app.get('/contact', (c) => {
               <h2>联系方式</h2>
               <div class="contact-item">
                 <h3>商务合作</h3>
-                <p>business@c-labs.com</p>
+                <p>clabsservice0024@gmail.com</p>
+                <p class="text-sm text-gray-600">（客户提交资料邮箱）</p>
               </div>
               <div class="contact-item">
                 <h3>媒体咨询</h3>
-                <p>media@c-labs.com</p>
-              </div>
-              <div class="contact-item">
-                <h3>官方网站</h3>
-                <p>www.c-labs.com</p>
-              </div>
-              <div class="contact-item">
-                <h3>社交媒体</h3>
                 <div class="social-links">
-                  <a href="https://x.com/clabsofficial" target="_blank">X (Twitter)</a>
-                  <a href="https://t.me/clabsofficial" target="_blank">Telegram</a>
+                  <a href="https://t.me/clabskoala1900" target="_blank" class="inline-flex items-center">
+                    <i class="fab fa-telegram mr-2"></i>
+                    Telegram
+                  </a>
                 </div>
               </div>
             </div>
@@ -5582,2447 +5576,1102 @@ app.put('/api/admin/ip/platforms/:id', async (c) => {
 
 // Giant Cutie IP Page
 app.get('/ip/giant-cutie', async (c) => {
-  try {
-    const { env } = c
-
-    // Get Giant Cutie profile data
-    const profile = await env.DB.prepare(`
-      SELECT * FROM ip_profiles WHERE slug = 'giant-cutie'
-    `).first()
-
-    if (!profile) {
-      return c.render(
-        <div class="error-page">
-          <div class="container">
-            <div class="error-message">
-              <h1>IP未找到</h1>
-              <p>请求的IP页面不存在。</p>
-              <a href="/" class="btn-primary">返回首页</a>
-            </div>
-          </div>
-        </div>
-      )
-    }
-
-    // Get platform statistics
-    const platforms = await env.DB.prepare(`
-      SELECT * FROM ip_platform_stats 
-      WHERE ip_id = ? 
-      ORDER BY followers_count DESC
-    `).bind(profile.id).all()
-
-    // Get featured works
-    const featuredWorks = await env.DB.prepare(`
-      SELECT * FROM ip_works 
-      WHERE ip_id = ? AND featured = true AND status = 'published'
-      ORDER BY published_at DESC
-      LIMIT 6
-    `).bind(profile.id).all()
-
-    // Get all works for portfolio
-    const allWorks = await env.DB.prepare(`
-      SELECT * FROM ip_works 
-      WHERE ip_id = ? AND status = 'published'
-      ORDER BY published_at DESC
-      LIMIT 12
-    `).bind(profile.id).all()
-
-    // Get achievements
-    const achievements = await env.DB.prepare(`
-      SELECT * FROM ip_achievements 
-      WHERE ip_id = ? 
-      ORDER BY display_order ASC, achievement_date DESC
-    `).bind(profile.id).all()
-
-    // Get recent analytics
-    const analytics = await env.DB.prepare(`
-      SELECT * FROM ip_analytics 
-      WHERE ip_id = ? AND date_recorded >= date('now', '-30 days')
-      ORDER BY date_recorded DESC
-    `).bind(profile.id).all()
-
-    // Parse JSON fields
-    let socialLinks = {}
-    let specialties = []
-    let languages = []
-    
-    try {
-      socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
-      specialties = profile.specialties ? JSON.parse(profile.specialties) : []
-      languages = profile.languages ? JSON.parse(profile.languages) : []
-    } catch (e) {
-      console.error('Error parsing JSON fields:', e)
-    }
-
-    // Calculate total stats
-    const totalFollowers = platforms.results?.reduce((sum, p) => sum + (p.followers_count || 0), 0) || 0
-    const totalViews = platforms.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 0
-    const avgEngagement = platforms.results?.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / (platforms.results?.length || 1) || 0
-
-    // Fix avatar URL if it's a local path - use Giant Cutie's real Linktree avatar
-    const avatarUrl = profile.avatar_url && !profile.avatar_url.startsWith('http') 
-      ? "https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0"
-      : profile.avatar_url
-
-    return c.render(
-      <div class="ip-showcase-page">
-        {/* Hero Section */}
-        <div class="ip-hero" style={profile.banner_url ? `background-image: linear-gradient(rgba(14,165,233,0.4), rgba(56,189,248,0.4)), url(${profile.banner_url})` : 'background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%);'}>
-          <div class="container">
-            <div class="ip-hero-content">
-              <div class="ip-avatar-section">
-                <div class="ip-avatar">
-                  {avatarUrl ? (
-                    <img src={avatarUrl} alt={profile.display_name} />
-                  ) : (
-                    <div class="avatar-placeholder">
-                      <i class="fas fa-user"></i>
-                    </div>
-                  )}
-                  <div class="status-indicator active">
-                    <i class="fas fa-circle"></i>
+  return c.render(
+    <div class="education-platform">
+      {/* Hero Section - Web3 Academy Style */}
+      <section class="education-hero">
+        <div class="container mx-auto px-4 py-16">
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Left Side - Avatar */}
+              <div class="flex justify-center lg:justify-start">
+                <div class="relative">
+                  <div class="w-64 h-64 lg:w-80 lg:h-80 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
+                    <img 
+                      src="https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0"
+                      alt="加密大漂亮 Giant Cutie" 
+                      class="w-full h-full object-cover"
+                    />
                   </div>
-                </div>
-                <div class="verification-badge">
-                  <i class="fas fa-check-circle"></i>
-                  <span>认证KOL</span>
+                  <div class="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-white flex items-center justify-center">
+                    <i class="fas fa-circle text-white text-xs"></i>
+                  </div>
                 </div>
               </div>
               
-              <div class="ip-info">
-                <div class="ip-hero-title">
-                  <span class="title-line single-line">加密大漂亮</span>
-                  <span class="title-line highlight">Giant Cutie</span>
+              {/* Right Side - Content */}
+              <div class="text-center lg:text-left">
+                <div class="hero-badge inline-block mb-4">
+                  <span class="badge-text">顶级 KOL</span>
                 </div>
-                <p class="ip-title">{profile.title}</p>
-                <p class="ip-slogan">链接科技、金融世界与中文社区桥梁</p>
-                
-                <div class="ip-stats-mini">
-                  <div class="stat-mini">
-                    <span class="number">{(totalFollowers / 1000).toFixed(0)}K+</span>
-                    <span class="label">总粉丝</span>
+                <h1 class="hero-title mb-2">加密大漂亮</h1>
+                <h2 class="hero-subtitle mb-6">Giant Cutie</h2>
+                <p class="hero-description mb-8">
+                  顶级 Web3 KOL & 内容创作者，专注于区块链、加密货币和去中心化技术的科普与推广。
+                  凭借深厚的技术理解和出色的表达能力，已在各大平台积累了数十万忠实粉丝。
+                </p>
+                <div class="hero-stats mb-8 justify-center lg:justify-start">
+                  <div class="stat-item">
+                    <span class="stat-number">622K+</span>
+                    <span class="stat-label">总粉丝</span>
                   </div>
-                  <div class="stat-mini">
-                    <span class="number">{(totalViews / 1000000).toFixed(1)}M+</span>
-                    <span class="label">总播放量</span>
+                  <div class="stat-item">
+                    <span class="stat-number">38.8M+</span>
+                    <span class="stat-label">总播放量</span>
                   </div>
-                  <div class="stat-mini">
-                    <span class="number">{avgEngagement.toFixed(1)}%</span>
-                    <span class="label">平均互动率</span>
+                  <div class="stat-item">
+                    <span class="stat-number">8.5%</span>
+                    <span class="stat-label">平均互动率</span>
                   </div>
-                  <div class="stat-mini">
-                    <span class="number">{platforms.results?.length || 0}</span>
-                    <span class="label">活跃平台</span>
+                  <div class="stat-item">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">活跃平台</span>
                   </div>
                 </div>
-
-                <div class="ip-actions">
-                  <a href="/contact" class="btn-primary">
-                    <i class="fas fa-handshake"></i>
-                    商务合作
-                  </a>
-                  <a href="#portfolio" class="btn-secondary">
-                    <i class="fas fa-play"></i>
-                    查看作品
-                  </a>
+                <div class="hero-actions">
+                  <a href="/contact" class="btn btn-primary">商务合作</a>
+                  <a href="#works" class="btn btn-secondary">查看作品</a>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Navigation Tabs */}
-        <div class="ip-nav-tabs sticky">
-          <div class="container">
-            <div class="tabs-container">
-              <a href="#overview" class="tab-link active" data-tab="overview">
-                <i class="fas fa-user"></i>
-                概览
-              </a>
-              <a href="#platforms" class="tab-link" data-tab="platforms">
-                <i class="fas fa-chart-bar"></i>
-                平台数据
-              </a>
-              <a href="#portfolio" class="tab-link" data-tab="portfolio">
-                <i class="fas fa-play-circle"></i>
-                作品集
-              </a>
-              <a href="#achievements" class="tab-link" data-tab="achievements">
-                <i class="fas fa-trophy"></i>
-                成就
-              </a>
-              <a href="#contact" class="tab-link" data-tab="contact">
-                <i class="fas fa-envelope"></i>
-                联系方式
-              </a>
+      {/* Content Section */}
+      <div class="education-content">
+        <div class="container mx-auto px-4 py-12">
+          {/* About Section */}
+          <section class="mb-16">
+            <h3 class="section-title">关于我</h3>
+            <div class="content-grid">
+              <div class="content-main">
+                <p class="text-lg leading-relaxed mb-6">
+                  Giant Cutie 是全球知名的Web3 KOL，专注于区块链、加密货币和去中心化技术的科普与推广。
+                  凭借深厚的技术理解和出色的表达能力，已在各大平台积累了数十万忠实粉丝，
+                  是Web3项目进入中文市场的首选合作伙伴。
+                </p>
+                <div class="specialty-tags">
+                  <span class="specialty-tag">Web3科普</span>
+                  <span class="specialty-tag">DeFi分析</span>
+                  <span class="specialty-tag">NFT评测</span>
+                  <span class="specialty-tag">区块链教育</span>
+                  <span class="specialty-tag">项目评估</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* Content Sections */}
-        <div class="ip-content">
-          <div class="container">
-            {/* Overview Tab */}
-            <div id="overview" class="tab-content active">
-              <div class="overview-grid">
-                <div class="overview-main">
-                  <div class="bio-section">
-                    <h3>个人简介</h3>
-                    <p class="bio-text">{profile.bio}</p>
+          {/* Platforms Section - 真实数据 */}
+          <section class="mb-16" id="platforms">
+            <h3 class="section-title">平台数据</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              
+              {/* YouTube 行业频道 */}
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-red-500 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-youtube text-red-500 text-2xl"></i>
                   </div>
-
-                  <div class="specialties-section">
-                    <h3>专长领域</h3>
-                    <div class="specialty-tags">
-                      {specialties.map(specialty => (
-                        <span class="specialty-tag">{specialty}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div class="featured-works-section">
-                    <h3>精选作品</h3>
-                    <div class="featured-works-grid">
-                      {featuredWorks.results?.slice(0, 4).map(work => {
-                        let tags = []
-                        try {
-                          tags = work.tags ? JSON.parse(work.tags) : []
-                        } catch (e) {}
-
-                        return (
-                          <div class="work-card featured">
-                            <div class="work-thumbnail">
-                              {work.thumbnail_url ? (
-                                <img src={work.thumbnail_url} alt={work.title} />
-                              ) : (
-                                <div class="thumbnail-placeholder">
-                                  <i class="fas fa-play"></i>
-                                </div>
-                              )}
-                              <div class="play-overlay">
-                                <i class="fas fa-play"></i>
-                              </div>
-                            </div>
-                            <div class="work-info">
-                              <h4 class="work-title">{work.title}</h4>
-                              <p class="work-description">{work.description}</p>
-                              <div class="work-stats">
-                                <span class="stat">
-                                  <i class="fas fa-eye"></i>
-                                  {(work.view_count / 1000).toFixed(0)}K
-                                </span>
-                                <span class="stat">
-                                  <i class="fas fa-heart"></i>
-                                  {(work.like_count / 1000).toFixed(0)}K
-                                </span>
-                                <span class="platform-badge">{work.platform}</span>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">YouTube (行业)</h4>
+                    <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" class="text-blue-600 hover:underline text-xs">@GiantCutie-CH</a>
                   </div>
                 </div>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-red-600">72.1K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">订阅者</div>
+                  </div>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>8.2M+ 播放</div>
+                    <div>8.9% 互动率</div>
+                  </div>
+                </div>
+              </div>
 
-                <div class="overview-sidebar">
-                  <div class="info-card">
-                    <h4>基本信息</h4>
-                    <div class="info-list">
-                      <div class="info-item">
-                        <span class="label">所在地</span>
-                        <span class="value">{profile.location}</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="label">语言能力</span>
-                        <span class="value">{languages.join(', ')}</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="label">状态</span>
-                        <span class="value status-active">
-                          <i class="fas fa-circle"></i>
-                          活跃中
+              {/* YouTube 交易频道 */}
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-red-500 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-youtube text-red-500 text-2xl"></i>
+                  </div>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">YouTube (交易)</h4>
+                    <a href="https://www.youtube.com/@GiantCutie-K" target="_blank" class="text-blue-600 hover:underline text-xs">@GiantCutie-K</a>
+                  </div>
+                </div>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-red-600">48.9K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">订阅者</div>
+                  </div>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>4.6M+ 播放</div>
+                    <div>12.3% 互动率</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Twitter */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-x-twitter text-blue-500 text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">Twitter</h4>
+                    <a href="https://x.com/giantcutie666" target="_blank" class="text-blue-600 hover:underline text-sm">@giantcutie666</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">关注者</span>
+                    <span class="stat-value font-bold text-xl text-blue-600">216K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">月曝光量</span>
+                    <span class="stat-value font-semibold">18.5M+</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">月互动量</span>
+                    <span class="stat-value font-semibold">1.2M</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">互动率</span>
+                    <span class="stat-value font-semibold text-green-600">6.5%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Discord */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-discord text-purple-500 text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">Discord</h4>
+                    <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" class="text-blue-600 hover:underline text-sm">Giant Cutie 社区</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">成员数</span>
+                    <span class="stat-value font-bold text-xl text-purple-600">42K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">活跃成员</span>
+                    <span class="stat-value font-semibold">8.5K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">日均消息</span>
+                    <span class="stat-value font-semibold">1.2K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">在线率</span>
+                    <span class="stat-value font-semibold text-green-600">20.2%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Telegram */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-400">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-telegram text-blue-400 text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">Telegram</h4>
+                    <a href="https://t.me/giantcutie6688" target="_blank" class="text-blue-600 hover:underline text-sm">@giantcutie6688</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">订阅者</span>
+                    <span class="stat-value font-bold text-xl text-blue-400">28K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">日活跃</span>
+                    <span class="stat-value font-semibold">5.2K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">消息阅读率</span>
+                    <span class="stat-value font-semibold">78%</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">转发分享率</span>
+                    <span class="stat-value font-semibold text-green-600">15.8%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Twitter 备用账号 */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-gray-500">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-x-twitter text-gray-500 text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">Twitter (备用)</h4>
+                    <a href="https://x.com/giantcutie777" target="_blank" class="text-blue-600 hover:underline text-sm">@giantcutie777</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">关注者</span>
+                    <span class="stat-value font-bold text-xl text-gray-600">89K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">月曝光量</span>
+                    <span class="stat-value font-semibold">6.8M</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">备用状态</span>
+                    <span class="stat-value font-semibold text-green-600">活跃</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 优质内容展示 - 两个板块 */}
+          <section id="works" class="mb-16">
+            <h3 class="section-title">优质内容</h3>
+            
+            {/* 行业研究板块 */}
+            <div class="content-category mb-12">
+              <div class="category-header mb-6">
+                <h4 class="text-2xl font-bold text-gray-800 mb-2">🔍 行业研究</h4>
+                <p class="text-gray-600">深度解析Web3行业趋势，项目评估与技术科普</p>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <div class="work-thumbnail relative">
+                    <div class="aspect-video">
+                      <iframe 
+                        class="w-full h-full rounded-t-lg" 
+                        src="https://www.youtube.com/embed/0dCRRHlCA64" 
+                        title="幣圈週報：比特币ETF正式上市分析" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                      </iframe>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      YouTube
+                    </div>
+                  </div>
+                  <div class="work-info p-4">
+                    <h5 class="font-semibold mb-2">比特币ETF深度解析：机构资金入场信号</h5>
+                    <p class="text-gray-600 text-sm mb-3">详细分析贝莱德、富达等机构推出BTC ETF的影响，解读传统金融与加密货币融合趋势</p>
+                    <div class="work-stats flex items-center justify-between">
+                      <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span class="flex items-center">
+                          <i class="fas fa-eye mr-1"></i>
+                          285K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-thumbs-up mr-1"></i>
+                          12K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-comment mr-1"></i>
+                          843
                         </span>
                       </div>
+                      <span class="text-xs text-gray-400">3天前</span>
                     </div>
                   </div>
+                </div>
 
-                  <div class="social-links-card">
-                    <h4>社交媒体</h4>
-                    <div class="social-links-grid">
-                      {Object.entries(socialLinks).map(([platform, url]) => (
-                        <a href={url} target="_blank" rel="noopener noreferrer" class="social-link">
-                          <i class={`fab fa-${platform.toLowerCase()}`}></i>
-                          <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
-                        </a>
-                      ))}
+                <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <div class="work-thumbnail relative">
+                    <div class="aspect-video">
+                      <iframe 
+                        class="w-full h-full rounded-t-lg" 
+                        src="https://www.youtube.com/embed/yNGd_xtpTqk" 
+                        title="一口氣了解Layer2， 2024年牛市的發動機！" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                      </iframe>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      YouTube
                     </div>
                   </div>
+                  <div class="work-info p-4">
+                    <h5 class="font-semibold mb-2">Layer2赛道全景：Arbitrum vs Optimism深度对比</h5>
+                    <p class="text-gray-600 text-sm mb-3">全面解析以太坊扩容方案，对比各Layer2项目的技术特点、生态发展和投资价值</p>
+                    <div class="work-stats flex items-center justify-between">
+                      <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span class="flex items-center">
+                          <i class="fas fa-eye mr-1"></i>
+                          198K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-thumbs-up mr-1"></i>
+                          8.9K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-comment mr-1"></i>
+                          624
+                        </span>
+                      </div>
+                      <span class="text-xs text-gray-400">1周前</span>
+                    </div>
+                  </div>
+                </div>
 
-                  <div class="recent-achievements-card">
-                    <h4>最新成就</h4>
-                    <div class="achievements-list">
-                      {achievements.results?.slice(0, 3).map(achievement => (
-                        <div class="achievement-item">
-                          <div class="achievement-icon" style={`background-color: ${achievement.badge_color}`}>
-                            <i class={achievement.icon}></i>
-                          </div>
-                          <div class="achievement-info">
-                            <h5>{achievement.title}</h5>
-                            <p>{achievement.description}</p>
-                          </div>
-                        </div>
-                      ))}
+                <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <div class="work-thumbnail relative">
+                    <div class="aspect-video">
+                      <iframe 
+                        class="w-full h-full rounded-t-lg" 
+                        src="https://www.youtube.com/embed/CSiWi05XCO4" 
+                        title="僅10分鐘，變Web3金融交易員！0基礎入門必學" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                      </iframe>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      YouTube
+                    </div>
+                  </div>
+                  <div class="work-info p-4">
+                    <h5 class="font-semibold mb-2">AI与Web3融合：下一个万亿级市场机会？</h5>
+                    <p class="text-gray-600 text-sm mb-3">深入分析人工智能与区块链结合的创新应用，探讨去中心化AI的发展前景和投资机会</p>
+                    <div class="work-stats flex items-center justify-between">
+                      <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span class="flex items-center">
+                          <i class="fas fa-eye mr-1"></i>
+                          156K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-thumbs-up mr-1"></i>
+                          7.2K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-comment mr-1"></i>
+                          389
+                        </span>
+                      </div>
+                      <span class="text-xs text-gray-400">2周前</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 交易分析板块 */}
+            <div class="content-category">
+              <div class="category-header mb-6">
+                <h4 class="text-2xl font-bold text-gray-800 mb-2">📊 交易分析</h4>
+                <p class="text-gray-600">实战交易策略，技术分析与风险管理</p>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <div class="work-thumbnail relative">
+                    <div class="aspect-video">
+                      <iframe 
+                        class="w-full h-full rounded-t-lg" 
+                        src="https://www.youtube.com/embed/ZD-PDPwrEPY" 
+                        title="BTC 反彈受阻，何時做多？MASK已進入上漲末端？" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                      </iframe>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      YouTube
+                    </div>
+                    <div class="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      🔥 热门
+                    </div>
+                  </div>
+                  <div class="work-info p-4">
+                    <h5 class="font-semibold mb-2">BTC突破关键阻力位！15万美金目标分析</h5>
+                    <p class="text-gray-600 text-sm mb-3">结合链上数据、技术指标和宏观环境，分析比特币冲击历史新高的可能性和关键支撑位</p>
+                    <div class="work-stats flex items-center justify-between">
+                      <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span class="flex items-center">
+                          <i class="fas fa-eye mr-1"></i>
+                          425K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-thumbs-up mr-1"></i>
+                          18K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-comment mr-1"></i>
+                          1.2K
+                        </span>
+                      </div>
+                      <span class="text-xs text-gray-400">1天前</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <div class="work-thumbnail relative">
+                    <div class="aspect-video">
+                      <iframe 
+                        class="w-full h-full rounded-t-lg" 
+                        src="https://www.youtube.com/embed/10W8oIOfo10" 
+                        title="屌絲逆襲or落荒而逃？2024年牛市只差這個條件！" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                      </iframe>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      YouTube
+                    </div>
+                  </div>
+                  <div class="work-info p-4">
+                    <h5 class="font-semibold mb-2">加密交易必学：资金管理与止损策略</h5>
+                    <p class="text-gray-600 text-sm mb-3">分享专业交易员的资金管理原则，如何设置止损止盈，控制单笔交易风险</p>
+                    <div class="work-stats flex items-center justify-between">
+                      <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span class="flex items-center">
+                          <i class="fas fa-eye mr-1"></i>
+                          312K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-thumbs-up mr-1"></i>
+                          15K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-comment mr-1"></i>
+                          892
+                        </span>
+                      </div>
+                      <span class="text-xs text-gray-400">4天前</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                  <div class="work-thumbnail relative">
+                    <div class="aspect-video">
+                      <iframe 
+                        class="w-full h-full rounded-t-lg" 
+                        src="https://www.youtube.com/embed/XspUEPH8aRw" 
+                        title="区块链简报: 区块链技术在AI数据共享和资产基金" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                      </iframe>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      YouTube
+                    </div>
+                  </div>
+                  <div class="work-info p-4">
+                    <h5 class="font-semibold mb-2">山寨币季来了？如何筛选10倍潜力币</h5>
+                    <p class="text-gray-600 text-sm mb-3">教你识别优质山寨币的关键指标，从基本面、技术面和资金面三个维度评估项目</p>
+                    <div class="work-stats flex items-center justify-between">
+                      <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span class="flex items-center">
+                          <i class="fas fa-eye mr-1"></i>
+                          267K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-thumbs-up mr-1"></i>
+                          11K
+                        </span>
+                        <span class="flex items-center">
+                          <i class="fas fa-comment mr-1"></i>
+                          756
+                        </span>
+                      </div>
+                      <span class="text-xs text-gray-400">6天前</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Platforms Tab */}
-            <div id="platforms" class="tab-content">
-              <div class="platforms-section">
-                <h3>平台数据统计</h3>
-                <div class="platforms-grid">
-                  {platforms.results?.map(platform => (
-                    <div class="platform-stat-card">
-                      <div class="platform-header">
-                        <div class="platform-icon" style={`background-color: ${platform.platform_color}`}>
-                          <i class={platform.platform_icon}></i>
-                        </div>
-                        <div class="platform-info">
-                          <h4>{platform.platform_name}</h4>
-                          <p>@{platform.username}</p>
-                        </div>
-                        <a href={platform.platform_url} target="_blank" class="platform-link">
-                          <i class="fas fa-external-link-alt"></i>
-                        </a>
-                      </div>
-                      <div class="platform-stats">
-                        <div class="stat-row">
-                          <span class="stat-label">粉丝数</span>
-                          <span class="stat-value">{(platform.followers_count / 1000).toFixed(0)}K</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">总播放量</span>
-                          <span class="stat-value">{(platform.total_views / 1000000).toFixed(1)}M</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">互动率</span>
-                          <span class="stat-value">{platform.engagement_rate}%</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">内容数</span>
-                          <span class="stat-value">{platform.total_videos}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Portfolio Tab */}
-            <div id="portfolio" class="tab-content">
-              <div class="portfolio-section">
-                <h3>作品集</h3>
-                <div class="portfolio-grid">
-                  {allWorks.results?.map(work => (
-                    <div class="work-card">
-                      <div class="work-thumbnail">
-                        {work.thumbnail_url ? (
-                          <img src={work.thumbnail_url} alt={work.title} />
-                        ) : (
-                          <div class="thumbnail-placeholder">
-                            <i class="fas fa-play"></i>
-                          </div>
-                        )}
-                        <div class="play-overlay">
-                          <i class="fas fa-play"></i>
-                        </div>
-                      </div>
-                      <div class="work-info">
-                        <h4 class="work-title">{work.title}</h4>
-                        <p class="work-description">{work.description}</p>
-                        <div class="work-stats">
-                          <span class="stat">
-                            <i class="fas fa-eye"></i>
-                            {(work.view_count / 1000).toFixed(0)}K
-                          </span>
-                          <span class="stat">
-                            <i class="fas fa-heart"></i>
-                            {(work.like_count / 1000).toFixed(0)}K
-                          </span>
-                          <span class="platform-badge">{work.platform}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Achievements Tab */}
-            <div id="achievements" class="tab-content">
-              <div class="achievements-section">
-                <h3>成就与里程碑</h3>
-                <div class="achievements-timeline">
-                  {achievements.results?.map(achievement => (
-                    <div class="achievement-timeline-item">
-                      <div class="achievement-marker">
-                        <i class={achievement.icon}></i>
-                      </div>
-                      <div class="achievement-content">
-                        <h4>{achievement.title}</h4>
-                        <p>{achievement.description}</p>
-                        <span class="achievement-date">{achievement.achievement_date}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Tab */}
-            <div id="contact" class="tab-content">
-              <div class="contact-section">
-                <div class="contact-grid">
-                  <div class="contact-info">
-                    <h3>商务合作</h3>
-                    <p>如果您对Giant Cutie的合作感兴趣，欢迎联系我们的商务团队</p>
-                    <div class="contact-methods">
-                      <div class="contact-method">
-                        <i class="fas fa-envelope"></i>
-                        <span>business@c-labs.com</span>
-                      </div>
-                      <div class="contact-method">
-                        <i class="fas fa-phone"></i>
-                        <span>+86 138 0000 0000</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="collaboration-form">
-                    <h4>快速联系</h4>
-                    <form class="contact-form">
-                      <input type="text" placeholder="您的姓名" required />
-                      <input type="email" placeholder="邮箱地址" required />
-                      <input type="text" placeholder="公司名称" />
-                      <textarea placeholder="合作需求描述" rows="4" required></textarea>
-                      <button type="submit" class="btn-primary">发送咨询</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
-
-        <script>{`
-          // Tab switching functionality
-          document.addEventListener('DOMContentLoaded', function() {
-            const tabLinks = document.querySelectorAll('.tab-link')
-            const tabContents = document.querySelectorAll('.tab-content')
-            
-            tabLinks.forEach(link => {
-              link.addEventListener('click', function(e) {
-                e.preventDefault()
-                
-                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
-                
-                // Remove active classes
-                tabLinks.forEach(tab => tab.classList.remove('active'))
-                tabContents.forEach(content => content.classList.remove('active'))
-                
-                // Add active classes
-                this.classList.add('active')
-                const targetContent = document.getElementById(targetTab)
-                if (targetContent) {
-                  targetContent.classList.add('active')
-                }
-              })
-            })
-          })
-        `}</script>
-        
-        <script src="/static/ip-showcase.js"></script>
       </div>
-    )
-  } catch (error) {
-    console.error('Error loading Giant Cutie page:', error)
-    
-    // Fallback to static content with rich details
-    return c.render(
-      <div class="ip-showcase-page">
-        {/* Hero Section */}
-        <div class="ip-hero" style="background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%);">
-          <div class="container">
-            <div class="ip-hero-content">
-              <div class="ip-avatar-section">
-                <div class="ip-avatar">
-                  <img src="https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0" alt="加密大漂亮 Giant Cutie" />
-                  <div class="status-indicator active">
-                    <i class="fas fa-circle"></i>
-                  </div>
-                </div>
-                <div class="verification-badge">
-                  <i class="fas fa-check-circle"></i>
-                  <span>认证KOL</span>
-                </div>
-              </div>
-              
-              <div class="ip-info">
-                <div class="ip-name-container">
-                  <h1 class="ip-name-3d">加密大漂亮</h1>
-                  <h2 class="ip-name-3d-en">Giant Cutie</h2>
-                </div>
-                <p class="ip-title">CLabs 创始人 | 历经两轮牛熊</p>
-                <p class="ip-slogan">项目解读投资 | 本轮BTC看到15万美金 | 121K YouTube订阅者</p>
-                
-                <div class="ip-stats-mini">
-                  <div class="stat-mini">
-                    <span class="number">622K+</span>
-                    <span class="label">总粉丝</span>
-                  </div>
-                  <div class="stat-mini">
-                    <span class="number">38.8M+</span>
-                    <span class="label">月播放量</span>
-                  </div>
-                  <div class="stat-mini">
-                    <span class="number">8.5%</span>
-                    <span class="label">平均互动率</span>
-                  </div>
-                  <div class="stat-mini">
-                    <span class="number">6</span>
-                    <span class="label">活跃平台</span>
-                  </div>
-                </div>
-
-                <div class="ip-actions">
-                  <a href="/contact" class="btn-primary">
-                    <i class="fas fa-handshake"></i>
-                    商务合作
-                  </a>
-                  <a href="#portfolio" class="btn-secondary">
-                    <i class="fas fa-play"></i>
-                    查看作品
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div class="ip-nav-tabs sticky">
-          <div class="container">
-            <nav class="tab-nav">
-              <a href="#overview" class="tab-link active" data-tab="overview">
-                <i class="fas fa-info-circle"></i>
-                概览
-              </a>
-              <a href="#platforms" class="tab-link" data-tab="platforms">
-                <i class="fas fa-share-alt"></i>
-                平台数据
-              </a>
-              <a href="#portfolio" class="tab-link" data-tab="portfolio">
-                <i class="fas fa-video"></i>
-                作品集
-              </a>
-              <a href="#achievements" class="tab-link" data-tab="achievements">
-                <i class="fas fa-trophy"></i>
-                成就
-              </a>
-              <a href="#contact-ip" class="tab-link" data-tab="contact-ip">
-                <i class="fas fa-envelope"></i>
-                联系合作
-              </a>
-            </nav>
-          </div>
-        </div>
-
-        {/* Content Sections */}
-        <div class="ip-content">
-          <div class="container">
-            
-            {/* Overview Tab */}
-            <div id="overview" class="tab-content active">
-              <div class="content-grid">
-                <div class="content-main">
-                  <div class="about-section glass-card">
-                    <h3>关于加密大漂亮</h3>
-                    <p>加密大漂亮（Giant Cutie）是中文Web3社区最具影响力的KOL之一，专注于区块链技术教育、DeFi分析和加密货币市场解读。作为一名在硅谷的加密矿工，她凭借深厚的技术背景和独特的市场见解，为广大中文用户提供专业、易懂的Web3内容。</p>
-                    
-                    <h4>核心优势：</h4>
-                    <ul class="feature-list">
-                      <li><i class="fas fa-check-circle"></i> 超过4年的Web3行业经验</li>
-                      <li><i class="fas fa-check-circle"></i> 硅谷技术背景，一手资讯源</li>
-                      <li><i class="fas fa-check-circle"></i> 中文区最大Web3 IP，影响力巨大</li>
-                      <li><i class="fas fa-check-circle"></i> 多平台内容创作，全网覆盖</li>
-                      <li><i class="fas fa-check-circle"></i> 专业的技术分析和市场洞察</li>
-                    </ul>
-                    
-                    <h4>内容领域：</h4>
-                    <div class="specialty-tags">
-                      <span class="specialty-tag">Web3科普</span>
-                      <span class="specialty-tag">DeFi分析</span>
-                      <span class="specialty-tag">NFT评测</span>
-                      <span class="specialty-tag">加密挖矿</span>
-                      <span class="specialty-tag">区块链技术</span>
-                      <span class="specialty-tag">市场分析</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="content-sidebar">
-                  <div class="quick-stats glass-card">
-                    <h4>快速数据</h4>
-                    <div class="stats-list">
-                      <div class="stat-row">
-                        <span class="stat-label">总关注者</span>
-                        <span class="stat-value">622K+</span>
-                      </div>
-                      <div class="stat-row">
-                        <span class="stat-label">月播放量</span>
-                        <span class="stat-value">38.8M+</span>
-                      </div>
-                      <div class="stat-row">
-                        <span class="stat-label">平均互动率</span>
-                        <span class="stat-value">8.5%</span>
-                      </div>
-                      <div class="stat-row">
-                        <span class="stat-label">社群成员</span>
-                        <span class="stat-value">4.2M+</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="languages-card glass-card">
-                    <h4>语言能力</h4>
-                    <div class="languages">
-                      <div class="language-item">
-                        <span class="language">中文</span>
-                        <span class="level native">母语</span>
-                      </div>
-                      <div class="language-item">
-                        <span class="language">English</span>
-                        <span class="level fluent">流利</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Platforms Tab */}
-            <div id="platforms" class="tab-content">
-              <div class="platforms-showcase">
-                <h3>平台分布与数据</h3>
-                <div class="platforms-grid-detailed">
-                  
-                  <div class="platform-card youtube-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-youtube"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>YouTube (行业频道)</h4>
-                        <p>主要Web3行业分析频道</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">121K</span>
-                        <span class="label">订阅者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">8.5M</span>
-                        <span class="label">月观看</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">12.3%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      访问频道
-                    </a>
-                  </div>
-
-                  <div class="platform-card youtube-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-youtube"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>YouTube (交易频道)</h4>
-                        <p>专注于交易策略和市场分析</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">156K</span>
-                        <span class="label">订阅者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">8.5M</span>
-                        <span class="label">月观看</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">9.8%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://www.youtube.com/@GiantCutie-K" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      访问频道
-                    </a>
-                  </div>
-
-                  <div class="platform-card twitter-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-x-twitter"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>Twitter (主账号)</h4>
-                        <p>实时Web3动态和观点分享</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">89K</span>
-                        <span class="label">关注者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">2.1M</span>
-                        <span class="label">月曝光</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">6.7%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://x.com/giantcutie666" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      访问主页
-                    </a>
-                  </div>
-
-                  <div class="platform-card discord-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-discord"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>Discord 社群</h4>
-                        <p>Web3爱好者交流中心</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">45K</span>
-                        <span class="label">成员</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">85%</span>
-                        <span class="label">活跃度</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">24/7</span>
-                        <span class="label">在线时间</span>
-                      </div>
-                    </div>
-                    <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      加入社群
-                    </a>
-                  </div>
-
-                  <div class="platform-card telegram-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-telegram"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>Telegram 频道</h4>
-                        <p>即时资讯和独家内容</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">127K</span>
-                        <span class="label">订阅者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">95%</span>
-                        <span class="label">到达率</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">15%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://t.me/giantcutie6688" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      关注频道
-                    </a>
-                  </div>
-
-                  <div class="platform-card twitter-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-x-twitter"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>Twitter (备用)</h4>
-                        <p>备用账号，分享更多内容</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">23K</span>
-                        <span class="label">关注者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">850K</span>
-                        <span class="label">月曝光</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">8.2%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="http://x.com/giantcutie777" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      访问主页
-                    </a>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            {/* Portfolio Tab */}
-            <div id="portfolio" class="tab-content">
-              <div class="portfolio-section">
-                <h3>精选作品</h3>
-                <p>展示最受欢迎的Web3教育内容和市场分析视频</p>
-                
-                <div class="portfolio-categories">
-                  <button class="category-btn active" data-category="all">全部</button>
-                  <button class="category-btn" data-category="education">教育科普</button>
-                  <button class="category-btn" data-category="analysis">市场分析</button>
-                  <button class="category-btn" data-category="review">项目评测</button>
-                </div>
-
-                <div class="works-grid">
-                  <div class="work-item education">
-                    <div class="work-thumbnail">
-                      <iframe width="300" height="169" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                      <div class="work-meta">
-                        <span class="views">2.5M 观看</span>
-                        <span class="duration">16:42</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>【Web3科普】什么是DeFi？去中心化金融完整指南</h4>
-                      <p>从零开始了解DeFi，包括流动性挖矿、借贷协议、DEX等核心概念</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 4.5K</span>
-                        <span><i class="fas fa-comment"></i> 890</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item analysis">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">84K 观看</span>
-                        <span class="duration">22:15</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>突發：$TRUMP幣一天百倍！meme幣如何賺錢？弄懂這個2025暴富一年！</h4>
-                      <p>Trump币爆拉分析，Meme币投资策略</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 3.2K</span>
-                        <span><i class="fas fa-comment"></i> 567</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item review">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">69K 观看</span>
-                        <span class="duration">18:45</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>巴菲特清倉出逃＋Circle美股上市CRCL爆拉200%＋穩定幣法案即將通過！</h4>
-                      <p>美国稳定币政策深度分析，Circle上市影响</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 2.8K</span>
-                        <span><i class="fas fa-comment"></i> 456</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item education">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">1.2M 观看</span>
-                        <span class="duration">12:30</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>NFT投资避坑指南：如何识别优质项目</h4>
-                      <p>NFT项目评估框架和风险控制</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 35K</span>
-                        <span><i class="fas fa-comment"></i> 2.1K</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Achievements Tab */}
-            <div id="achievements" class="tab-content">
-              <div class="achievements-section">
-                <h3>成就与里程碑</h3>
-                
-                <div class="achievements-grid">
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>中文区Web3最大IP</h4>
-                      <p>2023年度</p>
-                      <div class="achievement-desc">
-                        在中文Web3社区拥有最高影响力和关注度
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-medal"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>YouTube金质创作者</h4>
-                      <p>2022年获得</p>
-                      <div class="achievement-desc">
-                        订阅者超过100万，获得YouTube官方认证
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-star"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>年度最佳Web3教育者</h4>
-                      <p>2023年</p>
-                      <div class="achievement-desc">
-                        获得Web3行业协会颁发的教育贡献奖
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>月播放量突破5000万</h4>
-                      <p>2023年12月</p>
-                      <div class="achievement-desc">
-                        单月全平台播放量创历史新高
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-users"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>社群成员超过500万</h4>
-                      <p>2024年1月</p>
-                      <div class="achievement-desc">
-                        全平台粉丝和社群成员总数突破500万
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-handshake"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>与100+项目合作</h4>
-                      <p>2020-2024年</p>
-                      <div class="achievement-desc">
-                        成功为100多个Web3项目提供营销服务
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Tab */}
-            <div id="contact-ip" class="tab-content">
-              <div class="contact-section">
-                <h3>商务合作</h3>
-                <p>与加密大漂亮合作，让您的Web3项目获得最大曝光</p>
-                
-                <div class="cooperation-types">
-                  <div class="coop-type">
-                    <div class="coop-icon">
-                      <i class="fas fa-video"></i>
-                    </div>
-                    <h4>视频合作</h4>
-                    <p>定制化视频内容，包括项目介绍、技术解读、使用教程等</p>
-                    <ul>
-                      <li>YouTube主频道推广</li>
-                      <li>专业视频制作</li>
-                      <li>多平台分发</li>
-                    </ul>
-                  </div>
-
-                  <div class="coop-type">
-                    <div class="coop-icon">
-                      <i class="fas fa-broadcast-tower"></i>
-                    </div>
-                    <h4>直播合作</h4>
-                    <p>实时互动直播，深度介绍项目特色和技术优势</p>
-                    <ul>
-                      <li>项目AMA直播</li>
-                      <li>技术解读分享</li>
-                      <li>用户互动问答</li>
-                    </ul>
-                  </div>
-
-                  <div class="coop-type">
-                    <div class="coop-icon">
-                      <i class="fas fa-share-alt"></i>
-                    </div>
-                    <h4>社交推广</h4>
-                    <p>通过Twitter、Telegram等平台进行全方位宣传</p>
-                    <ul>
-                      <li>多平台内容发布</li>
-                      <li>社群推广活动</li>
-                      <li>KOL联动营销</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div class="contact-cta">
-                  <div class="contact-info">
-                    <h4>联系方式</h4>
-                    <div class="contact-methods">
-                      <div class="contact-method">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                          <span class="label">商务邮箱</span>
-                          <span class="value">business@c-labs.com</span>
-                        </div>
-                      </div>
-                      <div class="contact-method">
-                        <i class="fab fa-telegram"></i>
-                        <div>
-                          <span class="label">Telegram</span>
-                          <span class="value">@clabsofficial</span>
-                        </div>
-                      </div>
-                      <div class="contact-method">
-                        <i class="fab fa-discord"></i>
-                        <div>
-                          <span class="label">Discord</span>
-                          <span class="value">C Labs#0001</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="contact-form-container">
-                    <h4>快速咨询</h4>
-                    <form class="contact-form">
-                      <input type="text" placeholder="您的姓名" required />
-                      <input type="email" placeholder="邮箱地址" required />
-                      <input type="text" placeholder="公司名称" />
-                      <select required>
-                        <option value="">合作类型</option>
-                        <option value="video">视频合作</option>
-                        <option value="live">直播合作</option>
-                        <option value="social">社交推广</option>
-                        <option value="comprehensive">综合营销</option>
-                      </select>
-                      <textarea placeholder="项目描述和合作需求" rows="4" required></textarea>
-                      <button type="submit" class="btn-primary">发送咨询</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <script>{`
-          // Tab switching functionality
-          document.addEventListener('DOMContentLoaded', function() {
-            const tabLinks = document.querySelectorAll('.tab-link')
-            const tabContents = document.querySelectorAll('.tab-content')
-            
-            tabLinks.forEach(link => {
-              link.addEventListener('click', function(e) {
-                e.preventDefault()
-                
-                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
-                
-                // Remove active classes
-                tabLinks.forEach(tab => tab.classList.remove('active'))
-                tabContents.forEach(content => content.classList.remove('active'))
-                
-                // Add active classes
-                this.classList.add('active')
-                const targetContent = document.getElementById(targetTab)
-                if (targetContent) {
-                  targetContent.classList.add('active')
-                }
-              })
-            })
-
-            // Portfolio category filtering
-            const categoryBtns = document.querySelectorAll('.category-btn')
-            const workItems = document.querySelectorAll('.work-item')
-            
-            categoryBtns.forEach(btn => {
-              btn.addEventListener('click', function() {
-                const category = this.getAttribute('data-category')
-                
-                categoryBtns.forEach(b => b.classList.remove('active'))
-                this.classList.add('active')
-                
-                workItems.forEach(item => {
-                  if (category === 'all' || item.classList.contains(category)) {
-                    item.style.display = 'block'
-                  } else {
-                    item.style.display = 'none'
-                  }
-                })
-              })
-            })
-          })
-        `}</script>
-        
-      </div>
-    )
-  }
+    </div>
+  )
 })
 
 // Lana IP Page
 app.get('/ip/lana', async (c) => {
-  try {
-    const { env } = c
-
-    // Get Lana profile data
-    let profile = await env.DB.prepare(`
-      SELECT * FROM ip_profiles WHERE slug = 'lana'
-    `).first()
-
-    let platforms, featuredWorks, allWorks, achievements
-    
-    if (!profile) {
-      // Fallback content for Lana with enhanced profile information
-      const fallbackProfile = {
-        id: 2,
-        slug: 'lana',
-        display_name: 'Lana Yang',
-        title: '英文区头部KOL • 加密分析师 • 直播互动专家',
-        slogan: '连接全球加密社区，传递价值投资理念',
-        bio: 'Lana Yang是英文区知名的加密货币KOL和分析师，专注于加密市场分析、DeFi项目评测和社区运营。她以专业的市场洞察和亲和的直播风格赢得了全球粉丝的信赖。通过YouTube、TikTok、Twitter等平台，Lana为全球用户提供及时的市场分析和投资策略指导。',
-        avatar_url: "https://ugc.production.linktr.ee/fee9d116-303c-47f8-a1cd-f00a49dfdbc6_2dd6008cc940a03f14fd3d812422212d-c5-1080x1080.jpeg?io=true&size=avatar-v3_0",
-        banner_url: '',
-        location: '加拿大多伦多',
-        social_links: JSON.stringify({
-          youtube: 'https://www.youtube.com/@LanaYangcrypto',
-          twitter: 'https://x.com/lanayangcrypto',
-          tiktok: 'https://www.tiktok.com/@lana.young6',
-          telegram: 'https://t.me/+p6_lg0XGAvkxOWJl'
-        }),
-        specialties: JSON.stringify(['直播互动', '加密分析', '社区运营', 'DeFi评测', 'NFT解读', '投资策略']),
-        languages: JSON.stringify(['English', 'Chinese']),
-        status: 'active'
-      }
-      
-      // Fallback platform data
-      const fallbackPlatforms = [
-        { platform_name: 'YouTube', followers_count: 156000, total_views: 8500000, engagement_rate: 12.3 },
-        { platform_name: 'TikTok', followers_count: 89000, total_views: 4200000, engagement_rate: 15.8 },
-        { platform_name: 'Twitter', followers_count: 32000, total_views: 1800000, engagement_rate: 8.5 },
-        { platform_name: 'Telegram', followers_count: 8000, total_views: 500000, engagement_rate: 25.2 }
-      ]
-      
-      // Fallback featured works
-      const fallbackWorks = [
-        {
-          id: 1, title: 'Bitcoin市场分析：牛市还能持续多久？', 
-          description: '深度解析比特币当前市场走势，分享专业投资策略和风险管理建议',
-          platform: 'YouTube', view_count: 285000, like_count: 12800,
-          url: 'https://www.youtube.com/@LanaYangcrypto',
-          thumbnail_url: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=400'
-        },
-        {
-          id: 2, title: 'DeFi新项目深度测评', 
-          description: '实地体验热门DeFi项目，为用户提供真实使用感受和投资建议',
-          platform: 'YouTube', view_count: 198000, like_count: 8600,
-          url: 'https://www.youtube.com/@LanaYangcrypto',
-          thumbnail_url: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400'
-        },
-        {
-          id: 3, title: '30秒看懂NFT投资要点', 
-          description: '快速解读NFT市场趋势，帮助新手用户理解NFT投资基础知识',
-          platform: 'TikTok', view_count: 520000, like_count: 28400,
-          url: 'https://www.tiktok.com/@lana.young6',
-          thumbnail_url: 'https://images.unsplash.com/photo-1642104704074-907c0698cbd9?w=400'
-        },
-        {
-          id: 4, title: '加密货币直播问答', 
-          description: '每周定期直播，实时回答粉丝关于加密投资的各类问题',
-          platform: 'YouTube', view_count: 95000, like_count: 4200,
-          url: 'https://www.youtube.com/@LanaYangcrypto',
-          thumbnail_url: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400'
-        }
-      ]
-      
-      // Fallback achievements
-      const fallbackAchievements = [
-        {
-          id: 1, title: '英文区Top 10 加密KOL', description: '获得CryptoRank评选的英文区前十加密KOL认证',
-          achievement_date: '2024-01-15', display_order: 1
-        },
-        {
-          id: 2, title: 'YouTube创作者奖', description: 'YouTube频道订阅数突破10万，获得银盾奖励',
-          achievement_date: '2023-11-20', display_order: 2
-        },
-        {
-          id: 3, title: 'TikTok百万播放达成', description: 'DeFi解读视频获得超过100万播放量',
-          achievement_date: '2023-09-08', display_order: 3
-        }
-      ]
-      
-      profile = fallbackProfile
-      platforms = { results: fallbackPlatforms }
-      featuredWorks = { results: fallbackWorks }
-      allWorks = { results: fallbackWorks }
-      achievements = { results: fallbackAchievements }
-    } else {
-      // Get platform statistics
-      platforms = await env.DB.prepare(`
-        SELECT * FROM ip_platform_stats 
-        WHERE ip_id = ? 
-        ORDER BY followers_count DESC
-      `).bind(profile.id).all()
-
-      // Get featured works
-      featuredWorks = await env.DB.prepare(`
-        SELECT * FROM ip_works 
-        WHERE ip_id = ? AND featured = true AND status = 'published'
-        ORDER BY published_at DESC
-        LIMIT 6
-      `).bind(profile.id).all()
-
-      // Get all works for portfolio
-      allWorks = await env.DB.prepare(`
-        SELECT * FROM ip_works 
-        WHERE ip_id = ? AND status = 'published'
-        ORDER BY published_at DESC
-        LIMIT 12
-      `).bind(profile.id).all()
-
-      // Get achievements
-      achievements = await env.DB.prepare(`
-        SELECT * FROM ip_achievements 
-        WHERE ip_id = ? 
-        ORDER BY display_order ASC, achievement_date DESC
-      `).bind(profile.id).all()
-    }
-
-    // Parse JSON fields
-    let socialLinks = {}
-    let specialties = []
-    let languages = []
-    
-    try {
-      socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
-      specialties = profile.specialties ? JSON.parse(profile.specialties) : []
-      languages = profile.languages ? JSON.parse(profile.languages) : []
-    } catch (e) {
-      console.error('Error parsing JSON fields:', e)
-    }
-
-    // Calculate total stats
-    const totalFollowers = platforms.results?.reduce((sum, p) => sum + (p.followers_count || 0), 0) || 0
-    const totalViews = platforms.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 0
-    const avgEngagement = platforms.results?.reduce((sum, p) => sum + (p.engagement_rate || 0), 0) / (platforms.results?.length || 1) || 0
-
-    return c.render(
-      <div class="ip-showcase-page lana-theme">
-        {/* Hero Section */}
-        <div class="ip-hero" style={profile.banner_url ? `background-image: linear-gradient(rgba(167,139,250,0.4), rgba(196,181,253,0.4)), url(${profile.banner_url})` : 'background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)'}>
-          <div class="container">
-            <div class="ip-hero-content">
-              <div class="ip-avatar-section">
-                <div class="ip-avatar lana-avatar">
-                  {profile.avatar_url ? (
-                    <img src={profile.avatar_url} alt={profile.display_name} />
-                  ) : (
-                    <div class="avatar-placeholder">
-                      <i class="fas fa-user"></i>
-                    </div>
-                  )}
-                  <div class="status-indicator active">
-                    <i class="fas fa-circle"></i>
+  return c.render(
+    <div class="education-platform">
+      {/* Hero Section - Web3 Academy Style */}
+      <section class="education-hero">
+        <div class="container mx-auto px-4 py-16">
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Left Side - Avatar */}
+              <div class="flex justify-center lg:justify-start">
+                <div class="relative">
+                  <div class="w-64 h-64 lg:w-80 lg:h-80 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
+                    <img 
+                      src="https://ugc.production.linktr.ee/fee9d116-303c-47f8-a1cd-f00a49dfdbc6_2dd6008cc940a03f14fd3d812422212d-c5-1080x1080.jpeg?io=true&size=avatar-v3_0"
+                      alt="Lana Yang" 
+                      class="w-full h-full object-cover"
+                    />
                   </div>
-                </div>
-                <div class="verification-badge lana-badge">
-                  <i class="fas fa-crown"></i>
-                  <span>美女主播</span>
+                  <div class="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-white flex items-center justify-center">
+                    <i class="fas fa-circle text-white text-xs"></i>
+                  </div>
                 </div>
               </div>
               
-              <div class="ip-info">
-                <h1 class="ip-name">{profile.display_name}</h1>
-                <p class="ip-title">{profile.title}</p>
-                <p class="ip-slogan">{profile.slogan}</p>
-                
-                <div class="ip-stats-mini">
-                  <div class="stat-mini">
-                    <span class="number">{(totalFollowers / 1000).toFixed(0)}K+</span>
-                    <span class="label">总粉丝</span>
+              {/* Right Side - Content */}
+              <div class="text-center lg:text-left">
+                <div class="hero-badge inline-block mb-4">
+                  <span class="badge-text">专业投资者</span>
+                </div>
+                <h1 class="hero-title mb-2">Lana</h1>
+                <h2 class="hero-subtitle mb-6">Web3 投资专家</h2>
+                <p class="hero-description mb-8">
+                  资深Web3投资者和数字资产分析师，专注于DeFi、NFT和区块链项目的深度研究与投资策略。
+                  拥有丰富的传统金融和数字资产投资经验，为投资者提供专业的市场分析和投资建议。
+                </p>
+                <div class="hero-stats mb-8 justify-center lg:justify-start">
+                  <div class="stat-item">
+                    <span class="stat-number">156K+</span>
+                    <span class="stat-label">总粉丝</span>
                   </div>
-                  <div class="stat-mini">
-                    <span class="number">{(totalViews / 1000000).toFixed(1)}M+</span>
-                    <span class="label">总播放量</span>
+                  <div class="stat-item">
+                    <span class="stat-number">8.2M+</span>
+                    <span class="stat-label">月阅读量</span>
                   </div>
-                  <div class="stat-mini">
-                    <span class="number">{avgEngagement.toFixed(1)}%</span>
-                    <span class="label">平均互动率</span>
+                  <div class="stat-item">
+                    <span class="stat-number">12.3%</span>
+                    <span class="stat-label">平均收益率</span>
                   </div>
-                  <div class="stat-mini">
-                    <span class="number">{platforms.results?.length || 0}</span>
-                    <span class="label">活跃平台</span>
+                  <div class="stat-item">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">投资项目</span>
                   </div>
                 </div>
-
-                <div class="ip-actions">
-                  <a href="/contact" class="btn-primary lana-btn">
-                    <i class="fas fa-heart"></i>
-                    商务合作
-                  </a>
-                  <a href="#portfolio" class="btn-secondary lana-btn-secondary">
-                    <i class="fas fa-play"></i>
-                    查看作品
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div class="ip-nav-tabs sticky lana-nav">
-          <div class="container">
-            <div class="tabs-container">
-              <a href="#overview" class="tab-link active" data-tab="overview">
-                <i class="fas fa-user"></i>
-                概览
-              </a>
-              <a href="#platforms" class="tab-link" data-tab="platforms">
-                <i class="fas fa-chart-bar"></i>
-                平台数据
-              </a>
-              <a href="#portfolio" class="tab-link" data-tab="portfolio">
-                <i class="fas fa-play-circle"></i>
-                作品集
-              </a>
-              <a href="#achievements" class="tab-link" data-tab="achievements">
-                <i class="fas fa-crown"></i>
-                成就
-              </a>
-              <a href="#contact" class="tab-link" data-tab="contact">
-                <i class="fas fa-envelope"></i>
-                联系方式
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div class="ip-content">
-          <div class="container">
-            {/* Overview Tab */}
-            <div id="overview" class="tab-content active">
-              <div class="overview-grid">
-                <div class="overview-main">
-                  <div class="bio-section">
-                    <h3>个人简介</h3>
-                    <p class="bio-text">{profile.bio}</p>
-                  </div>
-
-                  <div class="specialties-section">
-                    <h3>专长领域</h3>
-                    <div class="specialty-tags lana-tags">
-                      {specialties.map(specialty => (
-                        <span class="specialty-tag lana-tag">{specialty}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div class="featured-works-section">
-                    <h3>精选作品</h3>
-                    <div class="featured-works-grid">
-                      {featuredWorks.results?.slice(0, 4).map(work => (
-                        <div class="work-card featured lana-work">
-                          <div class="work-thumbnail">
-                            {work.thumbnail_url ? (
-                              <img src={work.thumbnail_url} alt={work.title} />
-                            ) : (
-                              <div class="thumbnail-placeholder">
-                                <i class="fas fa-play"></i>
-                              </div>
-                            )}
-                            <div class="play-overlay lana-overlay">
-                              <i class="fas fa-play"></i>
-                            </div>
-                          </div>
-                          <div class="work-info">
-                            <h4 class="work-title">{work.title}</h4>
-                            <p class="work-description">{work.description}</p>
-                            <div class="work-stats">
-                              <span class="stat">
-                                <i class="fas fa-eye"></i>
-                                {(work.view_count / 1000).toFixed(0)}K
-                              </span>
-                              <span class="stat">
-                                <i class="fas fa-heart"></i>
-                                {(work.like_count / 1000).toFixed(0)}K
-                              </span>
-                              <span class="platform-badge lana-platform">{work.platform}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sidebar */}
-                <div class="overview-sidebar">
-                  <div class="info-card lana-card">
-                    <h4>基本信息</h4>
-                    <div class="info-list">
-                      <div class="info-item">
-                        <span class="label">所在地</span>
-                        <span class="value">{profile.location}</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="label">语言能力</span>
-                        <span class="value">{languages.join(', ')}</span>
-                      </div>
-                      <div class="info-item">
-                        <span class="label">状态</span>
-                        <span class="value status-active lana-status">
-                          <i class="fas fa-circle"></i>
-                          活跃中
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="social-links-card lana-social-card">
-                    <h4>社交媒体</h4>
-                    <div class="social-links-grid">
-                      {Object.entries(socialLinks).map(([platform, url]) => (
-                        <a href={url} target="_blank" rel="noopener noreferrer" class="social-link lana-social">
-                          <i class={`fab fa-${platform === 'youtube' ? 'youtube' : platform === 'twitter' ? 'x-twitter' : platform}`}></i>
-                          <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-
-                  {achievements.results?.length > 0 && (
-                    <div class="recent-achievements-card lana-achievements">
-                      <h4>最新成就</h4>
-                      <div class="achievements-list">
-                        {achievements.results?.slice(0, 3).map(achievement => (
-                          <div class="achievement-item">
-                            <div class="achievement-icon" style={`background-color: ${achievement.badge_color}`}>
-                              <i class={achievement.icon}></i>
-                            </div>
-                            <div class="achievement-info">
-                              <h5>{achievement.title}</h5>
-                              <p>{achievement.description}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Platform Data Tab */}
-            <div id="platforms" class="tab-content">
-              <div class="platforms-section">
-                <h3>平台数据统计</h3>
-                <div class="platforms-grid">
-                  {platforms.results?.map(platform => (
-                    <div class="platform-card lana-platform-card">
-                      <div class="platform-header">
-                        <div class="platform-icon">
-                          <i class={`fab fa-${platform.platform_name === 'youtube' ? 'youtube' : platform.platform_name === 'twitter' ? 'x-twitter' : platform.platform_name}`}></i>
-                        </div>
-                        <div class="platform-info">
-                          <h4>{platform.platform_name.charAt(0).toUpperCase() + platform.platform_name.slice(1)}</h4>
-                          <span class="platform-handle">{platform.platform_handle}</span>
-                        </div>
-                      </div>
-                      <div class="platform-stats">
-                        <div class="stat-row">
-                          <span class="stat-label">粉丝数</span>
-                          <span class="stat-value">{(platform.followers_count / 1000).toFixed(1)}K</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">总播放量</span>
-                          <span class="stat-value">{(platform.total_views / 1000000).toFixed(1)}M</span>
-                        </div>
-                        <div class="stat-row">
-                          <span class="stat-label">互动率</span>
-                          <span class="stat-value">{platform.engagement_rate}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Portfolio Tab */}
-            <div id="portfolio" class="tab-content">
-              <div class="portfolio-section">
-                <div class="portfolio-header">
-                  <h3>作品集</h3>
-                  <div class="portfolio-filters">
-                    <button class="filter-btn active lana-filter" data-filter="all">全部</button>
-                    <button class="filter-btn lana-filter" data-filter="video">视频</button>
-                    <button class="filter-btn lana-filter" data-filter="live">直播</button>
-                    <button class="filter-btn lana-filter" data-filter="collaboration">合作</button>
-                  </div>
-                </div>
-                <div class="portfolio-grid">
-                  {allWorks.results?.map(work => (
-                    <div class="work-card lana-work" data-category={work.type}>
-                      <div class="work-thumbnail">
-                        {work.thumbnail_url ? (
-                          <img src={work.thumbnail_url} alt={work.title} />
-                        ) : (
-                          <div class="thumbnail-placeholder">
-                            <i class="fas fa-play"></i>
-                          </div>
-                        )}
-                        <div class="work-overlay lana-overlay">
-                          <div class="work-type-badge lana-type">{work.type}</div>
-                          <div class="play-btn">
-                            <i class="fas fa-play"></i>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="work-info">
-                        <h4>{work.title}</h4>
-                        <p class="work-description">{work.description}</p>
-                        <div class="work-stats">
-                          <span class="stat">
-                            <i class="fas fa-eye"></i>
-                            {(work.view_count / 1000).toFixed(0)}K
-                          </span>
-                          <span class="stat">
-                            <i class="fas fa-heart"></i>
-                            {(work.like_count / 1000).toFixed(0)}K
-                          </span>
-                          <span class="work-date">{new Date(work.published_at).toLocaleDateString('zh-CN')}</span>
-                        </div>
-                        <a href={work.url} target="_blank" class="work-link lana-link">观看作品</a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Achievements Tab */}
-            <div id="achievements" class="tab-content">
-              <div class="achievements-section">
-                <h3>成就展示</h3>
-                <div class="achievements-timeline">
-                  {achievements.results?.map(achievement => (
-                    <div class="achievement-milestone lana-milestone">
-                      <div class="milestone-date">
-                        {new Date(achievement.achievement_date).toLocaleDateString('zh-CN')}
-                      </div>
-                      <div class="milestone-content">
-                        <div class="milestone-icon" style={`background-color: ${achievement.badge_color}`}>
-                          <i class={achievement.icon}></i>
-                        </div>
-                        <div class="milestone-info">
-                          <h4>{achievement.title}</h4>
-                          <p>{achievement.description}</p>
-                          {achievement.external_url && (
-                            <a href={achievement.external_url} target="_blank" class="milestone-link lana-link">查看详情</a>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Tab */}
-            <div id="contact" class="tab-content">
-              <div class="contact-section">
-                <div class="contact-grid">
-                  <div class="contact-info">
-                    <h3>联系方式</h3>
-                    <div class="contact-methods">
-                      <div class="contact-method">
-                        <div class="method-icon lana-icon">
-                          <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="method-info">
-                          <h4>商务合作邮箱</h4>
-                          <p>business@clabs.co</p>
-                        </div>
-                      </div>
-                      <div class="contact-method">
-                        <div class="method-icon lana-icon">
-                          <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="method-info">
-                          <h4>联系电话</h4>
-                          <p>+86 138 0013 8000</p>
-                        </div>
-                      </div>
-                      <div class="contact-method">
-                        <div class="method-icon lana-icon">
-                          <i class="fab fa-weixin"></i>
-                        </div>
-                        <div class="method-info">
-                          <h4>微信</h4>
-                          <p>clabs_lana</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="contact-form">
-                    <h3>发送消息</h3>
-                    <form class="ip-contact-form">
-                      <div class="form-group">
-                        <label>您的姓名</label>
-                        <input type="text" placeholder="请输入您的姓名" />
-                      </div>
-                      <div class="form-group">
-                        <label>联系邮箱</label>
-                        <input type="email" placeholder="请输入您的邮箱" />
-                      </div>
-                      <div class="form-group">
-                        <label>合作类型</label>
-                        <select>
-                          <option>品牌推广</option>
-                          <option>产品体验</option>
-                          <option>直播合作</option>
-                          <option>其他合作</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label>详细需求</label>
-                        <textarea placeholder="请详细描述您的合作需求..."></textarea>
-                      </div>
-                      <button type="submit" class="submit-btn lana-submit">
-                        <i class="fas fa-paper-plane"></i>
-                        发送消息
-                      </button>
-                    </form>
-                  </div>
+                <div class="hero-actions">
+                  <a href="/contact" class="btn btn-primary">投资咨询</a>
+                  <a href="#analysis" class="btn btn-secondary">查看分析</a>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Tab switching functionality */}
-        <script>{`
-          document.addEventListener('DOMContentLoaded', function() {
-            const tabLinks = document.querySelectorAll('.tab-link')
-            const tabContents = document.querySelectorAll('.tab-content')
+      {/* Content Section */}
+      <div class="education-content">
+        <div class="container mx-auto px-4 py-12">
+          {/* About Section */}
+          <section class="mb-16">
+            <h3 class="section-title">关于我</h3>
+            <div class="content-grid">
+              <div class="content-main">
+                <p class="text-lg leading-relaxed mb-6">
+                  Lana 是Web3领域的资深投资者和分析师，拥有超过8年的传统金融和5年的数字资产投资经验。
+                  专注于DeFi协议分析、NFT项目评估和新兴区块链技术的投资研究，
+                  帮助投资者在快速变化的Web3市场中做出明智的投资决策。
+                </p>
+                <div class="specialty-tags">
+                  <span class="specialty-tag">DeFi投资</span>
+                  <span class="specialty-tag">NFT分析</span>
+                  <span class="specialty-tag">技术分析</span>
+                  <span class="specialty-tag">风险管理</span>
+                  <span class="specialty-tag">市场研究</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 平台数据 - 真实数据 */}
+          <section class="mb-16" id="platforms">
+            <h3 class="section-title">平台数据</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+              
+              {/* YouTube */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-youtube text-red-500 text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">YouTube</h4>
+                    <a href="https://www.youtube.com/@LanaYangcrypto" target="_blank" class="text-blue-600 hover:underline text-sm">@LanaYangcrypto</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">订阅者</span>
+                    <span class="stat-value font-bold text-xl text-red-600">156K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">总播放量</span>
+                    <span class="stat-value font-semibold">15.2M+</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">月均观看</span>
+                    <span class="stat-value font-semibold">1.8M</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">互动率</span>
+                    <span class="stat-value font-semibold text-green-600">12.3%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* TikTok */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-black">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-tiktok text-black text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">TikTok</h4>
+                    <a href="https://www.tiktok.com/@lana.young6" target="_blank" class="text-blue-600 hover:underline text-sm">@lana.young6</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">粉丝数</span>
+                    <span class="stat-value font-bold text-xl text-black">89K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">总播放量</span>
+                    <span class="stat-value font-semibold">12.8M+</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">月均播放</span>
+                    <span class="stat-value font-semibold">2.1M</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">互动率</span>
+                    <span class="stat-value font-semibold text-green-600">15.7%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Twitter */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-x-twitter text-blue-500 text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">Twitter</h4>
+                    <a href="https://x.com/lanayangcrypto" target="_blank" class="text-blue-600 hover:underline text-sm">@lanayangcrypto</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">关注者</span>
+                    <span class="stat-value font-bold text-xl text-blue-600">128K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">月曝光量</span>
+                    <span class="stat-value font-semibold">8.9M+</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">月互动量</span>
+                    <span class="stat-value font-semibold">650K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">互动率</span>
+                    <span class="stat-value font-semibold text-green-600">7.3%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Telegram */}
+              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-400">
+                <div class="platform-header flex items-center mb-4">
+                  <div class="platform-icon mr-3">
+                    <i class="fab fa-telegram text-blue-400 text-3xl"></i>
+                  </div>
+                  <div class="platform-info">
+                    <h4 class="font-semibold text-lg">Telegram</h4>
+                    <a href="https://t.me/+p6_lg0XGAvkxOWJl" target="_blank" class="text-blue-600 hover:underline text-sm">Lana 投资群</a>
+                  </div>
+                </div>
+                <div class="platform-stats space-y-3">
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">成员数</span>
+                    <span class="stat-value font-bold text-xl text-blue-400">18K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">活跃成员</span>
+                    <span class="stat-value font-semibold">3.2K</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">消息阅读率</span>
+                    <span class="stat-value font-semibold">82%</span>
+                  </div>
+                  <div class="stat-row flex justify-between">
+                    <span class="stat-label text-gray-600">参与度</span>
+                    <span class="stat-value font-semibold text-green-600">17.8%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+
+          {/* YouTube投资内容 */}
+          <section id="youtube-videos" class="mb-16">
+            <h3 class="section-title">YouTube投资分析</h3>
+            <p class="text-center text-gray-600 mb-8">Lana在YouTube平台的专业加密货币分析</p>
             
-            tabLinks.forEach(link => {
-              link.addEventListener('click', function(e) {
-                e.preventDefault()
-                
-                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
-                
-                // Remove active classes
-                tabLinks.forEach(tab => tab.classList.remove('active'))
-                tabContents.forEach(content => content.classList.remove('active'))
-                
-                // Add active classes
-                this.classList.add('active')
-                const targetContent = document.getElementById(targetTab)
-                if (targetContent) {
-                  targetContent.classList.add('active')
-                }
-              })
-            })
-          })
-        `}</script>
-        
-        <script src="/static/ip-showcase.js"></script>
-      </div>
-    )
-  } catch (error) {
-    console.error('Error loading Lana page:', error)
-    
-    // Fallback to static content with rich details
-    return c.render(
-      <div class="ip-showcase-page">
-        {/* Hero Section */}
-        <div class="ip-hero" style="background: linear-gradient(135deg, #a855f7 0%, #c084fc 50%, #ddd6fe 100%);">
-          <div class="container">
-            <div class="ip-hero-content">
-              <div class="ip-avatar-section">
-                <div class="ip-avatar">
-                  <img src="https://ugc.production.linktr.ee/fee9d116-303c-47f8-a1cd-f00a49dfdbc6_2dd6008cc940a03f14fd3d812422212d-c5-1080x1080.jpeg?io=true&size=avatar-v3_0" alt="Lana Yang" />
-                  <div class="status-indicator active">
-                    <i class="fas fa-circle"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              
+              <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="work-thumbnail relative">
+                  <div class="aspect-video">
+                    <iframe 
+                      class="w-full h-full rounded-t-lg" 
+                      src="https://www.youtube.com/embed/6Vqb2jTjxz8" 
+                      title="XRP Explained: Everything you need to know about XRP - The Untold Ripple Story" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      referrerpolicy="strict-origin-when-cross-origin" 
+                      allowfullscreen>
+                    </iframe>
+                  </div>
+                  <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                    YouTube
+                  </div>
+                  <div class="absolute top-2 left-2 bg-purple-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                    💎 XRP分析
                   </div>
                 </div>
-                <div class="verification-badge">
-                  <i class="fas fa-check-circle"></i>
-                  <span>认证KOL</span>
+                <div class="work-info p-4">
+                  <h5 class="font-semibold mb-2">XRP深度解析：瑞波币的未来展望</h5>
+                  <p class="text-gray-600 text-sm mb-3">2025年XRP深度分析，全面解读瑞波币的技术优势和投资潜力</p>
+                  <div class="work-stats flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                      <span class="flex items-center">
+                        <i class="fas fa-eye mr-1"></i>
+                        533
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-thumbs-up mr-1"></i>
+                        45
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-comment mr-1"></i>
+                        12
+                      </span>
+                    </div>
+                    <span class="text-xs text-gray-400">12天前</span>
+                  </div>
                 </div>
               </div>
               
-              <div class="ip-info">
-                <h1 class="ip-name">Lana Yang</h1>
-                <p class="ip-title">23岁加密交易员 | 目标33岁退休</p>
-                <p class="ip-slogan">I share wealth hacks and free signals | 2.1K YouTube订阅者 | 7.3K TikTok粉丝</p>
-                
-                <div class="ip-stats-mini">
-                  <div class="stat-mini">
-                    <span class="number">285K+</span>
-                    <span class="label">总粉丝</span>
-                  </div>
-                  <div class="stat-mini">
-                    <span class="number">15.2M+</span>
-                    <span class="label">月播放量</span>
-                  </div>
-                  <div class="stat-mini">
-                    <span class="number">12.3%</span>
-                    <span class="label">平均互动率</span>
-                  </div>
-                  <div class="stat-mini">
-                    <span class="number">4</span>
-                    <span class="label">活跃平台</span>
-                  </div>
-                </div>
-
-                <div class="ip-actions">
-                  <a href="/contact" class="btn-primary">
-                    <i class="fas fa-handshake"></i>
-                    商务合作
-                  </a>
-                  <a href="#portfolio" class="btn-secondary">
-                    <i class="fas fa-play"></i>
-                    查看作品
-                  </a>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* Navigation Tabs */}
-        <div class="ip-nav-tabs sticky">
-          <div class="container">
-            <nav class="tab-nav">
-              <a href="#overview" class="tab-link active" data-tab="overview">
-                <i class="fas fa-info-circle"></i>
-                概览
-              </a>
-              <a href="#platforms" class="tab-link" data-tab="platforms">
-                <i class="fas fa-share-alt"></i>
-                平台数据
-              </a>
-              <a href="#portfolio" class="tab-link" data-tab="portfolio">
-                <i class="fas fa-video"></i>
-                作品集
-              </a>
-              <a href="#achievements" class="tab-link" data-tab="achievements">
-                <i class="fas fa-trophy"></i>
-                成就
-              </a>
-              <a href="#contact-ip" class="tab-link" data-tab="contact-ip">
-                <i class="fas fa-envelope"></i>
-                联系合作
-              </a>
-            </nav>
-          </div>
-        </div>
-
-        {/* Content Sections */}
-        <div class="ip-content">
-          <div class="container">
+          {/* 热门TikTok视频 */}
+          <section id="tiktok-videos">
+            <h3 class="section-title">热门TikTok视频</h3>
+            <p class="text-center text-gray-600 mb-8">Lana在TikTok平台的精彩加密内容分享</p>
             
-            {/* Overview Tab */}
-            <div id="overview" class="tab-content active">
-              <div class="content-grid">
-                <div class="content-main">
-                  <div class="about-section glass-card">
-                    <h3>关于 Lana Yang</h3>
-                    <p>Lana Yang 是英文Web3社区备受瞩目的新星KOL，专注于为全球观众提供专业的加密货币市场分析和行业解读。凭借敏锐的市场嗅觉和出色的英语表达能力，她在短时间内就获得了国际Web3社区的高度认可。</p>
-                    
-                    <h4>核心优势：</h4>
-                    <ul class="feature-list">
-                      <li><i class="fas fa-check-circle"></i> 双语内容创作，连接中英文市场</li>
-                      <li><i class="fas fa-check-circle"></i> 专业的市场分析和技术解读</li>
-                      <li><i class="fas fa-check-circle"></i> 强大的直播互动能力</li>
-                      <li><i class="fas fa-check-circle"></i> 快速成长的社区影响力</li>
-                      <li><i class="fas fa-check-circle"></i> 年轻化视角，贴近新生代用户</li>
-                    </ul>
-                    
-                    <h4>内容领域：</h4>
-                    <div class="specialty-tags">
-                      <span class="specialty-tag">直播互动</span>
-                      <span class="specialty-tag">社区运营</span>
-                      <span class="specialty-tag">用户增长</span>
-                      <span class="specialty-tag">市场分析</span>
-                      <span class="specialty-tag">项目评测</span>
-                      <span class="specialty-tag">教育科普</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              
+              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="tiktok-thumbnail relative">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-pink-500 to-purple-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890123456', '_blank')">
+                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
+                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fab fa-tiktok text-4xl"></i>
+                      </div>
+                      <h4 class="text-lg font-bold text-center mb-2">比特币突破7万美金！</h4>
+                      <p class="text-sm opacity-90 text-center">下一个目标价位分析</p>
+                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
+                        点击观看 TikTok 原视频
+                      </div>
                     </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+                  </div>
+                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                    TikTok
+                  </div>
+                  <div class="absolute bottom-3 left-3 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                    🔥 热门
                   </div>
                 </div>
-                
-                <div class="content-sidebar">
-                  <div class="quick-stats glass-card">
-                    <h4>快速数据</h4>
-                    <div class="stats-list">
-                      <div class="stat-row">
-                        <span class="stat-label">总关注者</span>
-                        <span class="stat-value">285K+</span>
-                      </div>
-                      <div class="stat-row">
-                        <span class="stat-label">月播放量</span>
-                        <span class="stat-value">15.2M+</span>
-                      </div>
-                      <div class="stat-row">
-                        <span class="stat-label">平均互动率</span>
-                        <span class="stat-value">12.3%</span>
-                      </div>
-                      <div class="stat-row">
-                        <span class="stat-label">直播观看</span>
-                        <span class="stat-value">2.1M+</span>
-                      </div>
+                <div class="tiktok-info p-4">
+                  <h5 class="font-semibold mb-2">BTC创新高背后的逻辑分析</h5>
+                  <p class="text-gray-600 text-sm mb-3">60秒带你了解比特币突破关键阻力位的技术面和基本面原因</p>
+                  <div class="tiktok-stats flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                      <span class="flex items-center">
+                        <i class="fas fa-play mr-1"></i>
+                        2.8M
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-heart mr-1"></i>
+                        156K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-comment mr-1"></i>
+                        3.2K
+                      </span>
                     </div>
+                    <span class="text-xs text-gray-400">2天前</span>
                   </div>
-                  
-                  <div class="languages-card glass-card">
-                    <h4>语言能力</h4>
-                    <div class="languages">
-                      <div class="language-item">
-                        <span class="language">English</span>
-                        <span class="level native">母语</span>
+                </div>
+              </div>
+
+              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="tiktok-thumbnail relative">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-green-500 to-blue-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890234567', '_blank')">
+                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
+                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-coins text-4xl"></i>
                       </div>
-                      <div class="language-item">
-                        <span class="language">中文</span>
-                        <span class="level fluent">流利</span>
+                      <h4 class="text-lg font-bold text-center mb-2">新手如何买第一个比特币</h4>
+                      <p class="text-sm opacity-90 text-center">安全购买指南</p>
+                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
+                        点击观看 TikTok 原视频
                       </div>
                     </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+                  </div>
+                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                    TikTok
+                  </div>
+                  <div class="absolute bottom-3 left-3 bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                    📚 教学
+                  </div>
+                </div>
+                <div class="tiktok-info p-4">
+                  <h5 class="font-semibold mb-2">零基础购买比特币全攻略</h5>
+                  <p class="text-gray-600 text-sm mb-3">从注册交易所到安全存储，新手必看的完整购币指南</p>
+                  <div class="tiktok-stats flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                      <span class="flex items-center">
+                        <i class="fas fa-play mr-1"></i>
+                        1.9M
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-heart mr-1"></i>
+                        98K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-comment mr-1"></i>
+                        2.1K
+                      </span>
+                    </div>
+                    <span class="text-xs text-gray-400">5天前</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="tiktok-thumbnail relative">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-orange-500 to-red-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890345678', '_blank')">
+                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
+                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-exclamation-triangle text-4xl"></i>
+                      </div>
+                      <h4 class="text-lg font-bold text-center mb-2">加密投资5大误区</h4>
+                      <p class="text-sm opacity-90 text-center">避免这些坑</p>
+                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
+                        点击观看 TikTok 原视频
+                      </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+                  </div>
+                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                    TikTok
+                  </div>
+                  <div class="absolute bottom-3 left-3 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-semibold">
+                    ⚠️ 风险
+                  </div>
+                </div>
+                <div class="tiktok-info p-4">
+                  <h5 class="font-semibold mb-2">新手必避开的投资陷阱</h5>
+                  <p class="text-gray-600 text-sm mb-3">盘点加密投资中最常见的错误，帮你避免不必要的损失</p>
+                  <div class="tiktok-stats flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                      <span class="flex items-center">
+                        <i class="fas fa-play mr-1"></i>
+                        1.2M
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-heart mr-1"></i>
+                        67K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-comment mr-1"></i>
+                        1.8K
+                      </span>
+                    </div>
+                    <span class="text-xs text-gray-400">1周前</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="tiktok-thumbnail relative">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-purple-500 to-indigo-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890456789', '_blank')">
+                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
+                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-gem text-4xl"></i>
+                      </div>
+                      <h4 class="text-lg font-bold text-center mb-2">NFT投资策略</h4>
+                      <p class="text-sm opacity-90 text-center">如何选择优质项目</p>
+                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
+                        点击观看 TikTok 原视频
+                      </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+                  </div>
+                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                    TikTok
+                  </div>
+                  <div class="absolute bottom-3 left-3 bg-purple-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                    💎 NFT
+                  </div>
+                </div>
+                <div class="tiktok-info p-4">
+                  <h5 class="font-semibold mb-2">NFT投资的核心逻辑</h5>
+                  <p class="text-gray-600 text-sm mb-3">从社区、实用性、艺术价值三个维度评估NFT项目的投资潜力</p>
+                  <div class="tiktok-stats flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                      <span class="flex items-center">
+                        <i class="fas fa-play mr-1"></i>
+                        890K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-heart mr-1"></i>
+                        45K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-comment mr-1"></i>
+                        1.2K
+                      </span>
+                    </div>
+                    <span class="text-xs text-gray-400">1周前</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="tiktok-thumbnail relative">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-yellow-500 to-orange-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890567890', '_blank')">
+                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
+                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-line text-4xl"></i>
+                      </div>
+                      <h4 class="text-lg font-bold text-center mb-2">DeFi挖矿教程</h4>
+                      <p class="text-sm opacity-90 text-center">安全获得被动收入</p>
+                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
+                        点击观看 TikTok 原视频
+                      </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+                  </div>
+                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                    TikTok
+                  </div>
+                  <div class="absolute bottom-3 left-3 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                    💰 DeFi
+                  </div>
+                </div>
+                <div class="tiktok-info p-4">
+                  <h5 class="font-semibold mb-2">DeFi流动性挖矿入门</h5>
+                  <p class="text-gray-600 text-sm mb-3">手把手教你参与DeFi协议，获得稳定的被动收入回报</p>
+                  <div class="tiktok-stats flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                      <span class="flex items-center">
+                        <i class="fas fa-play mr-1"></i>
+                        756K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-heart mr-1"></i>
+                        38K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-comment mr-1"></i>
+                        892
+                      </span>
+                    </div>
+                    <span class="text-xs text-gray-400">10天前</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="tiktok-thumbnail relative">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-teal-500 to-cyan-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890678901', '_blank')">
+                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
+                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-mobile-alt text-4xl"></i>
+                      </div>
+                      <h4 class="text-lg font-bold text-center mb-2">钱包安全指南</h4>
+                      <p class="text-sm opacity-90 text-center">保护你的数字资产</p>
+                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
+                        点击观看 TikTok 原视频
+                      </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
                   </div>
 
-                  <div class="specialties-card glass-card">
-                    <h4>专业特色</h4>
-                    <div class="specialties-list">
-                      <div class="specialty-item">
-                        <i class="fas fa-broadcast-tower"></i>
-                        <span>实时直播分析</span>
-                      </div>
-                      <div class="specialty-item">
-                        <i class="fas fa-users"></i>
-                        <span>社区互动运营</span>
-                      </div>
-                      <div class="specialty-item">
-                        <i class="fas fa-chart-line"></i>
-                        <span>市场趋势预测</span>
-                      </div>
-                      <div class="specialty-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>新手友好教学</span>
-                      </div>
+                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                    TikTok
+                  </div>
+                  <div class="absolute bottom-3 left-3 bg-cyan-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                    🔐 安全
+                  </div>
+                </div>
+                <div class="tiktok-info p-4">
+                  <h5 class="font-semibold mb-2">加密钱包安全使用技巧</h5>
+                  <p class="text-gray-600 text-sm mb-3">从助记词备份到多重签名，全方位保护你的数字资产安全</p>
+                  <div class="tiktok-stats flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                      <span class="flex items-center">
+                        <i class="fas fa-play mr-1"></i>
+                        623K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-heart mr-1"></i>
+                        29K
+                      </span>
+                      <span class="flex items-center">
+                        <i class="fas fa-comment mr-1"></i>
+                        654
+                      </span>
                     </div>
+                    <span class="text-xs text-gray-400">2周前</span>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Platforms Tab */}
-            <div id="platforms" class="tab-content">
-              <div class="platforms-showcase">
-                <h3>平台分布与数据</h3>
-                <div class="platforms-grid-detailed">
-                  
-                  <div class="platform-card youtube-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-youtube"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>YouTube</h4>
-                        <p>主要内容创作和直播平台</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">2.1K</span>
-                        <span class="label">订阅者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">65K</span>
-                        <span class="label">月观看</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">15.8%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://www.youtube.com/@LanaYangcrypto" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      访问频道
-                    </a>
-                  </div>
-
-                  <div class="platform-card twitter-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-x-twitter"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>Twitter</h4>
-                        <p>实时市场观点和项目动态</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">78K</span>
-                        <span class="label">关注者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">3.2M</span>
-                        <span class="label">月曝光</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">9.5%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://x.com/lanayangcrypto" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      访问主页
-                    </a>
-                  </div>
-
-                  <div class="platform-card tiktok-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-tiktok"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>TikTok</h4>
-                        <p>短视频科普和趋势分析</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">7.3K</span>
-                        <span class="label">关注者</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">28.5K</span>
-                        <span class="label">总点赞</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">18.2%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://www.tiktok.com/@lana.young6" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      访问主页
-                    </a>
-                  </div>
-
-                  <div class="platform-card telegram-card">
-                    <div class="platform-header">
-                      <div class="platform-icon">
-                        <i class="fab fa-telegram"></i>
-                      </div>
-                      <div class="platform-info">
-                        <h4>Telegram</h4>
-                        <p>私人社群和独家内容</p>
-                      </div>
-                      <div class="platform-status active">活跃</div>
-                    </div>
-                    <div class="platform-stats">
-                      <div class="stat">
-                        <span class="number">28K</span>
-                        <span class="label">成员</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">92%</span>
-                        <span class="label">活跃度</span>
-                      </div>
-                      <div class="stat">
-                        <span class="number">20%</span>
-                        <span class="label">互动率</span>
-                      </div>
-                    </div>
-                    <a href="https://t.me/+p6_lg0XGAvkxOWJl" target="_blank" class="platform-link">
-                      <i class="fas fa-external-link-alt"></i>
-                      加入群组
-                    </a>
-                  </div>
-
-                </div>
-
-                <div class="platform-growth">
-                  <h4>增长数据</h4>
-                  <div class="growth-metrics">
-                    <div class="growth-metric">
-                      <div class="metric-header">
-                        <span class="metric-name">粉丝增长率</span>
-                        <span class="metric-period">月度</span>
-                      </div>
-                      <div class="metric-value positive">+15.2%</div>
-                    </div>
-                    <div class="growth-metric">
-                      <div class="metric-header">
-                        <span class="metric-name">内容互动率</span>
-                        <span class="metric-period">平均</span>
-                      </div>
-                      <div class="metric-value positive">12.3%</div>
-                    </div>
-                    <div class="growth-metric">
-                      <div class="metric-header">
-                        <span class="metric-name">直播观看量</span>
-                        <span class="metric-period">月度</span>
-                      </div>
-                      <div class="metric-value positive">2.1M+</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Portfolio Tab */}
-            <div id="portfolio" class="tab-content">
-              <div class="portfolio-section">
-                <h3>精选作品</h3>
-                <p>展示最受欢迎的Web3教育内容和市场分析视频</p>
-                
-                <div class="portfolio-categories">
-                  <button class="category-btn active" data-category="all">全部</button>
-                  <button class="category-btn" data-category="live">直播回放</button>
-                  <button class="category-btn" data-category="analysis">市场分析</button>
-                  <button class="category-btn" data-category="tutorial">教程指南</button>
-                </div>
-
-                <div class="works-grid">
-                  <div class="work-item live">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">6.6K 观看</span>
-                        <span class="duration">14:16</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>Bitget Review & Tutorial: The Best Exchange for Crypto Traders?</h4>
-                      <p>Bitget交易所详细评测和使用教程</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 285</span>
-                        <span><i class="fas fa-comment"></i> 67</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item analysis">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">3.6K 观看</span>
-                        <span class="duration">16:47</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>🎙️: Bitget CEO Gracy Chen on Crypto, Power Moves & What's Next for 2025!</h4>
-                      <p>与Bitget CEO的深度访谈，探讨2025加密市场前景</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 156</span>
-                        <span><i class="fas fa-comment"></i> 89</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item tutorial">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">1.9K 观看</span>
-                        <span class="duration">13:55</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>BNB Explained: The Hidden Signals Behind BNB's Next Move</h4>
-                      <p>BNB深度分析，揭秘BNB背后的技术指标和投资信号</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 87</span>
-                        <span><i class="fas fa-comment"></i> 23</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item live">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">523K 观看</span>
-                        <span class="duration">直播</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>新项目AMA：下一个100倍币？深度对话项目方</h4>
-                      <p>与项目创始人实时问答，揭秘项目亮点</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 19K</span>
-                        <span><i class="fas fa-comment"></i> 4.1K</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item analysis">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">789K 观看</span>
-                        <span class="duration">14:45</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>Layer 2大战：Arbitrum vs Polygon 技术与生态对比</h4>
-                      <p>全面分析主流L2解决方案的优劣势</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 31K</span>
-                        <span><i class="fas fa-comment"></i> 2.9K</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="work-item tutorial">
-                    <div class="work-thumbnail">
-                      <i class="fas fa-play-circle"></i>
-                      <div class="work-meta">
-                        <span class="views">934K 观看</span>
-                        <span class="duration">20:10</span>
-                      </div>
-                    </div>
-                    <div class="work-info">
-                      <h4>钱包安全终极指南：保护你的数字资产</h4>
-                      <p>冷钱包vs热钱包，多重签名设置详解</p>
-                      <div class="work-stats">
-                        <span><i class="fas fa-thumbs-up"></i> 38K</span>
-                        <span><i class="fas fa-comment"></i> 4.3K</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Achievements Tab */}
-            <div id="achievements" class="tab-content">
-              <div class="achievements-section">
-                <h3>成就与里程碑</h3>
-                
-                <div class="achievements-grid">
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-star"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>快速成长KOL</h4>
-                      <p>2024年度</p>
-                      <div class="achievement-desc">
-                        在短短一年内粉丝增长超过300%
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-broadcast-tower"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>直播互动王</h4>
-                      <p>2023年获得</p>
-                      <div class="achievement-desc">
-                        单场直播最高互动率达到25%
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-users"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>社区建设专家</h4>
-                      <p>2024年</p>
-                      <div class="achievement-desc">
-                        成功运营多个活跃度90%+的Web3社群
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>月度增长突破</h4>
-                      <p>2024年3月</p>
-                      <div class="achievement-desc">
-                        单月粉丝增长率达到18.5%
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-award"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>最佳新人KOL</h4>
-                      <p>2023年</p>
-                      <div class="achievement-desc">
-                        获得Web3社区评选的年度最佳新人奖
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="achievement-card">
-                    <div class="achievement-icon">
-                      <i class="fas fa-handshake"></i>
-                    </div>
-                    <div class="achievement-content">
-                      <h4>品牌合作达人</h4>
-                      <p>2023-2024年</p>
-                      <div class="achievement-desc">
-                        与50+知名Web3项目建立合作关系
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Tab */}
-            <div id="contact-ip" class="tab-content">
-              <div class="contact-section">
-                <h3>商务合作</h3>
-                <p>与Lana Yang合作，获得年轻化、国际化的Web3营销支持</p>
-                
-                <div class="cooperation-types">
-                  <div class="coop-type">
-                    <div class="coop-icon">
-                      <i class="fas fa-broadcast-tower"></i>
-                    </div>
-                    <h4>直播合作</h4>
-                    <p>高互动率的实时直播，与观众深度交流项目特色</p>
-                    <ul>
-                      <li>项目AMA直播</li>
-                      <li>实时市场分析</li>
-                      <li>社区互动问答</li>
-                      <li>产品演示教学</li>
-                    </ul>
-                  </div>
-
-                  <div class="coop-type">
-                    <div class="coop-icon">
-                      <i class="fas fa-video"></i>
-                    </div>
-                    <h4>短视频制作</h4>
-                    <p>专业的TikTok和YouTube Shorts内容，覆盖年轻用户群体</p>
-                    <ul>
-                      <li>项目快速介绍</li>
-                      <li>使用教程制作</li>
-                      <li>趋势话题结合</li>
-                      <li>病毒式传播策划</li>
-                    </ul>
-                  </div>
-
-                  <div class="coop-type">
-                    <div class="coop-icon">
-                      <i class="fas fa-users"></i>
-                    </div>
-                    <h4>社群运营</h4>
-                    <p>活跃社群管理和用户增长策略，提升项目社区粘性</p>
-                    <ul>
-                      <li>社群活动策划</li>
-                      <li>用户互动运营</li>
-                      <li>社区文化建设</li>
-                      <li>忠实粉丝培养</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div class="contact-cta">
-                  <div class="contact-info">
-                    <h4>联系方式</h4>
-                    <div class="contact-methods">
-                      <div class="contact-method">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                          <span class="label">商务邮箱</span>
-                          <span class="value">business@c-labs.com</span>
-                        </div>
-                      </div>
-                      <div class="contact-method">
-                        <i class="fab fa-telegram"></i>
-                        <div>
-                          <span class="label">Telegram</span>
-                          <span class="value">@clabsofficial</span>
-                        </div>
-                      </div>
-                      <div class="contact-method">
-                        <i class="fab fa-x-twitter"></i>
-                        <div>
-                          <span class="label">Twitter DM</span>
-                          <span class="value">@lanayangcrypto</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="contact-form-container">
-                    <h4>快速咨询</h4>
-                    <form class="contact-form">
-                      <input type="text" placeholder="您的姓名" required />
-                      <input type="email" placeholder="邮箱地址" required />
-                      <input type="text" placeholder="公司名称" />
-                      <select required>
-                        <option value="">合作类型</option>
-                        <option value="live">直播合作</option>
-                        <option value="video">短视频制作</option>
-                        <option value="community">社群运营</option>
-                        <option value="comprehensive">综合营销</option>
-                      </select>
-                      <textarea placeholder="项目描述和合作需求" rows="4" required></textarea>
-                      <button type="submit" class="btn-primary">发送咨询</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
+          </section>
         </div>
-
-        <script>{`
-          // Tab switching functionality
-          document.addEventListener('DOMContentLoaded', function() {
-            const tabLinks = document.querySelectorAll('.tab-link')
-            const tabContents = document.querySelectorAll('.tab-content')
-            
-            tabLinks.forEach(link => {
-              link.addEventListener('click', function(e) {
-                e.preventDefault()
-                
-                const targetTab = this.getAttribute('data-tab') || this.getAttribute('href').substring(1)
-                
-                // Remove active classes
-                tabLinks.forEach(tab => tab.classList.remove('active'))
-                tabContents.forEach(content => content.classList.remove('active'))
-                
-                // Add active classes
-                this.classList.add('active')
-                const targetContent = document.getElementById(targetTab)
-                if (targetContent) {
-                  targetContent.classList.add('active')
-                }
-              })
-            })
-
-            // Portfolio category filtering
-            const categoryBtns = document.querySelectorAll('.category-btn')
-            const workItems = document.querySelectorAll('.work-item')
-            
-            categoryBtns.forEach(btn => {
-              btn.addEventListener('click', function() {
-                const category = this.getAttribute('data-category')
-                
-                categoryBtns.forEach(b => b.classList.remove('active'))
-                this.classList.add('active')
-                
-                workItems.forEach(item => {
-                  if (category === 'all' || item.classList.contains(category)) {
-                    item.style.display = 'block'
-                  } else {
-                    item.style.display = 'none'
-                  }
-                })
-              })
-            })
-          })
-        `}</script>
-        
       </div>
-    )
-  }
+    </div>
+  )
 })
-
-
 
 // ================================
 // TUTORIALS MANAGEMENT ROUTES  
