@@ -10196,11 +10196,17 @@ p[class*="text-blue-600"],
 p.text-gray-600,
 .description,
 .subtitle,
-[class*="description"] {
+[class*="description"]:not(.hero-description) {
   color: #2563eb !important;
 }
 
 /* Specific targeting for video card descriptions */
 .video-grid .video-card p {
   color: #2563eb !important;
+}
+
+/* IMPORTANT: Keep hero descriptions gray - DO NOT make them blue */
+.hero-description,
+p.text-lg.leading-relaxed {
+  color: var(--gray-600) !important;
 }
