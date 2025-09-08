@@ -6171,128 +6171,96 @@ app.get('/ip/lana', async (c) => {
           {/* 平台数据 - 真实数据 */}
           <section class="mb-16" id="platforms">
             <h3 class="section-title">平台数据</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               
               {/* YouTube */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-youtube text-red-500 text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-red-500 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-youtube text-red-500 text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">YouTube</h4>
-                    <a href="https://www.youtube.com/@LanaYangcrypto" target="_blank" class="text-blue-600 hover:underline text-sm">@LanaYangcrypto</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">YouTube</h4>
+                    <a href="https://www.youtube.com/@LanaYangcrypto" target="_blank" class="text-blue-600 hover:underline text-xs">@LanaYangcrypto</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">订阅者</span>
-                    <span class="stat-value font-bold text-xl text-red-600">156K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-red-600">156K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">订阅者</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">总播放量</span>
-                    <span class="stat-value font-semibold">15.2M+</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">月均观看</span>
-                    <span class="stat-value font-semibold">1.8M</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">互动率</span>
-                    <span class="stat-value font-semibold text-green-600">12.3%</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>15.2M+ 播放</div>
+                    <div>12.3% 互动率</div>
                   </div>
                 </div>
               </div>
 
               {/* TikTok */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-black">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-tiktok text-black text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-black hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-tiktok text-black text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">TikTok</h4>
-                    <a href="https://www.tiktok.com/@lana.young6" target="_blank" class="text-blue-600 hover:underline text-sm">@lana.young6</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">TikTok</h4>
+                    <a href="https://www.tiktok.com/@lana.young6" target="_blank" class="text-blue-600 hover:underline text-xs">@lana.young6</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">粉丝数</span>
-                    <span class="stat-value font-bold text-xl text-black">89K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-black">89K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">粉丝数</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">总播放量</span>
-                    <span class="stat-value font-semibold">12.8M+</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">月均播放</span>
-                    <span class="stat-value font-semibold">2.1M</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">互动率</span>
-                    <span class="stat-value font-semibold text-green-600">15.7%</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>12.8M+ 播放</div>
+                    <div>15.7% 互动率</div>
                   </div>
                 </div>
               </div>
 
               {/* Twitter */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-x-twitter text-blue-500 text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-blue-500 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-x-twitter text-blue-500 text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">Twitter</h4>
-                    <a href="https://x.com/lanayangcrypto" target="_blank" class="text-blue-600 hover:underline text-sm">@lanayangcrypto</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">Twitter</h4>
+                    <a href="https://x.com/lanayangcrypto" target="_blank" class="text-blue-600 hover:underline text-xs">@lanayangcrypto</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">关注者</span>
-                    <span class="stat-value font-bold text-xl text-blue-600">128K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-blue-600">128K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">关注者</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">月曝光量</span>
-                    <span class="stat-value font-semibold">8.9M+</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">月互动量</span>
-                    <span class="stat-value font-semibold">650K</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">互动率</span>
-                    <span class="stat-value font-semibold text-green-600">7.3%</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>8.9M+ 曝光</div>
+                    <div>7.3% 互动率</div>
                   </div>
                 </div>
               </div>
 
               {/* Telegram */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-400">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-telegram text-blue-400 text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-blue-400 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-telegram text-blue-400 text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">Telegram</h4>
-                    <a href="https://t.me/+p6_lg0XGAvkxOWJl" target="_blank" class="text-blue-600 hover:underline text-sm">Lana 投资群</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">Telegram</h4>
+                    <a href="https://t.me/+p6_lg0XGAvkxOWJl" target="_blank" class="text-blue-600 hover:underline text-xs">Lana投资群</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">成员数</span>
-                    <span class="stat-value font-bold text-xl text-blue-400">18K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-blue-400">18K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">成员数</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">活跃成员</span>
-                    <span class="stat-value font-semibold">3.2K</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">消息阅读率</span>
-                    <span class="stat-value font-semibold">82%</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">参与度</span>
-                    <span class="stat-value font-semibold text-green-600">17.8%</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>3.2K 活跃</div>
+                    <div>17.8% 参与度</div>
                   </div>
                 </div>
               </div>
