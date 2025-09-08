@@ -301,6 +301,15 @@ nav {
   gap: 0 !important;
 }
 
+/* 强制所有hero-content的直接子元素独占一行 */
+.hero-content > * {
+  width: 100% !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 .hero-logo .logo {
   width: 6rem;
   height: 6rem;
@@ -553,7 +562,7 @@ nav {
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* 数据统计下方的副标题样式 - 使用最高特异性并添加测试颜色 */
+/* 数据统计下方的副标题样式 - 最高特异性 + 强制换行 */
 body .hero-section .hero-content .hero-subtitle-below.hero-subtitle-below {
   color: rgba(255, 255, 255, 0.4) !important; /* 60% 透明度 */
   margin: 2rem auto 4rem auto !important; /* 调整上下边距 */
@@ -571,20 +580,25 @@ body .hero-section .hero-content .hero-subtitle-below.hero-subtitle-below {
     0 4px 16px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
   
-  /* 强制布局属性确保垂直显示 - 重置基础样式 */
+  /* 最强力的布局控制 - 确保独占一行并垂直居中 */
   display: block !important;
-  width: fit-content !important; /* 恢复 fit-content 而不是 100% */
-  max-width: 50rem !important; /* 继承最大宽度限制 */
+  width: fit-content !important;
+  max-width: 50rem !important;
+  position: relative !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   clear: both !important;
   float: none !important;
-  align-self: stretch !important; /* 在flex容器中占据全宽 */
-  margin-left: auto !important;
-  margin-right: auto !important;
   
-  /* 确保垂直布局 - 移除可能导致并列的属性 */
-  position: relative !important;
+  /* 强制换行 - 确保不与其他元素并列 */
+  flex-basis: 100% !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  
+  /* 确保垂直布局 */
   z-index: 2 !important;
-  flex-basis: auto !important;
 }
 
 /* 响应式处理：小屏幕上允许换行 */
@@ -610,19 +624,20 @@ body .hero-section .hero-content .hero-subtitle-below.hero-subtitle-below {
   grid-template-columns: repeat(4, 1fr);
   justify-content: center;
   gap: 1.5rem;
-  margin-bottom: 0; /* 移除底部边距，让副标题紧跟在下面 */
+  margin-bottom: 2rem; /* 添加底部边距，与副标题分离 */
   max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 1rem;
   perspective: 1000px;
   
-  /* 确保在flex容器中的正确布局 - 强制独占行 */
+  /* 确保在flex容器中独占一行 */
   width: 100% !important;
   flex-shrink: 0 !important;
   flex-grow: 0 !important;
   flex-basis: auto !important;
-  align-self: stretch !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .stat {
