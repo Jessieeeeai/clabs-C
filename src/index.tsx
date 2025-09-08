@@ -863,14 +863,7 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                             <p class="text-gray-600 mb-3">点击上方链接访问OKX注册页面，确保使用Giant Cutie的专属邀请链接。</p>
                           </div>
                         </div>
-                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
-                          <img 
-                            src="/static/images/tutorials/okx/registration-steps.png" 
-                            alt="OKX注册页面完整流程" 
-                            class="w-full h-auto rounded-lg border shadow-sm"
-                          />
-                          <p class="text-xs text-blue-600 text-center mt-2">完整注册流程：选择居住地 → 输入邮箱 → 确认邀请码</p>
-                        </div>
+
                       </div>
                       
                       <div class="step-item mb-8">
@@ -893,16 +886,7 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                             </div>
                           </div>
                         </div>
-                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
-                          <img 
-                            src="/static/images/tutorials/okx/registration-steps.png" 
-                            alt="OKX注册邀请码确认步骤" 
-                            class="w-full h-auto rounded-lg border shadow-sm"
-                          />
-                          <p class="text-xs text-blue-600 text-center mt-2">
-                            <strong>重要：</strong>确保邀请码字段显示"GC8888"，如图右侧步骤所示
-                          </p>
-                        </div>
+
                       </div>
                       
                       <div class="step-item mb-8">
@@ -913,15 +897,7 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                             <p class="text-gray-600 mb-3">输入您的邮箱或手机号，设置强密码（包含大小写字母、数字和特殊字符）。</p>
                           </div>
                         </div>
-                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-user-plus text-blue-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-blue-600">注册表单</p>
-                              <p class="text-xs text-blue-500">邮箱、密码、邀请码字段</p>
-                            </div>
-                          </div>
-                        </div>
+
                       </div>
 
                       <div class="step-item mb-8">
@@ -932,15 +908,7 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                             <p class="text-gray-600 mb-3">完成邮箱或短信验证码验证，激活您的OKX账户。</p>
                           </div>
                         </div>
-                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-check-circle text-blue-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-blue-600">验证成功页面</p>
-                              <p class="text-xs text-blue-500">账户激活完成</p>
-                            </div>
-                          </div>
-                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -977,15 +945,7 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                             <p class="text-gray-600 mb-3">使用浏览器打开下载链接，下载OKX安装包到手机。</p>
                           </div>
                         </div>
-                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-mobile-alt text-gray-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-gray-500">浏览器下载页面截图</p>
-                              <p class="text-xs text-gray-400">显示下载进度和安装提示</p>
-                            </div>
-                          </div>
-                        </div>
+
                       </div>
                       
                       <div class="step-item mb-8">
@@ -1016,15 +976,7 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                             <p class="text-gray-600 mb-3">点击APK文件开始安装，会覆盖原有APP，请勿卸载原有APP后安装。</p>
                           </div>
                         </div>
-                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
-                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
-                            <div class="text-center">
-                              <i class="fas fa-download text-gray-400 text-3xl mb-2"></i>
-                              <p class="text-sm text-gray-500">安装确认页面</p>
-                              <p class="text-xs text-gray-400">显示应用权限和安装按钮</p>
-                            </div>
-                          </div>
-                        </div>
+
                       </div>
                     </div>
 
