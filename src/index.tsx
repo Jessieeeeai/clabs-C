@@ -6329,33 +6329,31 @@ app.get('/ip/lana', async (c) => {
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               
-              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-pink-500 to-purple-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7493529691425393950', '_blank')">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
-                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fab fa-tiktok text-4xl"></i>
-                      </div>
-                      <h4 class="text-lg font-bold text-center mb-2">比特币突破7万美金！</h4>
-                      <p class="text-sm opacity-90 text-center">下一个目标价位分析</p>
-                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
-                        点击观看 TikTok 原视频
-                      </div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+              {/* TikTok视频1 */}
+              <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="work-thumbnail relative">
+                  <div class="aspect-video">
+                    <iframe 
+                      class="w-full h-full rounded-t-lg" 
+                      src="https://www.tiktok.com/embed/v2/7493529691425393950" 
+                      title="比特币突破7万美金！下一个目标价位分析" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      referrerpolicy="strict-origin-when-cross-origin" 
+                      allowfullscreen>
+                    </iframe>
                   </div>
-                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
                     TikTok
                   </div>
-                  <div class="absolute bottom-3 left-3 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
                     🔥 热门
                   </div>
                 </div>
-                <div class="tiktok-info p-4">
-                  <h5 class="font-semibold mb-2">BTC创新高背后的逻辑分析</h5>
-                  <p class="text-gray-600 text-sm mb-3">60秒带你了解比特币突破关键阻力位的技术面和基本面原因</p>
-                  <div class="tiktok-stats flex items-center justify-between">
+                <div class="work-info p-4">
+                  <h5 class="font-semibold mb-2">比特币突破7万美金！</h5>
+                  <p class="text-gray-600 text-sm mb-3">下一个目标价位分析</p>
+                  <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-play mr-1"></i>
@@ -6375,33 +6373,31 @@ app.get('/ip/lana', async (c) => {
                 </div>
               </div>
 
-              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-green-500 to-blue-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7490933021814705438', '_blank')">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
-                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-coins text-4xl"></i>
-                      </div>
-                      <h4 class="text-lg font-bold text-center mb-2">新手如何买第一个比特币</h4>
-                      <p class="text-sm opacity-90 text-center">安全购买指南</p>
-                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
-                        点击观看 TikTok 原视频
-                      </div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+              {/* TikTok视频2 */}
+              <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="work-thumbnail relative">
+                  <div class="aspect-video">
+                    <iframe 
+                      class="w-full h-full rounded-t-lg" 
+                      src="https://www.tiktok.com/embed/v2/7490933021814705438" 
+                      title="新手如何买第一个比特币" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      referrerpolicy="strict-origin-when-cross-origin" 
+                      allowfullscreen>
+                    </iframe>
                   </div>
-                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
                     TikTok
                   </div>
-                  <div class="absolute bottom-3 left-3 bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">
                     📚 教学
                   </div>
                 </div>
-                <div class="tiktok-info p-4">
-                  <h5 class="font-semibold mb-2">零基础购买比特币全攻略</h5>
-                  <p class="text-gray-600 text-sm mb-3">从注册交易所到安全存储，新手必看的完整购币指南</p>
-                  <div class="tiktok-stats flex items-center justify-between">
+                <div class="work-info p-4">
+                  <h5 class="font-semibold mb-2">新手如何买第一个比特币</h5>
+                  <p class="text-gray-600 text-sm mb-3">安全购买指南</p>
+                  <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-play mr-1"></i>
@@ -6421,33 +6417,31 @@ app.get('/ip/lana', async (c) => {
                 </div>
               </div>
 
-              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-orange-500 to-red-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7490564026661932318', '_blank')">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
-                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-exclamation-triangle text-4xl"></i>
-                      </div>
-                      <h4 class="text-lg font-bold text-center mb-2">加密投资5大误区</h4>
-                      <p class="text-sm opacity-90 text-center">避免这些坑</p>
-                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
-                        点击观看 TikTok 原视频
-                      </div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+              {/* TikTok视频3 */}
+              <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="work-thumbnail relative">
+                  <div class="aspect-video">
+                    <iframe 
+                      class="w-full h-full rounded-t-lg" 
+                      src="https://www.tiktok.com/embed/v2/7490564026661932318" 
+                      title="加密投资5大误区" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      referrerpolicy="strict-origin-when-cross-origin" 
+                      allowfullscreen>
+                    </iframe>
                   </div>
-                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
                     TikTok
                   </div>
-                  <div class="absolute bottom-3 left-3 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 left-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-semibold">
                     ⚠️ 风险
                   </div>
                 </div>
-                <div class="tiktok-info p-4">
-                  <h5 class="font-semibold mb-2">新手必避开的投资陷阱</h5>
-                  <p class="text-gray-600 text-sm mb-3">盘点加密投资中最常见的错误，帮你避免不必要的损失</p>
-                  <div class="tiktok-stats flex items-center justify-between">
+                <div class="work-info p-4">
+                  <h5 class="font-semibold mb-2">加密投资5大误区</h5>
+                  <p class="text-gray-600 text-sm mb-3">避免这些坑</p>
+                  <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-play mr-1"></i>
@@ -6467,33 +6461,31 @@ app.get('/ip/lana', async (c) => {
                 </div>
               </div>
 
-              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-purple-500 to-indigo-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7488344083933433118', '_blank')">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
-                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-gem text-4xl"></i>
-                      </div>
-                      <h4 class="text-lg font-bold text-center mb-2">NFT投资策略</h4>
-                      <p class="text-sm opacity-90 text-center">如何选择优质项目</p>
-                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
-                        点击观看 TikTok 原视频
-                      </div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+              {/* TikTok视频4 */}
+              <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="work-thumbnail relative">
+                  <div class="aspect-video">
+                    <iframe 
+                      class="w-full h-full rounded-t-lg" 
+                      src="https://www.tiktok.com/embed/v2/7488344083933433118" 
+                      title="NFT投资策略" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      referrerpolicy="strict-origin-when-cross-origin" 
+                      allowfullscreen>
+                    </iframe>
                   </div>
-                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
                     TikTok
                   </div>
-                  <div class="absolute bottom-3 left-3 bg-purple-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 left-2 bg-purple-500 text-white px-2 py-1 rounded text-xs font-semibold">
                     💎 NFT
                   </div>
                 </div>
-                <div class="tiktok-info p-4">
-                  <h5 class="font-semibold mb-2">NFT投资的核心逻辑</h5>
-                  <p class="text-gray-600 text-sm mb-3">从社区、实用性、艺术价值三个维度评估NFT项目的投资潜力</p>
-                  <div class="tiktok-stats flex items-center justify-between">
+                <div class="work-info p-4">
+                  <h5 class="font-semibold mb-2">NFT投资策略</h5>
+                  <p class="text-gray-600 text-sm mb-3">如何选择优质项目</p>
+                  <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-play mr-1"></i>
@@ -6513,33 +6505,31 @@ app.get('/ip/lana', async (c) => {
                 </div>
               </div>
 
-              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-yellow-500 to-orange-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7491680779232120094', '_blank')">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
-                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-chart-line text-4xl"></i>
-                      </div>
-                      <h4 class="text-lg font-bold text-center mb-2">DeFi挖矿教程</h4>
-                      <p class="text-sm opacity-90 text-center">安全获得被动收入</p>
-                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
-                        点击观看 TikTok 原视频
-                      </div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+              {/* TikTok视频5 */}
+              <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="work-thumbnail relative">
+                  <div class="aspect-video">
+                    <iframe 
+                      class="w-full h-full rounded-t-lg" 
+                      src="https://www.tiktok.com/embed/v2/7491680779232120094" 
+                      title="DeFi挖矿教程" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      referrerpolicy="strict-origin-when-cross-origin" 
+                      allowfullscreen>
+                    </iframe>
                   </div>
-                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
                     TikTok
                   </div>
-                  <div class="absolute bottom-3 left-3 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
                     💰 DeFi
                   </div>
                 </div>
-                <div class="tiktok-info p-4">
-                  <h5 class="font-semibold mb-2">DeFi流动性挖矿入门</h5>
-                  <p class="text-gray-600 text-sm mb-3">手把手教你参与DeFi协议，获得稳定的被动收入回报</p>
-                  <div class="tiktok-stats flex items-center justify-between">
+                <div class="work-info p-4">
+                  <h5 class="font-semibold mb-2">DeFi挖矿教程</h5>
+                  <p class="text-gray-600 text-sm mb-3">安全获得被动收入</p>
+                  <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-play mr-1"></i>
@@ -6559,34 +6549,31 @@ app.get('/ip/lana', async (c) => {
                 </div>
               </div>
 
-              <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-teal-500 to-cyan-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7502066677400472863', '_blank')">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
-                      <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-mobile-alt text-4xl"></i>
-                      </div>
-                      <h4 class="text-lg font-bold text-center mb-2">钱包安全指南</h4>
-                      <p class="text-sm opacity-90 text-center">保护你的数字资产</p>
-                      <div class="mt-4 bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">
-                        点击观看 TikTok 原视频
-                      </div>
-                    </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-24"></div>
+              {/* TikTok视频6 */}
+              <div class="work-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div class="work-thumbnail relative">
+                  <div class="aspect-video">
+                    <iframe 
+                      class="w-full h-full rounded-t-lg" 
+                      src="https://www.tiktok.com/embed/v2/7502066677400472863" 
+                      title="钱包安全指南" 
+                      frameborder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                      referrerpolicy="strict-origin-when-cross-origin" 
+                      allowfullscreen>
+                    </iframe>
                   </div>
-
-                  <div class="absolute top-3 right-3 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
                     TikTok
                   </div>
-                  <div class="absolute bottom-3 left-3 bg-cyan-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                  <div class="absolute top-2 left-2 bg-cyan-500 text-white px-2 py-1 rounded text-xs font-semibold">
                     🔐 安全
                   </div>
                 </div>
-                <div class="tiktok-info p-4">
-                  <h5 class="font-semibold mb-2">加密钱包安全使用技巧</h5>
-                  <p class="text-gray-600 text-sm mb-3">从助记词备份到多重签名，全方位保护你的数字资产安全</p>
-                  <div class="tiktok-stats flex items-center justify-between">
+                <div class="work-info p-4">
+                  <h5 class="font-semibold mb-2">钱包安全指南</h5>
+                  <p class="text-gray-600 text-sm mb-3">保护你的数字资产</p>
+                  <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-play mr-1"></i>
