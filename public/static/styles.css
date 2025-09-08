@@ -681,13 +681,12 @@ nav {
   text-align: center;
   margin-bottom: 6rem;
   background: linear-gradient(135deg, 
-    #ffffff 0%, 
-    #93c5fd 15%,
-    #3b82f6 30%, 
-    #1d4ed8 50%,
-    #1e40af 70%,
-    #60a5fa 85%,
-    #ffffff 100%);
+    #e0f2fe 0%, 
+    #b3e5fc 20%,
+    #81d4fa 40%, 
+    #4fc3f7 60%,
+    #29b6f6 80%,
+    #e1f5fe 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -3835,7 +3834,7 @@ nav {
 /* IP Showcase Page Base Styles */
 .ip-showcase-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: var(--unified-bg);
   position: relative;
 }
 
@@ -3863,17 +3862,15 @@ nav {
   align-items: center;
 }
 
-/* Theme variations - Updated for Giant Cutie */
+/* Theme variations - Unified with Web3 Academy Style */
 .ip-hero.giant-cutie-theme {
-  background: 
-    linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #3b82f6 50%, #06b6d4 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #6366f1 50%, #8b5cf6 100%);
+  color: white;
 }
 
 .ip-hero.lana-theme {
-  background: 
-    linear-gradient(135deg, rgba(139, 69, 193, 0.92), rgba(219, 39, 119, 0.92)),
-    url('/static/images/lana-bg.jpg') center/cover;
-  position: relative;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #6366f1 50%, #8b5cf6 100%);
+  color: white;
 }
 
 .ip-hero.lana-theme::after {
@@ -5362,6 +5359,8 @@ nav {
 /* Tab Content */
 .ip-content {
   padding: 3rem 0;
+  background: var(--unified-bg);
+  min-height: 100vh;
 }
 
 .tab-content {
