@@ -61,9 +61,6 @@ app.get('/', (c) => {
               <span class="stat-label">自有头部IP</span>
             </div>
           </div>
-          <div class="hero-subtitle-container">
-            <p class="hero-subtitle hero-subtitle-below">投资型用户 | Investment-focused Users</p>
-          </div>
           <div class="hero-cta">
             <a href="/contact" class="btn-primary">联系合作</a>
             <a href="/ip/giant-cutie" class="btn-secondary">了解IP</a>

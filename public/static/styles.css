@@ -310,17 +310,7 @@ nav {
   margin-right: auto !important;
 }
 
-/* 副标题容器 - 确保独占一行并居中 */
-.hero-subtitle-container {
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  margin: 2rem 0 4rem 0 !important;
-  clear: both !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
+/* 清理：移除副标题容器样式 */
 
 .hero-logo .logo {
   width: 6rem;
@@ -574,46 +564,11 @@ nav {
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* 数据统计下方的副标题样式 - 简化布局，让容器控制位置 */
-.hero-subtitle-container .hero-subtitle-below.hero-subtitle-below {
-  color: rgba(255, 255, 255, 0.4) !important; /* 60% 透明度 */
-  margin: 0 !important; /* 移除边距，让容器控制 */
-  font-weight: 300 !important; /* 更轻的字重 */
-  opacity: 1 !important; /* 移除额外透明度，在color中控制 */
-  background: 
-    linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.08) 0%, 
-      rgba(255, 255, 255, 0.04) 100%),
-    linear-gradient(135deg, 
-      rgba(96, 165, 250, 0.05) 0%, 
-      rgba(139, 92, 246, 0.05) 100%) !important;
-  border: 1px solid rgba(96, 165, 250, 0.15) !important;
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  
-  /* 简化的样式控制 */
-  display: block !important;
-  width: fit-content !important;
-  max-width: 50rem !important;
-  position: relative !important;
-  z-index: 2 !important;
-  
-  /* 继承基础样式 */
-  font-size: clamp(1.1rem, 3vw, 1.4rem) !important;
-  line-height: 1.3 !important;
-  text-align: center !important;
-  backdrop-filter: blur(20px) !important;
-  padding: 1rem 2rem !important;
-  border-radius: 32px !important;
-  letter-spacing: 0.01em !important;
-  white-space: nowrap !important;
-}
+/* 清理：移除副标题样式 */
 
 /* 响应式处理：小屏幕上允许换行 */
 @media (max-width: 640px) {
-  .hero-subtitle,
-  .hero-subtitle-below {
+  .hero-subtitle {
     white-space: normal;
     word-break: keep-all;
     overflow-wrap: break-word;
@@ -622,10 +577,6 @@ nav {
     line-height: 1.4;
     max-width: 90vw;
   }
-  
-  .hero-subtitle-below {
-    margin: 1.5rem auto 3rem auto;
-  }
 }
 
 .hero-stats {
@@ -633,20 +584,12 @@ nav {
   grid-template-columns: repeat(4, 1fr);
   justify-content: center;
   gap: 1.5rem;
-  margin-bottom: 2rem; /* 添加底部边距，与副标题分离 */
+  margin-bottom: 4rem; /* 恢复正常底部边距 */
   max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 1rem;
   perspective: 1000px;
-  
-  /* 确保在flex容器中独占一行 */
-  width: 100% !important;
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-  flex-basis: auto !important;
-  position: relative !important;
-  z-index: 1 !important;
 }
 
 .stat {
