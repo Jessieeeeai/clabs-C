@@ -291,14 +291,9 @@ nav {
   max-width: 64rem;
   margin: 0 auto;
   padding: 0 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   
-  /* 强制垂直布局 - 防止子元素并列 */
-  flex-wrap: nowrap !important;
-  gap: 0 !important;
+  /* 改用普通块级布局，避免flex布局冲突 */
+  display: block !important;
 }
 
 /* 强制所有hero-content的直接子元素独占一行 */

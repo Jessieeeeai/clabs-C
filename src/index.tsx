@@ -47,7 +47,9 @@ app.get('/', (c) => {
               <span class="stat-label">自有头部IP</span>
             </div>
           </div>
-          <p class="hero-subtitle hero-subtitle-below">投资型用户 | Investment-focused Users</p>
+          <div style="width: 100%; display: block; clear: both; margin: 2rem 0 4rem 0;">
+            <p class="hero-subtitle hero-subtitle-below" style="margin: 0 auto; display: block; width: fit-content;">投资型用户 | Investment-focused Users</p>
+          </div>
           <div class="hero-cta">
             <a href="/contact" class="btn-primary">联系合作</a>
             <a href="/ip/giant-cutie" class="btn-secondary">了解IP</a>
