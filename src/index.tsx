@@ -20,48 +20,7 @@ app.use('/static/*', serveStatic({ root: './public' }))
 app.use(renderer)
 
 // Home page
-app.get('/', async (c) => {
-  try {
-    const { env } = c
-
-    // Get IP profiles from database
-    const ipProfiles = await env.DB.prepare(`
-      SELECT * FROM ip_profiles WHERE status = 'active' ORDER BY featured DESC, created_at ASC
-    `).all()
-
-    // Get platform stats for each IP
-    const platformStats = await env.DB.prepare(`
-      SELECT ip_id, COUNT(*) as platform_count, SUM(followers_count) as total_followers, SUM(total_views) as total_views
-      FROM ip_platform_stats 
-      GROUP BY ip_id
-    `).all()
-
-    // Parse data for display
-    const ips = ipProfiles.results?.map(profile => {
-      let socialLinks = {}
-      let specialties = []
-      
-      try {
-        socialLinks = profile.social_links ? JSON.parse(profile.social_links) : {}
-        specialties = profile.specialties ? JSON.parse(profile.specialties) : []
-      } catch (e) {
-        console.error('Error parsing JSON fields:', e)
-      }
-
-      const stats = platformStats.results?.find(p => p.ip_id === profile.id)
-      
-      return {
-        ...profile,
-        socialLinks,
-        specialties,
-        stats: stats || { platform_count: 0, total_followers: 0, total_views: 0 }
-      }
-    }) || []
-
-    // Calculate combined stats for hero section
-    const totalFollowers = platformStats.results?.reduce((sum, p) => sum + (p.total_followers || 0), 0) || 520000
-    const totalViews = platformStats.results?.reduce((sum, p) => sum + (p.total_views || 0), 0) || 100000000
-
+app.get('/', (c) => {
   return c.render(
     <div>
       <div class="hero-section">
@@ -403,85 +362,6 @@ app.get('/', async (c) => {
       </div>
     </div>
   )
-  } catch (error) {
-    console.error('Error loading homepage:', error)
-    
-    // Fallback to static content if database fails
-    return c.render(
-      <div>
-        <div class="hero-section">
-          <div class="hero-content">
-            <div class="hero-logo">
-              <div class="logo-placeholder">
-                <div class="logo-icon">
-                  <i class="fas fa-cube"></i>
-                </div>
-                <div class="logo-particles">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
-            <h1 class="hero-title">
-              <span class="title-line">加密货币/美股MCN机构</span>
-              <span class="title-line highlight">Cryptocurrency/US Stock MCN Institution</span>
-            </h1>
-            <p class="hero-subtitle">投资型用户 | Investment-focused Users</p>
-            <div class="hero-stats">
-              <div class="stat">
-                <span class="stat-number">80万+</span>
-                <span class="stat-label">自由流量</span>
-              </div>
-              <div class="stat">
-                <span class="stat-number">500万+</span>
-                <span class="stat-label">社区联盟</span>
-              </div>
-              <div class="stat">
-                <span class="stat-number">60亿+</span>
-                <span class="stat-label">累计曝光</span>
-              </div>
-              <div class="stat">
-                <span class="stat-number">2位</span>
-                <span class="stat-label">自有头部IP</span>
-              </div>
-            </div>
-            <div class="hero-cta">
-              <a href="/contact" class="btn-primary">联系合作</a>
-              <a href="/ip/lana" class="btn-secondary">了解IP</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="kol-section">
-          <div class="container">
-            <h2 class="section-title">核心IP矩阵</h2>
-            <p class="section-subtitle">我们的顶级KOL为您的Web3项目提供专业的营销推广服务</p>
-            <div class="kol-cta">
-              <p class="cta-text">探索我们的核心IP，开启您的Web3营销之旅</p>
-              <div class="cta-buttons">
-                <a href="/ip/giant-cutie" class="btn-primary">Giant Cutie</a>
-                <a href="/ip/lana" class="btn-secondary">Lana</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="cta-section">
-          <div class="container">
-            <h2>准备开始合作？</h2>
-            <p>联系我们，让您的 Web3 项目在全球市场闪闪发光</p>
-            <div class="cta-buttons">
-              <a href="/contact" class="btn-primary">立即咨询</a>
-              <a href="mailto:clabsservice0024@gmail.com" class="btn-secondary">发送邮件</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
 })
 
 // About and Services pages removed - content moved to homepage
