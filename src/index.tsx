@@ -5824,7 +5824,7 @@ app.get('/ip/giant-cutie', async (c) => {
                     <div class="aspect-video">
                       <iframe 
                         class="w-full h-full rounded-t-lg" 
-                        src="https://www.youtube.com/embed/0dCRRHlCA64" 
+                        src="https://www.youtube.com/embed/k9L3_qEa4kg" 
                         title="幣圈週報：比特币ETF正式上市分析" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -5954,8 +5954,8 @@ app.get('/ip/giant-cutie', async (c) => {
                     <div class="aspect-video">
                       <iframe 
                         class="w-full h-full rounded-t-lg" 
-                        src="https://www.youtube.com/embed/k9L3_qEa4kg" 
-                        title="比特币ETF深度解析与市场分析" 
+                        src="https://www.youtube.com/embed/1pWpgPnlvz4" 
+                        title="加密货币交易分析与策略" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                         referrerpolicy="strict-origin-when-cross-origin" 
