@@ -25,20 +25,6 @@ app.get('/', (c) => {
     <div>
       <div class="hero-section">
         <div class="hero-content">
-          <div class="hero-logo">
-            <div class="logo-placeholder">
-              <div class="logo-icon">
-                <i class="fas fa-cube"></i>
-              </div>
-              <div class="logo-particles">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          </div>
           <h1 class="hero-title">
             <span class="title-line single-line">加密货币/美股MCN机构</span>
             <span class="title-line highlight">Cryptocurrency/US Stock MCN Institution</span>
@@ -61,6 +47,7 @@ app.get('/', (c) => {
               <span class="stat-label">自有头部IP</span>
             </div>
           </div>
+          <p class="hero-subtitle hero-subtitle-below">投资型用户 | Investment-focused Users</p>
           <div class="hero-cta">
             <a href="/contact" class="btn-primary">联系合作</a>
             <a href="/ip/giant-cutie" class="btn-secondary">了解IP</a>

@@ -564,7 +564,20 @@ nav {
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* 清理：移除副标题样式 */
+/* 投资型用户副标题样式 - 简单有效的方案 */
+.hero-subtitle-below {
+  color: rgba(255, 255, 255, 0.4) !important; /* 60% 透明度 - 更浅的颜色 */
+  font-weight: 300 !important; /* 更轻的字重 */
+  margin: 2rem auto 4rem auto !important; /* 上下间距 */
+  background: 
+    linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.08) 0%, 
+      rgba(255, 255, 255, 0.04) 100%),
+    linear-gradient(135deg, 
+      rgba(96, 165, 250, 0.05) 0%, 
+      rgba(139, 92, 246, 0.05) 100%) !important;
+  border: 1px solid rgba(96, 165, 250, 0.15) !important;
+}
 
 /* 响应式处理：小屏幕上允许换行 */
 @media (max-width: 640px) {
@@ -584,7 +597,7 @@ nav {
   grid-template-columns: repeat(4, 1fr);
   justify-content: center;
   gap: 1.5rem;
-  margin-bottom: 4rem; /* 恢复正常底部边距 */
+  margin-bottom: 0; /* 移除底部边距，让副标题紧跟在下方 */
   max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
