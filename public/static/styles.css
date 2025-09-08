@@ -10212,7 +10212,17 @@ p.text-lg.leading-relaxed {
   color: var(--gray-600) !important;
 }
 
-/* Specifically protect homepage section subtitles */
+/* Specifically protect homepage section titles and subtitles */
+.kol-section .section-title {
+  background: linear-gradient(135deg, 
+    #374151 0%, 
+    #1f2937 50%,
+    #111827 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
 .kol-section .section-subtitle {
   color: var(--gray-600) !important;
 }

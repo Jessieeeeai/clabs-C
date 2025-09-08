@@ -458,9 +458,9 @@ app.get('/', async (c) => {
         <div class="kol-section">
           <div class="container">
             <h2 class="section-title">核心IP矩阵</h2>
-            <p class="section-subtitle">数据加载中，请访问具体IP页面查看详情</p>
+            <p class="section-subtitle">我们的顶级KOL为您的Web3项目提供专业的营销推广服务</p>
             <div class="kol-cta">
-              <p class="cta-text">数据库连接异常，请稍后再试或直接联系我们</p>
+              <p class="cta-text">探索我们的核心IP，开启您的Web3营销之旅</p>
               <div class="cta-buttons">
                 <a href="/ip/giant-cutie" class="btn-primary">Giant Cutie</a>
                 <a href="/ip/lana" class="btn-secondary">Lana</a>
