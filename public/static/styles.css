@@ -692,12 +692,7 @@ nav {
   background-clip: text;
   position: relative;
   letter-spacing: -0.02em;
-  text-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.3),
-    0 4px 8px rgba(59, 130, 246, 0.4),
-    0 8px 16px rgba(59, 130, 246, 0.2),
-    0 16px 32px rgba(59, 130, 246, 0.1);
-  filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.3));
+
   transform: perspective(1000px) rotateX(5deg);
   transform-style: preserve-3d;
 }
@@ -3834,7 +3829,7 @@ nav {
 /* IP Showcase Page Base Styles */
 .ip-showcase-page {
   min-height: 100vh;
-  background: var(--unified-bg);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   position: relative;
 }
 
@@ -5385,7 +5380,7 @@ nav {
 /* Tab Content */
 .ip-content {
   padding: 3rem 0;
-  background: var(--unified-bg);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   min-height: 100vh;
 }
 
