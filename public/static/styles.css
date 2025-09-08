@@ -681,12 +681,12 @@ nav {
   text-align: center;
   margin-bottom: 6rem;
   background: linear-gradient(135deg, 
-    #f0f9ff 0%, 
-    #e0f2fe 20%,
-    #bae6fd 40%, 
-    #7dd3fc 60%,
-    #38bdf8 80%,
-    #f0f9ff 100%);
+    #f8fafc 0%, 
+    #f1f5f9 20%,
+    #e2e8f0 40%, 
+    #cbd5e1 60%,
+    #94a3b8 80%,
+    #f8fafc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -3834,7 +3834,7 @@ nav {
 /* IP Showcase Page Base Styles */
 .ip-showcase-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: var(--unified-bg);
   position: relative;
 }
 
@@ -3866,11 +3866,37 @@ nav {
 .ip-hero.giant-cutie-theme {
   background: linear-gradient(135deg, var(--brand-primary) 0%, #6366f1 50%, #8b5cf6 100%);
   color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.ip-hero.giant-cutie-theme::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>') center/cover;
+  opacity: 0.3;
 }
 
 .ip-hero.lana-theme {
   background: linear-gradient(135deg, var(--brand-primary) 0%, #6366f1 50%, #8b5cf6 100%);
   color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.ip-hero.lana-theme::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>') center/cover;
+  opacity: 0.3;
 }
 
 .ip-hero.lana-theme::after {
