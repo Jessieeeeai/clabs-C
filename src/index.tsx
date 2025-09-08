@@ -6281,40 +6281,40 @@ app.get('/ip/lana', async (c) => {
                   <div class="aspect-video">
                     <iframe 
                       class="w-full h-full rounded-t-lg" 
-                      src="https://www.youtube.com/embed/6Vqb2jTjxz8" 
-                      title="XRP Explained: Everything you need to know about XRP - The Untold Ripple Story" 
+                      src="https://www.tiktok.com/embed/v2/7493529691425393950" 
+                      title="BTC创新高后的逻辑分析" 
                       frameborder="0" 
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                       referrerpolicy="strict-origin-when-cross-origin" 
                       allowfullscreen>
                     </iframe>
                   </div>
-                  <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                    YouTube
+                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
+                    TikTok
                   </div>
-                  <div class="absolute top-2 left-2 bg-purple-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                    💎 XRP分析
+                  <div class="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                    🔥 热门
                   </div>
                 </div>
                 <div class="work-info p-4">
-                  <h5 class="font-semibold mb-2">XRP深度解析：瑞波币的未来展望</h5>
-                  <p class="text-gray-600 text-sm mb-3">2025年XRP深度分析，全面解读瑞波币的技术优势和投资潜力</p>
+                  <h5 class="font-semibold mb-2">BTC创新高后的逻辑分析</h5>
+                  <p class="text-gray-600 text-sm mb-3">60秒带你了解比特币突破7万美金关键阻力位的技术面和基本面原因</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-eye mr-1"></i>
-                        533
+                        2.8M
                       </span>
                       <span class="flex items-center">
                         <i class="fas fa-thumbs-up mr-1"></i>
-                        45
+                        156K
                       </span>
                       <span class="flex items-center">
                         <i class="fas fa-comment mr-1"></i>
-                        12
+                        3.2K
                       </span>
                     </div>
-                    <span class="text-xs text-gray-400">12天前</span>
+                    <span class="text-xs text-gray-400">2天前</span>
                   </div>
                 </div>
               </div>
