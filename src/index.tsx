@@ -5714,121 +5714,93 @@ app.get('/ip/giant-cutie', async (c) => {
               </div>
 
               {/* Twitter */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-x-twitter text-blue-500 text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-blue-500 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-x-twitter text-blue-500 text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">Twitter</h4>
-                    <a href="https://x.com/giantcutie666" target="_blank" class="text-blue-600 hover:underline text-sm">@giantcutie666</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">Twitter</h4>
+                    <a href="https://x.com/giantcutie666" target="_blank" class="text-blue-600 hover:underline text-xs">@giantcutie666</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">关注者</span>
-                    <span class="stat-value font-bold text-xl text-blue-600">216K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-blue-600">216K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">关注者</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">月曝光量</span>
-                    <span class="stat-value font-semibold">18.5M+</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">月互动量</span>
-                    <span class="stat-value font-semibold">1.2M</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">互动率</span>
-                    <span class="stat-value font-semibold text-green-600">6.5%</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>18.5M+ 曝光</div>
+                    <div>6.5% 互动率</div>
                   </div>
                 </div>
               </div>
 
               {/* Discord */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-discord text-purple-500 text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-purple-500 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-discord text-purple-500 text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">Discord</h4>
-                    <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" class="text-blue-600 hover:underline text-sm">Giant Cutie 社区</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">Discord</h4>
+                    <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" class="text-blue-600 hover:underline text-xs">Giant Cutie社区</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">成员数</span>
-                    <span class="stat-value font-bold text-xl text-purple-600">42K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-purple-600">42K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">成员数</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">活跃成员</span>
-                    <span class="stat-value font-semibold">8.5K</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">日均消息</span>
-                    <span class="stat-value font-semibold">1.2K</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">在线率</span>
-                    <span class="stat-value font-semibold text-green-600">20.2%</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>8.5K 活跃</div>
+                    <div>20.2% 在线率</div>
                   </div>
                 </div>
               </div>
 
               {/* Telegram */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-400">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-telegram text-blue-400 text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-blue-400 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-telegram text-blue-400 text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">Telegram</h4>
-                    <a href="https://t.me/giantcutie6688" target="_blank" class="text-blue-600 hover:underline text-sm">@giantcutie6688</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">Telegram</h4>
+                    <a href="https://t.me/giantcutie6688" target="_blank" class="text-blue-600 hover:underline text-xs">@giantcutie6688</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">订阅者</span>
-                    <span class="stat-value font-bold text-xl text-blue-400">28K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-blue-400">28K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">订阅者</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">日活跃</span>
-                    <span class="stat-value font-semibold">5.2K</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">消息阅读率</span>
-                    <span class="stat-value font-semibold">78%</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">转发分享率</span>
-                    <span class="stat-value font-semibold text-green-600">15.8%</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>5.2K 日活</div>
+                    <div>15.8% 分享率</div>
                   </div>
                 </div>
               </div>
 
               {/* Twitter 备用账号 */}
-              <div class="platform-card bg-white rounded-lg shadow-md p-6 border-l-4 border-gray-500">
-                <div class="platform-header flex items-center mb-4">
-                  <div class="platform-icon mr-3">
-                    <i class="fab fa-x-twitter text-gray-500 text-3xl"></i>
+              <div class="platform-card-compact bg-white rounded-lg shadow-md p-4 border-t-4 border-gray-500 hover:shadow-lg transition-shadow">
+                <div class="platform-header-compact flex flex-col items-center text-center mb-3">
+                  <div class="platform-icon-compact mb-2">
+                    <i class="fab fa-x-twitter text-gray-500 text-2xl"></i>
                   </div>
-                  <div class="platform-info">
-                    <h4 class="font-semibold text-lg">Twitter (备用)</h4>
-                    <a href="https://x.com/giantcutie777" target="_blank" class="text-blue-600 hover:underline text-sm">@giantcutie777</a>
+                  <div class="platform-info-compact">
+                    <h4 class="font-semibold text-sm">Twitter (备用)</h4>
+                    <a href="https://x.com/giantcutie777" target="_blank" class="text-blue-600 hover:underline text-xs">@giantcutie777</a>
                   </div>
                 </div>
-                <div class="platform-stats space-y-3">
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">关注者</span>
-                    <span class="stat-value font-bold text-xl text-gray-600">89K</span>
+                <div class="platform-stats-compact">
+                  <div class="stat-row-compact text-center mb-2">
+                    <div class="stat-value-compact font-bold text-lg text-gray-600">89K</div>
+                    <div class="stat-label-compact text-gray-500 text-xs">关注者</div>
                   </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">月曝光量</span>
-                    <span class="stat-value font-semibold">6.8M</span>
-                  </div>
-                  <div class="stat-row flex justify-between">
-                    <span class="stat-label text-gray-600">备用状态</span>
-                    <span class="stat-value font-semibold text-green-600">活跃</span>
+                  <div class="stat-secondary text-center text-xs text-gray-600">
+                    <div>6.8M 曝光</div>
+                    <div>活跃</div>
                   </div>
                 </div>
               </div>
