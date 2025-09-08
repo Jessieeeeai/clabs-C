@@ -148,18 +148,22 @@ export const renderer = jsxRenderer(({ children }) => {
               <div>
                 <h3 class="font-semibold mb-4">联系我们</h3>
                 <ul class="space-y-2 text-gray-400">
-                  <li>business@c-labs.com</li>
-                  <li>media@c-labs.com</li>
-                  <li>www.c-labs.com</li>
+                  <li>
+                    <div class="flex flex-col">
+                      <span class="text-sm font-medium text-gray-300">商务合作</span>
+                      <span>clabsservice0024@gmail.com</span>
+                    </div>
+                  </li>
+                  <li class="mt-3">
+                    <div class="flex flex-col">
+                      <span class="text-sm font-medium text-gray-300">媒体咨询</span>
+                      <a href="https://t.me/clabskoala1900" target="_blank" class="hover:text-white transition-colors inline-flex items-center">
+                        <i class="fab fa-telegram mr-2"></i>
+                        Telegram
+                      </a>
+                    </div>
+                  </li>
                 </ul>
-                <div class="flex space-x-4 mt-4">
-                  <a href="https://x.com/clabsofficial" target="_blank" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="fab fa-x-twitter"></i>
-                  </a>
-                  <a href="https://t.me/clabsofficial" target="_blank" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="fab fa-telegram"></i>
-                  </a>
-                </div>
               </div>
             </div>
             
