@@ -681,12 +681,12 @@ nav {
   text-align: center;
   margin-bottom: 6rem;
   background: linear-gradient(135deg, 
-    #e0f2fe 0%, 
-    #b3e5fc 20%,
-    #81d4fa 40%, 
-    #4fc3f7 60%,
-    #29b6f6 80%,
-    #e1f5fe 100%);
+    #f0f9ff 0%, 
+    #e0f2fe 20%,
+    #bae6fd 40%, 
+    #7dd3fc 60%,
+    #38bdf8 80%,
+    #f0f9ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -3834,7 +3834,7 @@ nav {
 /* IP Showcase Page Base Styles */
 .ip-showcase-page {
   min-height: 100vh;
-  background: var(--unified-bg);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   position: relative;
 }
 
