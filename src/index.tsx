@@ -443,28 +443,93 @@ app.get('/contact', (c) => {
 // Lana IP Details page
 
 // Web3 Tutorials Main Page - Redesigned with Professional Education Platform Style
-app.get('/tutorials', async (c) => {
-  try {
-    const { env } = c;
-    
-    // Fetch categories with article counts
-    const categories = await env.DB.prepare(`
-      SELECT * FROM categories ORDER BY sort_order ASC
-    `).all();
-    
-    // Fetch featured articles
-    const featuredArticles = await env.DB.prepare(`
-      SELECT id, title, slug, summary, category, read_time, views, author
-      FROM articles 
-      WHERE status = 'published' AND featured = true
-      ORDER BY views DESC, published_at DESC
-      LIMIT 6
-    `).all();
-    
-    const categoriesData = categories.results || [];
-    const featured = featuredArticles.results || [];
-    
-    const renderContent = () => (
+app.get('/tutorials', (c) => {
+  // Static data for tutorials
+  const categoriesData = [
+    {
+      name: '交易所使用',
+      slug: 'exchanges',
+      description: '掌握主流交易所的使用技巧，包括注册、充值、交易、提现等基础操作',
+      icon: 'fas fa-exchange-alt',
+      articles_count: 12,
+      difficulty: 'beginner'
+    },
+    {
+      name: '钱包安全',
+      slug: 'wallets',
+      description: '学习数字钱包的创建、备份、安全使用等核心知识',
+      icon: 'fas fa-wallet',
+      articles_count: 8,
+      difficulty: 'beginner'
+    },
+    {
+      name: 'DeFi协议',
+      slug: 'defi',
+      description: '深入了解去中心化金融协议的使用和风险管理',
+      icon: 'fas fa-coins',
+      articles_count: 15,
+      difficulty: 'advanced'
+    },
+    {
+      name: '空投策略',
+      slug: 'airdrops',
+      description: '掌握空投获取的方法和注意事项',
+      icon: 'fas fa-parachute-box',
+      articles_count: 10,
+      difficulty: 'intermediate'
+    },
+    {
+      name: 'NFT交易',
+      slug: 'nft',
+      description: '学习NFT的购买、销售和创作技巧',
+      icon: 'fas fa-image',
+      articles_count: 7,
+      difficulty: 'intermediate'
+    },
+    {
+      name: '链上分析',
+      slug: 'analysis',
+      description: '掌握区块链数据分析和链上调研方法',
+      icon: 'fas fa-chart-line',
+      articles_count: 6,
+      difficulty: 'advanced'
+    }
+  ];
+
+  const featured = [
+    {
+      id: 1,
+      title: '币安交易所完全指南',
+      slug: 'binance-complete-guide',
+      category: 'exchanges',
+      summary: '从注册到高级交易功能的完整教程',
+      read_time: 25,
+      views: 12500,
+      difficulty: 'beginner'
+    },
+    {
+      id: 2,
+      title: 'MetaMask钱包安全使用',
+      slug: 'metamask-security-guide',
+      category: 'wallets',
+      summary: '学习如何安全地设置和使用MetaMask钱包',
+      read_time: 15,
+      views: 8900,
+      difficulty: 'beginner'
+    },
+    {
+      id: 3,
+      title: 'Uniswap交易实战',
+      slug: 'uniswap-trading-guide',
+      category: 'defi',
+      summary: '掌握Uniswap V3的交易技巧和流动性挖矿',
+      read_time: 30,
+      views: 6700,
+      difficulty: 'advanced'
+    }
+  ];
+
+  return c.render(
       <div class="education-platform">
         {/* Hero Section with Professional Design */}
         <section class="education-hero">
@@ -530,7 +595,7 @@ app.get('/tutorials', async (c) => {
                       </div>
                       <div class="stat">
                         <i class="fas fa-clock"></i>
-                        <span>{(category.article_count || 0) * 5} 分钟</span>
+                        <span>{(category.articles_count || 0) * 5} 分钟</span>
                       </div>
                       <div class="stat">
                         <i class="fas fa-users"></i>
@@ -685,32 +750,7 @@ app.get('/tutorials', async (c) => {
           </div>
         </section>
       </div>
-  );
-    
-    return c.render(renderContent());
-  } catch (error) {
-    console.error('Error loading tutorials page:', error);
-    return c.render(
-      <div>
-        <div class="page-header">
-          <div class="container">
-            <h1>Web3 入门教程</h1>
-            <p>从零开始学习Web3，掌握区块链世界的核心技能</p>
-          </div>
-        </div>
-        
-        <div class="tutorials-content">
-          <div class="container">
-            <div class="error-message glass-card">
-              <h2>页面加载出错</h2>
-              <p>抱歉，教程页面暂时无法加载。请稍后再试。</p>
-              <a href="/" class="btn-primary">返回首页</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  )
 })
 
 // Tutorial Category Pages
