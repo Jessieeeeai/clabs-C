@@ -451,7 +451,7 @@ app.get('/tutorials', (c) => {
       slug: 'exchanges',
       description: '掌握主流交易所的使用技巧，包括注册、充值、交易、提现等基础操作',
       icon: 'fas fa-exchange-alt',
-      articles_count: 12,
+      articles_count: 1,
       difficulty: 'beginner'
     },
     {
@@ -499,6 +499,16 @@ app.get('/tutorials', (c) => {
   const featured = [
     {
       id: 1,
+      title: 'OKX欧易注册完整指南',
+      slug: 'okx-registration',
+      category: 'exchanges',
+      summary: 'Giant Cutie专属邀请码，一步步教你安全注册OKX，包含安卓和iOS详细步骤',
+      read_time: 15,
+      views: 15600,
+      difficulty: 'beginner'
+    },
+    {
+      id: 2,
       title: '币安交易所完全指南',
       slug: 'binance-complete-guide',
       category: 'exchanges',
@@ -508,7 +518,7 @@ app.get('/tutorials', (c) => {
       difficulty: 'beginner'
     },
     {
-      id: 2,
+      id: 3,
       title: 'MetaMask钱包安全使用',
       slug: 'metamask-security-guide',
       category: 'wallets',
@@ -516,16 +526,6 @@ app.get('/tutorials', (c) => {
       read_time: 15,
       views: 8900,
       difficulty: 'beginner'
-    },
-    {
-      id: 3,
-      title: 'Uniswap交易实战',
-      slug: 'uniswap-trading-guide',
-      category: 'defi',
-      summary: '掌握Uniswap V3的交易技巧和流动性挖矿',
-      read_time: 30,
-      views: 6700,
-      difficulty: 'advanced'
     }
   ];
 
@@ -591,7 +591,7 @@ app.get('/tutorials', (c) => {
                     <div class="path-stats">
                       <div class="stat">
                         <i class="fas fa-book"></i>
-                        <span>{category.article_count || 0} 个课程</span>
+                        <span>{category.articles_count || 0} 个课程</span>
                       </div>
                       <div class="stat">
                         <i class="fas fa-clock"></i>
@@ -828,42 +828,119 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                     
                     <div class="registration-info bg-blue-50 p-6 rounded-lg mb-6">
                       <h3 class="font-semibold text-blue-900 mb-4">Giant Cutie专属邀请</h3>
-                      <div class="space-y-3">
-                        <div>
-                          <span class="text-sm text-blue-600 font-medium">注册链接：</span>
-                          <a href="https://www.okx.com/join/GC8888" target="_blank" class="text-blue-600 hover:text-blue-800 underline ml-2">
-                            https://www.okx.com/join/GC8888
-                          </a>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-3">
+                          <div>
+                            <span class="text-sm text-blue-600 font-medium">注册链接：</span>
+                            <a href="https://www.okx.com/join/GC8888" target="_blank" class="text-blue-600 hover:text-blue-800 underline ml-2">
+                              https://www.okx.com/join/GC8888
+                            </a>
+                          </div>
+                          <div>
+                            <span class="text-sm text-blue-600 font-medium">邀请码：</span>
+                            <code class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono text-lg ml-2">GC8888</code>
+                          </div>
                         </div>
-                        <div>
-                          <span class="text-sm text-blue-600 font-medium">邀请码：</span>
-                          <code class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono text-lg ml-2">GC8888</code>
+                        <div class="registration-preview">
+                          <div class="preview-placeholder bg-white p-4 rounded border-2 border-dashed border-blue-200">
+                            <div class="flex items-center justify-center h-24">
+                              <div class="text-center">
+                                <i class="fas fa-image text-blue-400 text-2xl mb-2"></i>
+                                <p class="text-sm text-blue-600">注册页面示例</p>
+                                <p class="text-xs text-blue-500">查看邀请码填写位置</p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     <div class="steps-list">
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">访问注册页面</h4>
-                          <p class="text-gray-600 mb-3">点击上方链接访问OKX注册页面，确保使用Giant Cutie的专属邀请链接。</p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">访问注册页面</h4>
+                            <p class="text-gray-600 mb-3">点击上方链接访问OKX注册页面，确保使用Giant Cutie的专属邀请链接。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-link text-blue-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-blue-600">OKX注册页面</p>
+                              <p class="text-xs text-blue-500">确认URL包含 /join/GC8888</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">填写注册信息</h4>
-                          <p class="text-gray-600 mb-3">输入您的邮箱或手机号，设置安全密码，确认邀请码为 <code class="bg-gray-100 px-2 py-1 rounded">GC8888</code></p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">确认邀请码（重要）</h4>
+                            <p class="text-gray-600 mb-3">
+                              在注册表单中，务必确认邀请码字段显示为 
+                              <code class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono mx-1">GC8888</code>
+                              。如未自动填写，请手动输入。
+                            </p>
+                            <div class="bg-amber-50 border border-amber-200 rounded p-3 mt-3">
+                              <div class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-amber-600 mr-2 mt-0.5"></i>
+                                <p class="text-sm text-amber-700">
+                                  <strong>特别注意：</strong>邀请码必须正确填写才能享受Giant Cutie社区专属福利！
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-edit text-blue-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-blue-600">邀请码输入框</p>
+                              <p class="text-xs text-blue-500">确认显示 "GC8888"</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">3</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">验证账户</h4>
-                          <p class="text-gray-600 mb-3">完成邮箱或短信验证，激活您的OKX账户。</p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">3</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">填写账户信息</h4>
+                            <p class="text-gray-600 mb-3">输入您的邮箱或手机号，设置强密码（包含大小写字母、数字和特殊字符）。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-user-plus text-blue-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-blue-600">注册表单</p>
+                              <p class="text-xs text-blue-500">邮箱、密码、邀请码字段</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">4</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">验证账户</h4>
+                            <p class="text-gray-600 mb-3">完成邮箱或短信验证码验证，激活您的OKX账户。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-blue-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-blue-200 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-check-circle text-blue-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-blue-600">验证成功页面</p>
+                              <p class="text-xs text-blue-500">账户激活完成</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -893,19 +970,60 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                     </div>
 
                     <div class="steps-list">
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">下载APK文件</h4>
-                          <p class="text-gray-600 mb-3">使用浏览器打开下载链接，下载OKX安装包到手机。</p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">下载APK文件</h4>
+                            <p class="text-gray-600 mb-3">使用浏览器打开下载链接，下载OKX安装包到手机。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-mobile-alt text-gray-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-gray-500">浏览器下载页面截图</p>
+                              <p class="text-xs text-gray-400">显示下载进度和安装提示</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">安装应用</h4>
-                          <p class="text-gray-600 mb-3">下载完成后直接安装，会覆盖原有APP，请勿卸载原有APP后安装。</p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">允许安装未知来源应用</h4>
+                            <p class="text-gray-600 mb-3">根据手机品牌设置允许安装第三方应用。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-shield-alt text-gray-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-gray-500">安全设置页面</p>
+                              <p class="text-xs text-gray-400">允许未知来源应用安装</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">3</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">安装应用</h4>
+                            <p class="text-gray-600 mb-3">点击APK文件开始安装，会覆盖原有APP，请勿卸载原有APP后安装。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-download text-gray-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-gray-500">安装确认页面</p>
+                              <p class="text-xs text-gray-400">显示应用权限和安装按钮</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -958,27 +1076,60 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                     </div>
 
                     <div class="steps-list">
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">获取海外Apple ID</h4>
-                          <p class="text-gray-600 mb-3">通过可靠渠道获取海外Apple ID，或自行注册美区/港区账户。</p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">获取海外Apple ID</h4>
+                            <p class="text-gray-600 mb-3">通过可靠渠道获取海外Apple ID，或自行注册美区/港区账户。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fab fa-apple text-gray-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-gray-500">Apple ID注册页面</p>
+                              <p class="text-xs text-gray-400">选择海外地区（美国/香港）</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">切换App Store账户</h4>
-                          <p class="text-gray-600 mb-3">在App Store中登出当前账户，登录海外Apple ID。</p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">切换App Store账户</h4>
+                            <p class="text-gray-600 mb-3">在App Store中登出当前账户，登录海外Apple ID。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-store text-gray-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-gray-500">App Store登录界面</p>
+                              <p class="text-xs text-gray-400">输入海外Apple ID账户</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       
-                      <div class="step-item flex mb-6">
-                        <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">3</div>
-                        <div class="flex-1">
-                          <h4 class="font-semibold text-gray-900 mb-2">搜索下载OKX</h4>
-                          <p class="text-gray-600 mb-3">在App Store搜索"OKX"，下载官方应用。</p>
+                      <div class="step-item mb-8">
+                        <div class="flex items-start mb-4">
+                          <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">3</div>
+                          <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 mb-2">搜索下载OKX</h4>
+                            <p class="text-gray-600 mb-3">在App Store搜索"OKX"，下载官方应用。</p>
+                          </div>
+                        </div>
+                        <div class="step-screenshot bg-gray-50 p-4 rounded-lg ml-12">
+                          <div class="screenshot-placeholder bg-white border-2 border-dashed border-gray-300 rounded h-32 flex items-center justify-center">
+                            <div class="text-center">
+                              <i class="fas fa-search text-gray-400 text-3xl mb-2"></i>
+                              <p class="text-sm text-gray-500">App Store搜索结果</p>
+                              <p class="text-xs text-gray-400">OKX官方应用下载页面</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
