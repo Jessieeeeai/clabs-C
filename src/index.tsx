@@ -43,7 +43,6 @@ app.get('/', (c) => {
             <span class="title-line single-line">加密货币/美股MCN机构</span>
             <span class="title-line highlight">Cryptocurrency/US Stock MCN Institution</span>
           </h1>
-          <p class="hero-subtitle">投资型用户 | Investment-focused Users</p>
           <div class="hero-stats">
             <div class="stat">
               <span class="stat-number">80万+</span>
@@ -62,6 +61,7 @@ app.get('/', (c) => {
               <span class="stat-label">自有头部IP</span>
             </div>
           </div>
+          <p class="hero-subtitle hero-subtitle-below">投资型用户 | Investment-focused Users</p>
           <div class="hero-cta">
             <a href="/contact" class="btn-primary">联系合作</a>
             <a href="/ip/giant-cutie" class="btn-secondary">了解IP</a>
@@ -828,28 +828,30 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                     
                     <div class="registration-info bg-blue-50 p-6 rounded-lg mb-6">
                       <h3 class="font-semibold text-blue-900 mb-4">Giant Cutie专属邀请</h3>
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-3">
-                          <div>
-                            <span class="text-sm text-blue-600 font-medium">注册链接：</span>
-                            <a href="https://www.okx.com/join/GC8888" target="_blank" class="text-blue-600 hover:text-blue-800 underline ml-2">
-                              https://www.okx.com/join/GC8888
-                            </a>
-                          </div>
-                          <div>
-                            <span class="text-sm text-blue-600 font-medium">邀请码：</span>
-                            <code class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono text-lg ml-2">GC8888</code>
-                          </div>
+                      
+                      {/* 注册信息 */}
+                      <div class="space-y-3 mb-6">
+                        <div>
+                          <span class="text-sm text-blue-600 font-medium">注册链接：</span>
+                          <a href="https://www.okx.com/join/GC8888" target="_blank" class="text-blue-600 hover:text-blue-800 underline ml-2">
+                            https://www.okx.com/join/GC8888
+                          </a>
                         </div>
-                        <div class="registration-preview">
-                          <div class="bg-white p-4 rounded border border-blue-200">
-                            <img 
-                              src="/static/images/tutorials/okx/registration-steps.png" 
-                              alt="OKX注册页面，显示邀请码填写步骤" 
-                              class="w-full h-auto rounded-lg shadow-sm"
-                            />
-                            <p class="text-xs text-blue-600 text-center mt-2">注册页面邀请码填写示例</p>
-                          </div>
+                        <div>
+                          <span class="text-sm text-blue-600 font-medium">邀请码：</span>
+                          <code class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono text-lg ml-2">GC8888</code>
+                        </div>
+                      </div>
+
+                      {/* 注册预览图 - 全宽显示 */}
+                      <div class="registration-preview w-full">
+                        <div class="bg-white p-6 rounded-lg border border-blue-200 shadow-sm">
+                          <img 
+                            src="/static/images/tutorials/okx/registration-steps.png" 
+                            alt="OKX注册页面，显示邀请码填写步骤" 
+                            class="w-full h-auto rounded-lg shadow-md max-w-none"
+                          />
+                          <p class="text-sm text-blue-600 text-center mt-3 font-medium">注册页面邀请码填写示例</p>
                         </div>
                       </div>
                     </div>
@@ -895,6 +897,18 @@ app.get('/tutorials/exchanges/okx-registration', (c) => {
                           <div class="flex-1">
                             <h4 class="font-semibold text-gray-900 mb-2">填写账户信息</h4>
                             <p class="text-gray-600 mb-3">输入您的邮箱或手机号，设置强密码（包含大小写字母、数字和特殊字符）。</p>
+                          </div>
+                        </div>
+
+                        {/* 在填写账户信息步骤下添加注册步骤图片 */}
+                        <div class="registration-preview w-full mt-4">
+                          <div class="bg-white p-6 rounded-lg border border-blue-200 shadow-sm">
+                            <img 
+                              src="/static/images/tutorials/okx/registration-steps.png" 
+                              alt="OKX注册页面，显示邀请码填写步骤" 
+                              class="w-full h-auto rounded-lg shadow-md max-w-none"
+                            />
+                            <p class="text-sm text-blue-600 text-center mt-3 font-medium">注册页面邀请码填写示例</p>
                           </div>
                         </div>
 
