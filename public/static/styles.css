@@ -559,9 +559,9 @@ nav {
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* 投资型用户副标题样式 - 简单有效的方案 */
-.hero-subtitle-below {
-  color: rgba(255, 255, 255, 0.4) !important; /* 60% 透明度 - 更浅的颜色 */
+/* 投资型用户副标题样式 - 强制浅白色 */
+p.hero-subtitle.hero-subtitle-below {
+  color: rgba(255, 255, 255, 0.4) !important; /* 浅白色，不是蓝色 */
   font-weight: 300 !important; /* 更轻的字重 */
   margin: 2rem auto 4rem auto !important; /* 上下间距 */
   background: 
@@ -572,6 +572,11 @@ nav {
       rgba(96, 165, 250, 0.05) 0%, 
       rgba(139, 92, 246, 0.05) 100%) !important;
   border: 1px solid rgba(96, 165, 250, 0.15) !important;
+}
+
+/* 更高优先级的颜色控制 */
+.hero-content p.hero-subtitle-below {
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 
 /* 响应式处理：小屏幕上允许换行 */

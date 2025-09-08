@@ -48,7 +48,7 @@ app.get('/', (c) => {
             </div>
           </div>
           <div style="width: 100%; display: block; clear: both; margin: 2rem 0 4rem 0;">
-            <p class="hero-subtitle hero-subtitle-below" style="margin: 0 auto; display: block; width: fit-content;">投资型用户 | Investment-focused Users</p>
+            <p class="hero-subtitle hero-subtitle-below" style="margin: 0 auto; display: block; width: fit-content; color: rgba(255, 255, 255, 0.4) !important;">投资型用户 | Investment-focused Users</p>
           </div>
           <div class="hero-cta">
             <a href="/contact" class="btn-primary">联系合作</a>
