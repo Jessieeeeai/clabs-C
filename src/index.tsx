@@ -6281,40 +6281,40 @@ app.get('/ip/lana', async (c) => {
                   <div class="aspect-video">
                     <iframe 
                       class="w-full h-full rounded-t-lg" 
-                      src="https://www.tiktok.com/embed/v2/7493529691425393950" 
-                      title="BTC创新高后的逻辑分析" 
+                      src="https://www.youtube.com/embed/6Vqb2jTjxz8" 
+                      title="XRP Explained: Everything you need to know about XRP - The Untold Ripple Story" 
                       frameborder="0" 
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                       referrerpolicy="strict-origin-when-cross-origin" 
                       allowfullscreen>
                     </iframe>
                   </div>
-                  <div class="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
-                    TikTok
+                  <div class="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                    YouTube
                   </div>
-                  <div class="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                    🔥 热门
+                  <div class="absolute top-2 left-2 bg-purple-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                    💎 XRP分析
                   </div>
                 </div>
                 <div class="work-info p-4">
-                  <h5 class="font-semibold mb-2">BTC创新高后的逻辑分析</h5>
-                  <p class="text-gray-600 text-sm mb-3">60秒带你了解比特币突破7万美金关键阻力位的技术面和基本面原因</p>
+                  <h5 class="font-semibold mb-2">XRP深度解析：瑞波币的未来展望</h5>
+                  <p class="text-gray-600 text-sm mb-3">2025年XRP深度分析，全面解读瑞波币的技术优势和投资潜力</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
                         <i class="fas fa-eye mr-1"></i>
-                        2.8M
+                        533
                       </span>
                       <span class="flex items-center">
                         <i class="fas fa-thumbs-up mr-1"></i>
-                        156K
+                        45
                       </span>
                       <span class="flex items-center">
                         <i class="fas fa-comment mr-1"></i>
-                        3.2K
+                        12
                       </span>
                     </div>
-                    <span class="text-xs text-gray-400">2天前</span>
+                    <span class="text-xs text-gray-400">12天前</span>
                   </div>
                 </div>
               </div>
@@ -6331,7 +6331,7 @@ app.get('/ip/lana', async (c) => {
               
               <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-pink-500 to-purple-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890123456', '_blank')">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-pink-500 to-purple-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7493529691425393950', '_blank')">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
                     <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
                       <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -6377,7 +6377,7 @@ app.get('/ip/lana', async (c) => {
 
               <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-green-500 to-blue-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890234567', '_blank')">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-green-500 to-blue-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7490933021814705438', '_blank')">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
                     <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
                       <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -6423,7 +6423,7 @@ app.get('/ip/lana', async (c) => {
 
               <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-orange-500 to-red-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890345678', '_blank')">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-orange-500 to-red-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7490564026661932318', '_blank')">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
                     <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
                       <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -6469,7 +6469,7 @@ app.get('/ip/lana', async (c) => {
 
               <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-purple-500 to-indigo-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890456789', '_blank')">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-purple-500 to-indigo-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7488344083933433118', '_blank')">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
                     <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
                       <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -6515,7 +6515,7 @@ app.get('/ip/lana', async (c) => {
 
               <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-yellow-500 to-orange-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890567890', '_blank')">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-yellow-500 to-orange-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7491680779232120094', '_blank')">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
                     <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
                       <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -6561,7 +6561,7 @@ app.get('/ip/lana', async (c) => {
 
               <div class="tiktok-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div class="tiktok-thumbnail relative">
-                  <div class="aspect-[9/16] bg-gradient-to-br from-teal-500 to-cyan-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7315234567890678901', '_blank')">
+                  <div class="aspect-[9/16] bg-gradient-to-br from-teal-500 to-cyan-600 relative overflow-hidden cursor-pointer group" onclick="window.open('https://www.tiktok.com/@lana.young6/video/7502066677400472863', '_blank')">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
                     <div class="flex flex-col items-center justify-center h-full text-white relative z-10">
                       <div class="bg-black bg-opacity-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform duration-300">
