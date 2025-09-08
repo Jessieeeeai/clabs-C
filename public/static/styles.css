@@ -8615,17 +8615,17 @@ nav {
 /* IP Matrix Card Base - Premium Glassmorphism Design */
 .ip-matrix-card {
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.55) 0%, 
-    rgba(248, 250, 252, 0.45) 100%);
+    rgba(255, 255, 255, 0.92) 0%, 
+    rgba(248, 250, 252, 0.88) 100%);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-radius: 24px;
   padding: 0;
   box-shadow: 
     0 20px 40px -12px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   overflow: hidden;
   position: relative;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -8644,11 +8644,11 @@ nav {
   transform: translateY(-10px) scale(1.02);
   box-shadow: 
     0 40px 80px -16px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.65) 0%, 
-    rgba(248, 250, 252, 0.55) 100%);
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(248, 250, 252, 0.92) 100%);
 }
 
 /* Theme-specific gradients - Enhanced */
