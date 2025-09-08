@@ -5954,8 +5954,8 @@ app.get('/ip/giant-cutie', async (c) => {
                     <div class="aspect-video">
                       <iframe 
                         class="w-full h-full rounded-t-lg" 
-                        src="https://www.youtube.com/embed/ZD-PDPwrEPY" 
-                        title="BTC 反彈受阻，何時做多？MASK已進入上漲末端？" 
+                        src="https://www.youtube.com/embed/k9L3_qEa4kg" 
+                        title="比特币ETF深度解析与市场分析" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                         referrerpolicy="strict-origin-when-cross-origin" 
@@ -5997,8 +5997,8 @@ app.get('/ip/giant-cutie', async (c) => {
                     <div class="aspect-video">
                       <iframe 
                         class="w-full h-full rounded-t-lg" 
-                        src="https://www.youtube.com/embed/10W8oIOfo10" 
-                        title="屌絲逆襲or落荒而逃？2024年牛市只差這個條件！" 
+                        src="https://www.youtube.com/embed/hGu44VWwMMw" 
+                        title="市场趋势分析与交易机会" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                         referrerpolicy="strict-origin-when-cross-origin" 
@@ -6037,8 +6037,8 @@ app.get('/ip/giant-cutie', async (c) => {
                     <div class="aspect-video">
                       <iframe 
                         class="w-full h-full rounded-t-lg" 
-                        src="https://www.youtube.com/embed/XspUEPH8aRw" 
-                        title="区块链简报: 区块链技术在AI数据共享和资产基金" 
+                        src="https://www.youtube.com/embed/ywxkWSMgBYU" 
+                        title="数字资产投资策略与风险管理" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                         referrerpolicy="strict-origin-when-cross-origin" 
