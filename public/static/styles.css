@@ -10205,8 +10205,14 @@ p.text-gray-600,
   color: #2563eb !important;
 }
 
-/* IMPORTANT: Keep hero descriptions gray - DO NOT make them blue */
+/* IMPORTANT: Keep hero descriptions and homepage subtitles gray - DO NOT make them blue */
 .hero-description,
+.hero-subtitle,
 p.text-lg.leading-relaxed {
+  color: var(--gray-600) !important;
+}
+
+/* Specifically protect homepage section subtitles */
+.kol-section .section-subtitle {
   color: var(--gray-600) !important;
 }
