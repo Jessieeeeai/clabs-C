@@ -5815,7 +5815,7 @@ app.get('/ip/giant-cutie', async (c) => {
             <div class="content-category mb-12">
               <div class="category-header mb-6">
                 <h4 class="text-2xl font-bold text-gray-800 mb-2">🔍 行业研究</h4>
-                <p class="text-gray-600">深度解析Web3行业趋势，项目评估与技术科普</p>
+                <p class="text-blue-600">深度解析Web3行业趋势，项目评估与技术科普</p>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
@@ -5838,7 +5838,7 @@ app.get('/ip/giant-cutie', async (c) => {
                   </div>
                   <div class="work-info p-4">
                     <h5 class="font-semibold mb-2">比特币ETF深度解析：机构资金入场信号</h5>
-                    <p class="text-gray-600 text-sm mb-3">详细分析贝莱德、富达等机构推出BTC ETF的影响，解读传统金融与加密货币融合趋势</p>
+                    <p class="text-blue-600 text-sm mb-3">详细分析贝莱德、富达等机构推出BTC ETF的影响，解读传统金融与加密货币融合趋势</p>
                     <div class="work-stats flex items-center justify-between">
                       <div class="flex items-center space-x-4 text-sm text-gray-500">
                         <span class="flex items-center">
@@ -5878,7 +5878,7 @@ app.get('/ip/giant-cutie', async (c) => {
                   </div>
                   <div class="work-info p-4">
                     <h5 class="font-semibold mb-2">Layer2赛道全景：Arbitrum vs Optimism深度对比</h5>
-                    <p class="text-gray-600 text-sm mb-3">全面解析以太坊扩容方案，对比各Layer2项目的技术特点、生态发展和投资价值</p>
+                    <p class="text-blue-600 text-sm mb-3">全面解析以太坊扩容方案，对比各Layer2项目的技术特点、生态发展和投资价值</p>
                     <div class="work-stats flex items-center justify-between">
                       <div class="flex items-center space-x-4 text-sm text-gray-500">
                         <span class="flex items-center">
@@ -5918,7 +5918,7 @@ app.get('/ip/giant-cutie', async (c) => {
                   </div>
                   <div class="work-info p-4">
                     <h5 class="font-semibold mb-2">AI与Web3融合：下一个万亿级市场机会？</h5>
-                    <p class="text-gray-600 text-sm mb-3">深入分析人工智能与区块链结合的创新应用，探讨去中心化AI的发展前景和投资机会</p>
+                    <p class="text-blue-600 text-sm mb-3">深入分析人工智能与区块链结合的创新应用，探讨去中心化AI的发展前景和投资机会</p>
                     <div class="work-stats flex items-center justify-between">
                       <div class="flex items-center space-x-4 text-sm text-gray-500">
                         <span class="flex items-center">
@@ -5945,7 +5945,7 @@ app.get('/ip/giant-cutie', async (c) => {
             <div class="content-category">
               <div class="category-header mb-6">
                 <h4 class="text-2xl font-bold text-gray-800 mb-2">📊 交易分析</h4>
-                <p class="text-gray-600">实战交易策略，技术分析与风险管理</p>
+                <p class="text-blue-600">实战交易策略，技术分析与风险管理</p>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
@@ -5971,7 +5971,7 @@ app.get('/ip/giant-cutie', async (c) => {
                   </div>
                   <div class="work-info p-4">
                     <h5 class="font-semibold mb-2">BTC突破关键阻力位！15万美金目标分析</h5>
-                    <p class="text-gray-600 text-sm mb-3">结合链上数据、技术指标和宏观环境，分析比特币冲击历史新高的可能性和关键支撑位</p>
+                    <p class="text-blue-600 text-sm mb-3">结合链上数据、技术指标和宏观环境，分析比特币冲击历史新高的可能性和关键支撑位</p>
                     <div class="work-stats flex items-center justify-between">
                       <div class="flex items-center space-x-4 text-sm text-gray-500">
                         <span class="flex items-center">
@@ -6011,7 +6011,7 @@ app.get('/ip/giant-cutie', async (c) => {
                   </div>
                   <div class="work-info p-4">
                     <h5 class="font-semibold mb-2">加密交易必学：资金管理与止损策略</h5>
-                    <p class="text-gray-600 text-sm mb-3">分享专业交易员的资金管理原则，如何设置止损止盈，控制单笔交易风险</p>
+                    <p class="text-blue-600 text-sm mb-3">分享专业交易员的资金管理原则，如何设置止损止盈，控制单笔交易风险</p>
                     <div class="work-stats flex items-center justify-between">
                       <div class="flex items-center space-x-4 text-sm text-gray-500">
                         <span class="flex items-center">
@@ -6051,7 +6051,7 @@ app.get('/ip/giant-cutie', async (c) => {
                   </div>
                   <div class="work-info p-4">
                     <h5 class="font-semibold mb-2">山寨币季来了？如何筛选10倍潜力币</h5>
-                    <p class="text-gray-600 text-sm mb-3">教你识别优质山寨币的关键指标，从基本面、技术面和资金面三个维度评估项目</p>
+                    <p class="text-blue-600 text-sm mb-3">教你识别优质山寨币的关键指标，从基本面、技术面和资金面三个维度评估项目</p>
                     <div class="work-stats flex items-center justify-between">
                       <div class="flex items-center space-x-4 text-sm text-gray-500">
                         <span class="flex items-center">
@@ -6272,7 +6272,7 @@ app.get('/ip/lana', async (c) => {
           {/* YouTube投资内容 */}
           <section id="youtube-videos" class="mb-16">
             <h3 class="section-title">YouTube投资分析</h3>
-            <p class="text-center text-gray-600 mb-8">Lana在YouTube平台的专业加密货币分析</p>
+            <p class="text-center text-blue-600 mb-8">Lana在YouTube平台的专业加密货币分析</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               
@@ -6298,7 +6298,7 @@ app.get('/ip/lana', async (c) => {
                 </div>
                 <div class="work-info p-4">
                   <h5 class="font-semibold mb-2">XRP深度解析：瑞波币的未来展望</h5>
-                  <p class="text-gray-600 text-sm mb-3">2025年XRP深度分析，全面解读瑞波币的技术优势和投资潜力</p>
+                  <p class="text-blue-600 text-sm mb-3">2025年XRP深度分析，全面解读瑞波币的技术优势和投资潜力</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
@@ -6325,7 +6325,7 @@ app.get('/ip/lana', async (c) => {
           {/* 热门TikTok视频 */}
           <section id="tiktok-videos">
             <h3 class="section-title">热门TikTok视频</h3>
-            <p class="text-center text-gray-600 mb-8">Lana在TikTok平台的精彩加密内容分享</p>
+            <p class="text-center text-blue-600 mb-8">Lana在TikTok平台的精彩加密内容分享</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               
@@ -6352,7 +6352,7 @@ app.get('/ip/lana', async (c) => {
                 </div>
                 <div class="work-info p-4">
                   <h5 class="font-semibold mb-2">比特币突破7万美金！</h5>
-                  <p class="text-gray-600 text-sm mb-3">下一个目标价位分析</p>
+                  <p class="text-blue-600 text-sm mb-3">下一个目标价位分析</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
@@ -6396,7 +6396,7 @@ app.get('/ip/lana', async (c) => {
                 </div>
                 <div class="work-info p-4">
                   <h5 class="font-semibold mb-2">新手如何买第一个比特币</h5>
-                  <p class="text-gray-600 text-sm mb-3">安全购买指南</p>
+                  <p class="text-blue-600 text-sm mb-3">安全购买指南</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
@@ -6440,7 +6440,7 @@ app.get('/ip/lana', async (c) => {
                 </div>
                 <div class="work-info p-4">
                   <h5 class="font-semibold mb-2">加密投资5大误区</h5>
-                  <p class="text-gray-600 text-sm mb-3">避免这些坑</p>
+                  <p class="text-blue-600 text-sm mb-3">避免这些坑</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
@@ -6484,7 +6484,7 @@ app.get('/ip/lana', async (c) => {
                 </div>
                 <div class="work-info p-4">
                   <h5 class="font-semibold mb-2">NFT投资策略</h5>
-                  <p class="text-gray-600 text-sm mb-3">如何选择优质项目</p>
+                  <p class="text-blue-600 text-sm mb-3">如何选择优质项目</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
@@ -6528,7 +6528,7 @@ app.get('/ip/lana', async (c) => {
                 </div>
                 <div class="work-info p-4">
                   <h5 class="font-semibold mb-2">DeFi挖矿教程</h5>
-                  <p class="text-gray-600 text-sm mb-3">安全获得被动收入</p>
+                  <p class="text-blue-600 text-sm mb-3">安全获得被动收入</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
@@ -6572,7 +6572,7 @@ app.get('/ip/lana', async (c) => {
                 </div>
                 <div class="work-info p-4">
                   <h5 class="font-semibold mb-2">钱包安全指南</h5>
-                  <p class="text-gray-600 text-sm mb-3">保护你的数字资产</p>
+                  <p class="text-blue-600 text-sm mb-3">保护你的数字资产</p>
                   <div class="work-stats flex items-center justify-between">
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
                       <span class="flex items-center">
