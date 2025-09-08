@@ -10226,3 +10226,181 @@ p.text-lg.leading-relaxed {
 .kol-section .section-subtitle {
   color: var(--gray-600) !important;
 }
+
+/* ===========================
+   Tutorial Content Page Styles
+   =========================== */
+
+.tutorial-content {
+  background: var(--gray-50);
+  min-height: 100vh;
+}
+
+.tutorial-hero {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.breadcrumb {
+  font-size: 0.875rem;
+}
+
+.tutorial-header {
+  text-align: left;
+}
+
+.tutorial-badge span {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.tutorial-meta {
+  font-size: 0.875rem;
+}
+
+.tutorial-body {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.tutorial-content-body {
+  line-height: 1.7;
+}
+
+.content-section {
+  border-bottom: 1px solid var(--gray-200);
+  padding-bottom: 2rem;
+}
+
+.content-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.steps-list {
+  margin: 1.5rem 0;
+}
+
+.step-item {
+  margin-bottom: 2rem;
+}
+
+.step-number {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+.alert {
+  border-radius: 0.5rem;
+  border-width: 1px;
+}
+
+.alert-warning {
+  background-color: #fefbf3;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.alert-danger {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+.download-info, .registration-info, .ios-requirements, .backup-warning {
+  border-radius: 0.5rem;
+}
+
+.troubleshooting {
+  border-radius: 0.5rem;
+}
+
+.tutorial-sidebar {
+  top: 6rem;
+}
+
+.toc-widget ul li {
+  padding: 0.25rem 0;
+}
+
+.quick-actions a {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.related-tutorials .related-item {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.related-tutorials .related-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Tutorial Content Typography */
+.tutorial-content h2 {
+  color: var(--gray-900);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+
+.tutorial-content h3 {
+  color: var(--gray-800);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.tutorial-content h4 {
+  color: var(--gray-800);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.tutorial-content p {
+  color: var(--gray-600);
+  margin-bottom: 1rem;
+}
+
+.tutorial-content code {
+  background-color: var(--gray-100);
+  color: var(--gray-800);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.tutorial-content ul, .tutorial-content ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.tutorial-content li {
+  margin-bottom: 0.5rem;
+  color: var(--gray-600);
+}
+
+/* Responsive Tutorial Layout */
+@media (max-width: 768px) {
+  .tutorial-sidebar {
+    position: static;
+    margin-top: 2rem;
+  }
+  
+  .tutorial-content-body {
+    padding: 1.5rem;
+  }
+  
+  .step-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .step-number {
+    margin-right: 0;
+    margin-bottom: 1rem;
+    align-self: center;
+  }
+}

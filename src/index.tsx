@@ -612,7 +612,7 @@ app.get('/tutorials', (c) => {
                   </div>
                   
                   <div class="path-action">
-                    <a href={`/tutorials/${category.slug}`} class="path-btn">
+                    <a href={category.slug === 'exchanges' ? '/tutorials/exchanges/okx-registration' : `/tutorials/${category.slug}`} class="path-btn">
                       <span>开始课程</span>
                       <i class="fas fa-arrow-right"></i>
                     </a>
@@ -753,7 +753,347 @@ app.get('/tutorials', (c) => {
   )
 })
 
-// Tutorial Category Pages
+// Specific Tutorial Content - OKX Registration Guide
+app.get('/tutorials/exchanges/okx-registration', (c) => {
+  return c.render(
+    <div class="tutorial-content">
+      {/* Tutorial Header */}
+      <section class="tutorial-hero">
+        <div class="container mx-auto px-4 py-12">
+          <div class="max-w-4xl mx-auto">
+            <div class="breadcrumb mb-6">
+              <a href="/tutorials" class="text-blue-600 hover:text-blue-800">Web3教程</a>
+              <span class="mx-2 text-gray-400">/</span>
+              <a href="/tutorials/exchanges" class="text-blue-600 hover:text-blue-800">交易所使用</a>
+              <span class="mx-2 text-gray-400">/</span>
+              <span class="text-gray-600">OKX注册完整指南</span>
+            </div>
+            
+            <div class="tutorial-header">
+              <div class="tutorial-badge mb-4">
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">基础教程</span>
+                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium ml-2">推荐</span>
+              </div>
+              
+              <h1 class="text-4xl font-bold text-gray-900 mb-4">OKX欧易注册完整指南</h1>
+              <p class="text-xl text-gray-600 mb-6">一步步教你安全注册OKX交易所，包含安卓和iOS下载安装详细步骤</p>
+              
+              <div class="tutorial-meta flex items-center space-x-6 text-gray-500">
+                <div class="flex items-center">
+                  <i class="fas fa-clock mr-2"></i>
+                  <span>预计 15 分钟</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-signal mr-2"></i>
+                  <span>难度：初级</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-user mr-2"></i>
+                  <span>Giant Cutie</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-eye mr-2"></i>
+                  <span>12,580 次学习</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tutorial Content */}
+      <section class="tutorial-body">
+        <div class="container mx-auto px-4 py-8">
+          <div class="max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              
+              {/* Main Content */}
+              <div class="lg:col-span-3">
+                <div class="tutorial-content-body bg-white rounded-lg shadow-lg p-8">
+                  
+                  {/* Important Notice */}
+                  <div class="alert alert-warning mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div class="flex items-start">
+                      <i class="fas fa-exclamation-triangle text-amber-600 mr-3 mt-1"></i>
+                      <div>
+                        <h3 class="font-semibold text-amber-800 mb-2">重要提醒</h3>
+                        <p class="text-amber-700">一定先填写邀请码完成注册后，再去下载APP！</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Registration Section */}
+                  <div class="content-section mb-12">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">第一步：注册OKX账户</h2>
+                    
+                    <div class="registration-info bg-blue-50 p-6 rounded-lg mb-6">
+                      <h3 class="font-semibold text-blue-900 mb-4">Giant Cutie专属邀请</h3>
+                      <div class="space-y-3">
+                        <div>
+                          <span class="text-sm text-blue-600 font-medium">注册链接：</span>
+                          <a href="https://www.okx.com/join/GC8888" target="_blank" class="text-blue-600 hover:text-blue-800 underline ml-2">
+                            https://www.okx.com/join/GC8888
+                          </a>
+                        </div>
+                        <div>
+                          <span class="text-sm text-blue-600 font-medium">邀请码：</span>
+                          <code class="bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono text-lg ml-2">GC8888</code>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="steps-list">
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">访问注册页面</h4>
+                          <p class="text-gray-600 mb-3">点击上方链接访问OKX注册页面，确保使用Giant Cutie的专属邀请链接。</p>
+                        </div>
+                      </div>
+                      
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">填写注册信息</h4>
+                          <p class="text-gray-600 mb-3">输入您的邮箱或手机号，设置安全密码，确认邀请码为 <code class="bg-gray-100 px-2 py-1 rounded">GC8888</code></p>
+                        </div>
+                      </div>
+                      
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">3</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">验证账户</h4>
+                          <p class="text-gray-600 mb-3">完成邮箱或短信验证，激活您的OKX账户。</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Android Download Section */}
+                  <div class="content-section mb-12">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                      <i class="fab fa-android text-green-600 mr-2"></i>
+                      安卓手机下载安装
+                    </h2>
+                    
+                    <div class="download-info bg-green-50 p-6 rounded-lg mb-6">
+                      <h3 class="font-semibold text-green-900 mb-4">官方下载链接</h3>
+                      <div class="space-y-3">
+                        <div>
+                          <span class="text-sm text-green-600 font-medium">APK下载：</span>
+                          <a href="https://static.prhci.com/upgradeapp/okx-android.apk" target="_blank" class="text-green-600 hover:text-green-800 underline ml-2">
+                            官方Android安装包
+                          </a>
+                        </div>
+                        <div>
+                          <span class="text-sm text-green-600 font-medium">邮箱获取：</span>
+                          <span class="text-green-700 ml-2">发送"下载欧易"至 download@okx.com</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="steps-list">
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">下载APK文件</h4>
+                          <p class="text-gray-600 mb-3">使用浏览器打开下载链接，下载OKX安装包到手机。</p>
+                        </div>
+                      </div>
+                      
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">安装应用</h4>
+                          <p class="text-gray-600 mb-3">下载完成后直接安装，会覆盖原有APP，请勿卸载原有APP后安装。</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Troubleshooting */}
+                    <div class="troubleshooting bg-yellow-50 p-6 rounded-lg">
+                      <h3 class="font-semibold text-yellow-900 mb-4">
+                        <i class="fas fa-tools mr-2"></i>
+                        安装问题解决
+                      </h3>
+                      <div class="space-y-4">
+                        <div>
+                          <h4 class="font-medium text-yellow-800 mb-2">华为手机设置：</h4>
+                          <ul class="text-yellow-700 space-y-1 ml-4">
+                            <li>• 设置 → 系统和更新 → 纯净模式 → 关闭增强防护</li>
+                            <li>• 设置 → 安全 → 更多安全设置 → 关闭外部来源应用检查</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h4 class="font-medium text-yellow-800 mb-2">小米手机设置：</h4>
+                          <p class="text-yellow-700">安装页面点击右上角设置 → 开启安全守护 → 按提示完成安装</p>
+                        </div>
+                        <div>
+                          <h4 class="font-medium text-yellow-800 mb-2">OPPO手机设置：</h4>
+                          <p class="text-yellow-700">设置 → 手机管家 → 支付保护 → 关闭所有软件保护 → 安装完成后再开启</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* iOS Download Section */}
+                  <div class="content-section mb-12">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                      <i class="fab fa-apple text-gray-800 mr-2"></i>
+                      苹果手机下载安装
+                    </h2>
+                    
+                    <div class="ios-requirements bg-gray-50 p-6 rounded-lg mb-6">
+                      <h3 class="font-semibold text-gray-900 mb-4">前置要求</h3>
+                      <div class="space-y-3">
+                        <div class="flex items-start">
+                          <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                          <span class="text-gray-700">需要拥有海外Apple ID（美区、香港区等）</span>
+                        </div>
+                        <div class="flex items-start">
+                          <i class="fas fa-info-circle text-blue-500 mr-3 mt-1"></i>
+                          <span class="text-gray-700">可通过淘宝搜索"海外Apple ID"购买，几元即可</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="steps-list">
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">1</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">获取海外Apple ID</h4>
+                          <p class="text-gray-600 mb-3">通过可靠渠道获取海外Apple ID，或自行注册美区/港区账户。</p>
+                        </div>
+                      </div>
+                      
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">2</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">切换App Store账户</h4>
+                          <p class="text-gray-600 mb-3">在App Store中登出当前账户，登录海外Apple ID。</p>
+                        </div>
+                      </div>
+                      
+                      <div class="step-item flex mb-6">
+                        <div class="step-number bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-semibold mr-4 mt-1">3</div>
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-gray-900 mb-2">搜索下载OKX</h4>
+                          <p class="text-gray-600 mb-3">在App Store搜索"OKX"，下载官方应用。</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Security Warning */}
+                  <div class="content-section mb-12">
+                    <div class="alert alert-danger p-6 bg-red-50 border border-red-200 rounded-lg">
+                      <div class="flex items-start">
+                        <i class="fas fa-shield-alt text-red-600 mr-3 mt-1"></i>
+                        <div>
+                          <h3 class="font-semibold text-red-800 mb-3">安全提醒</h3>
+                          <ul class="text-red-700 space-y-2">
+                            <li>• 务必在网页完成注册后再下载APP</li>
+                            <li>• 不要点击广告中的OKX下载链接</li>
+                            <li>• 确保邀请码 GC8888 填写正确</li>
+                            <li>• 创建钱包前务必备份助记词和私钥</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Wallet Backup Guide */}
+                  <div class="content-section">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                      <i class="fas fa-key text-amber-600 mr-2"></i>
+                      钱包备份重要说明  
+                    </h2>
+                    
+                    <div class="backup-warning bg-amber-50 p-6 rounded-lg mb-6">
+                      <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-amber-600 mr-3 mt-1"></i>
+                        <div>
+                          <h3 class="font-semibold text-amber-800 mb-2">重要警告</h3>
+                          <p class="text-amber-700">若您创建了钱包，在更新APP之前，一定要正确备份钱包的助记词和地址私钥。一旦丢失，钱包资产将无法找回！</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="backup-steps">
+                      <h4 class="font-semibold text-gray-900 mb-4">备份步骤：</h4>
+                      <ol class="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                        <li>打开Web3钱包首页</li>
+                        <li>点击资产栏</li>
+                        <li>点击卡包图标右边的三个点</li>
+                        <li>进入钱包管理页面</li>
+                        <li>选择备份钱包</li>
+                        <li>导出助记词/导出私钥地址</li>
+                      </ol>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div class="lg:col-span-1">
+                <div class="tutorial-sidebar sticky top-24">
+                  
+                  {/* Table of Contents */}
+                  <div class="toc-widget bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">目录</h3>
+                    <ul class="space-y-2 text-sm">
+                      <li><a href="#registration" class="text-blue-600 hover:text-blue-800">账户注册</a></li>
+                      <li><a href="#android" class="text-blue-600 hover:text-blue-800">安卓下载</a></li>
+                      <li><a href="#ios" class="text-blue-600 hover:text-blue-800">iOS下载</a></li>
+                      <li><a href="#security" class="text-blue-600 hover:text-blue-800">安全提醒</a></li>
+                      <li><a href="#backup" class="text-blue-600 hover:text-blue-800">钱包备份</a></li>
+                    </ul>
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div class="quick-actions bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">快速操作</h3>
+                    <div class="space-y-3">
+                      <a href="https://www.okx.com/join/GC8888" target="_blank" class="block w-full bg-blue-600 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-700 transition-colors">
+                        立即注册OKX
+                      </a>
+                      <a href="/tutorials/exchanges" class="block w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-center hover:bg-gray-200 transition-colors">
+                        更多交易所教程
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Related Tutorials */}
+                  <div class="related-tutorials bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">相关教程</h3>
+                    <div class="space-y-4">
+                      <div class="related-item">
+                        <h4 class="text-sm font-medium text-gray-900 mb-1">币安注册完整指南</h4>
+                        <p class="text-xs text-gray-500">交易所使用 • 20分钟</p>
+                      </div>
+                      <div class="related-item">
+                        <h4 class="text-sm font-medium text-gray-900 mb-1">交易所安全设置</h4>
+                        <p class="text-xs text-gray-500">安全防护 • 15分钟</p>
+                      </div>
+                      <div class="related-item">
+                        <h4 class="text-sm font-medium text-gray-900 mb-1">首次充值指南</h4>
+                        <p class="text-xs text-gray-500">基础操作 • 10分钟</p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+})
+
+// Tutorial Category Pages  
 app.get('/tutorials/:category', async (c) => {
   try {
     const { env } = c;
