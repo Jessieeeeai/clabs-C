@@ -3,12 +3,8 @@ import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-workers'
 import { renderer } from './renderer'
 
-// Type definitions for Cloudflare D1 bindings
-type Bindings = {
-  DB: D1Database;
-}
-
-const app = new Hono<{ Bindings: Bindings }>()
+// No bindings needed for this deployment
+const app = new Hono()
 
 // Enable CORS for all routes
 app.use('*', cors())
