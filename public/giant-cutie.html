@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加密大漂亮 Giant Cutie - C Labs 顶级KOL</title>
+    <meta name="description" content="Giant Cutie - 中文区Web3.0行业最大IP，加密矿工，坐标硅谷，622K+总粉丝，38.8M+月播放">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': {
+                            'primary': '#283dfe',
+                            'secondary': '#ffffff', 
+                            'dark': '#000002'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link href="/static/styles.css" rel="stylesheet">
+</head>
+<body class="font-sans bg-white text-gray-900">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">C</span>
+                    </div>
+                    <span class="font-bold text-xl">C Labs</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/index.html" class="nav-link">首页</a>
+                    <a href="/tutorials.html" class="nav-link">Web3教程</a>
+                    <a href="/giant-cutie.html" class="nav-link text-brand-primary">Giant Cutie</a>
+                    <a href="/lana.html" class="nav-link">Lana Yang</a>
+                    <a href="/contact.html" class="nav-link">联系</a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/contact.html" class="bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        开始合作
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
+                <div class="flex flex-col space-y-2">
+                    <a href="/index.html" class="mobile-nav-link">首页</a>
+                    <a href="/tutorials.html" class="mobile-nav-link">Web3教程</a>
+                    <a href="/giant-cutie.html" class="mobile-nav-link text-brand-primary">Giant Cutie</a>
+                    <a href="/lana.html" class="mobile-nav-link">Lana Yang</a>
+                    <a href="/contact.html" class="mobile-nav-link">联系</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <div class="kol-hero bg-gradient-to-br from-blue-50 to-purple-50 py-16">
+            <div class="container mx-auto px-4">
+                <div class="max-w-6xl mx-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <!-- Left: KOL Info -->
+                        <div class="kol-info">
+                            <div class="flex items-center mb-6">
+                                <div class="kol-avatar-large relative">
+                                    <img src="https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0" 
+                                         alt="Giant Cutie" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg">
+                                    <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 rounded-full border-3 border-white flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-sm"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-6">
+                                    <h1 class="text-3xl font-bold text-gray-900 mb-2">加密大漂亮</h1>
+                                    <p class="text-xl text-blue-600 mb-3">Giant Cutie</p>
+                                    <div class="flex items-center space-x-4">
+                                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                            <i class="fas fa-check-circle mr-1"></i>官方认证
+                                        </span>
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                                            <i class="fas fa-fire mr-1"></i>热门创作者
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-lg text-gray-700 mb-6">
+                                中文区Web3.0行业最大IP，专业加密矿工，坐标硅谷。深度参与区块链技术发展，为华语社区提供最前沿的Web3资讯和教育内容。
+                            </p>
+                            
+                            <div class="kol-highlights grid grid-cols-2 gap-4 mb-8">
+                                <div class="highlight-item bg-white rounded-lg p-4 shadow-md">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">坐标</p>
+                                            <p class="font-semibold">硅谷</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="highlight-item bg-white rounded-lg p-4 shadow-md">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-coins text-yellow-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">身份</p>
+                                            <p class="font-semibold">加密矿工</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="cta-buttons flex flex-wrap gap-4">
+                                <a href="/contact.html" class="bg-brand-primary text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                    <i class="fas fa-handshake mr-2"></i>商务合作
+                                </a>
+                                <a href="https://t.me/giantcutie6688" target="_blank" class="bg-gray-800 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-medium">
+                                    <i class="fab fa-telegram mr-2"></i>关注Telegram
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Right: Stats -->
+                        <div class="kol-stats">
+                            <div class="stats-grid grid grid-cols-2 gap-6">
+                                <div class="stat-card bg-white rounded-lg p-6 shadow-lg text-center">
+                                    <div class="stat-icon w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div class="stat-number text-2xl font-bold text-gray-900 mb-1">622K+</div>
+                                    <div class="stat-label text-gray-600 text-sm">总粉丝</div>
+                                    <div class="stat-label-en text-gray-400 text-xs">Total Followers</div>
+                                </div>
+                                
+                                <div class="stat-card bg-white rounded-lg p-6 shadow-lg text-center">
+                                    <div class="stat-icon w-12 h-12 bg-red-100 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                        <i class="fas fa-play text-red-600 text-xl"></i>
+                                    </div>
+                                    <div class="stat-number text-2xl font-bold text-gray-900 mb-1">38.8M+</div>
+                                    <div class="stat-label text-gray-600 text-sm">月播放</div>
+                                    <div class="stat-label-en text-gray-400 text-xs">Monthly Views</div>
+                                </div>
+                                
+                                <div class="stat-card bg-white rounded-lg p-6 shadow-lg text-center">
+                                    <div class="stat-icon w-12 h-12 bg-green-100 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                        <i class="fas fa-heart text-green-600 text-xl"></i>
+                                    </div>
+                                    <div class="stat-number text-2xl font-bold text-gray-900 mb-1">8.5%</div>
+                                    <div class="stat-label text-gray-600 text-sm">互动率</div>
+                                    <div class="stat-label-en text-gray-400 text-xs">Engagement Rate</div>
+                                </div>
+                                
+                                <div class="stat-card bg-white rounded-lg p-6 shadow-lg text-center">
+                                    <div class="stat-icon w-12 h-12 bg-purple-100 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                        <i class="fas fa-comments text-purple-600 text-xl"></i>
+                                    </div>
+                                    <div class="stat-number text-2xl font-bold text-gray-900 mb-1">4.2M+</div>
+                                    <div class="stat-label text-gray-600 text-sm">社群成员</div>
+                                    <div class="stat-label-en text-gray-400 text-xs">Community Members</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Distribution -->
+        <section class="platforms-section py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">平台分布</h2>
+                        <p class="text-lg text-gray-600">全平台矩阵布局，覆盖核心Web3用户群体</p>
+                    </div>
+                    
+                    <div class="platforms-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- YouTube Industry -->
+                        <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" class="platform-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow border-l-4 border-red-500">
+                            <div class="flex items-center mb-4">
+                                <div class="platform-icon w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fab fa-youtube text-red-500 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">YouTube (行业)</h3>
+                                    <p class="text-sm text-gray-600">专业行业分析</p>
+                                </div>
+                            </div>
+                            <div class="platform-stats">
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">订阅者</span>
+                                    <span class="font-semibold">285K+</span>
+                                </div>
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">月观看</span>
+                                    <span class="font-semibold">15.2M+</span>
+                                </div>
+                                <div class="status flex items-center">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-sm text-green-600">活跃更新</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- YouTube Trading -->
+                        <a href="https://www.youtube.com/@GiantCutie-K" target="_blank" class="platform-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow border-l-4 border-red-500">
+                            <div class="flex items-center mb-4">
+                                <div class="platform-icon w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fab fa-youtube text-red-500 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">YouTube (交易)</h3>
+                                    <p class="text-sm text-gray-600">交易策略分享</p>
+                                </div>
+                            </div>
+                            <div class="platform-stats">
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">订阅者</span>
+                                    <span class="font-semibold">337K+</span>
+                                </div>
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">月观看</span>
+                                    <span class="font-semibold">23.6M+</span>
+                                </div>
+                                <div class="status flex items-center">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-sm text-green-600">活跃更新</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Twitter Main -->
+                        <a href="https://x.com/giantcutie666" target="_blank" class="platform-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow border-l-4 border-blue-500">
+                            <div class="flex items-center mb-4">
+                                <div class="platform-icon w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fab fa-x-twitter text-blue-500 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Twitter</h3>
+                                    <p class="text-sm text-gray-600">实时资讯分享</p>
+                                </div>
+                            </div>
+                            <div class="platform-stats">
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">关注者</span>
+                                    <span class="font-semibold">156K+</span>
+                                </div>
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">月互动</span>
+                                    <span class="font-semibold">2.8M+</span>
+                                </div>
+                                <div class="status flex items-center">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-sm text-green-600">每日更新</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Discord -->
+                        <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" class="platform-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow border-l-4 border-purple-500">
+                            <div class="flex items-center mb-4">
+                                <div class="platform-icon w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fab fa-discord text-purple-500 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Discord</h3>
+                                    <p class="text-sm text-gray-600">社区交流</p>
+                                </div>
+                            </div>
+                            <div class="platform-stats">
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">成员数</span>
+                                    <span class="font-semibold">89K+</span>
+                                </div>
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">活跃用户</span>
+                                    <span class="font-semibold">12K+</span>
+                                </div>
+                                <div class="status flex items-center">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-sm text-green-600">24/7 活跃</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Telegram -->
+                        <a href="https://t.me/giantcutie6688" target="_blank" class="platform-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow border-l-4 border-blue-400">
+                            <div class="flex items-center mb-4">
+                                <div class="platform-icon w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fab fa-telegram text-blue-400 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Telegram</h3>
+                                    <p class="text-sm text-gray-600">即时通讯</p>
+                                </div>
+                            </div>
+                            <div class="platform-stats">
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">订阅者</span>
+                                    <span class="font-semibold">245K+</span>
+                                </div>
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">日活跃</span>
+                                    <span class="font-semibold">45K+</span>
+                                </div>
+                                <div class="status flex items-center">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-sm text-green-600">实时更新</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Twitter Backup -->
+                        <a href="http://x.com/giantcutie777" target="_blank" class="platform-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow border-l-4 border-gray-500">
+                            <div class="flex items-center mb-4">
+                                <div class="platform-icon w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fab fa-x-twitter text-gray-500 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Twitter (备用)</h3>
+                                    <p class="text-sm text-gray-600">备份账号</p>
+                                </div>
+                            </div>
+                            <div class="platform-stats">
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">关注者</span>
+                                    <span class="font-semibold">78K+</span>
+                                </div>
+                                <div class="stat-row flex justify-between mb-2">
+                                    <span class="text-gray-600">备用状态</span>
+                                    <span class="font-semibold">准备中</span>
+                                </div>
+                                <div class="status flex items-center">
+                                    <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                                    <span class="text-sm text-yellow-600">备用激活</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Specialties -->
+        <section class="specialties-section py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">内容专长</h2>
+                        <p class="text-lg text-gray-600">深度专业的Web3内容创作和教育</p>
+                    </div>
+                    
+                    <div class="specialties-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="specialty-card bg-white rounded-lg p-8 shadow-lg text-center">
+                            <div class="specialty-icon w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                <i class="fas fa-graduation-cap text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Web3科普</h3>
+                            <p class="text-gray-600 mb-4">深入浅出的区块链技术科普，让复杂概念变得易懂</p>
+                            <div class="specialty-features">
+                                <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">技术解读</span>
+                                <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">趋势分析</span>
+                                <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">项目评测</span>
+                            </div>
+                        </div>
+                        
+                        <div class="specialty-card bg-white rounded-lg p-8 shadow-lg text-center">
+                            <div class="specialty-icon w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">DeFi分析</h3>
+                            <p class="text-gray-600 mb-4">专业的去中心化金融协议分析和风险评估</p>
+                            <div class="specialty-features">
+                                <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">协议分析</span>
+                                <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">收益策略</span>
+                                <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">风险管理</span>
+                            </div>
+                        </div>
+                        
+                        <div class="specialty-card bg-white rounded-lg p-8 shadow-lg text-center">
+                            <div class="specialty-icon w-16 h-16 bg-purple-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                <i class="fas fa-image text-purple-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">NFT评测</h3>
+                            <p class="text-gray-600 mb-4">深度的NFT项目评测和市场趋势分析</p>
+                            <div class="specialty-features">
+                                <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">项目评估</span>
+                                <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">市场分析</span>
+                                <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">投资建议</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Collaboration Section -->
+        <section class="collaboration-section py-16 bg-brand-primary">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold text-white mb-4">与 Giant Cutie 合作</h2>
+                    <p class="text-xl text-blue-100 mb-8">
+                        借助头部中文KOL的影响力，让您的Web3项目触达更广泛的中文用户群体
+                    </p>
+                    
+                    <div class="collaboration-benefits grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        <div class="benefit-item bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+                            <div class="benefit-icon w-12 h-12 bg-white/20 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                <i class="fas fa-bullhorn text-white text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-white mb-2">品牌曝光</h3>
+                            <p class="text-blue-100 text-sm">600万+ 月曝光量，覆盖核心Web3用户</p>
+                        </div>
+                        
+                        <div class="benefit-item bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+                            <div class="benefit-icon w-12 h-12 bg-white/20 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                <i class="fas fa-users text-white text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-white mb-2">社区建设</h3>
+                            <p class="text-blue-100 text-sm">专业社区运营，提升用户粘性和活跃度</p>
+                        </div>
+                        
+                        <div class="benefit-item bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+                            <div class="benefit-icon w-12 h-12 bg-white/20 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-white text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-white mb-2">效果保证</h3>
+                            <p class="text-blue-100 text-sm">基于数据的营销策略，确保投资回报</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cta-buttons flex flex-wrap justify-center gap-4">
+                        <a href="/contact.html" class="bg-white text-brand-primary px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-medium">
+                            <i class="fas fa-envelope mr-2"></i>商务合作
+                        </a>
+                        <a href="https://t.me/clabskoala1900" target="_blank" class="bg-white/20 text-white px-8 py-3 rounded-lg hover:bg-white/30 transition-colors font-medium backdrop-blur-sm">
+                            <i class="fab fa-telegram mr-2"></i>立即联系
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">C</span>
+                        </div>
+                        <span class="font-bold text-xl">C Labs</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">TOP Vol Web3 Chinese Brand</p>
+                    <p class="text-gray-400 text-sm">专业的 Web3 品牌营销机构，连接全球与中文社区</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">服务</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">KOL 营销</a></li>
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">内容传播</a></li>
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">社区运营</a></li>
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">品牌策划</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">IP展示</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/giant-cutie.html" class="hover:text-white transition-colors">Giant Cutie</a></li>
+                        <li><a href="/lana.html" class="hover:text-white transition-colors">Lana</a></li>
+                        <li><a href="/tutorials.html" class="hover:text-white transition-colors">Web3教程</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">联系我们</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-gray-300">商务合作</span>
+                                <span>clabsservice0024@gmail.com</span>
+                            </div>
+                        </li>
+                        <li class="mt-3">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-gray-300">媒体咨询</span>
+                                <a href="https://t.me/clabskoala1900" target="_blank" class="hover:text-white transition-colors inline-flex items-center">
+                                    <i class="fab fa-telegram mr-2"></i>
+                                    Telegram
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2024 C Labs. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="/static/app.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
