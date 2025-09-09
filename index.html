@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Labs - TOP Vol Web3 Chinese Brand</title>
+    <meta name="description" content="C Labs 是专业的 Web3 品牌营销机构，拥有顶级 KOL Giant Cutie，提供全方位的 Web3 营销解决方案，连接全球与中文社区。">
+    <meta name="keywords" content="Web3, 营销, KOL, 区块链, 加密货币, 品牌, 中文社区, Giant Cutie">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="C Labs - TOP Vol Web3 Chinese Brand">
+    <meta property="og:description" content="专业的 Web3 品牌营销机构，连接全球与中文社区">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://clabs-c.pages.dev">
+    <meta property="og:image" content="/static/og-image.jpg">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="C Labs - TOP Vol Web3 Chinese Brand">
+    <meta name="twitter:description" content="专业的 Web3 品牌营销机构，连接全球与中文社区">
+    <meta name="twitter:image" content="/static/og-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': {
+                            'primary': '#283dfe',
+                            'secondary': '#ffffff', 
+                            'dark': '#000002'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link href="/static/styles.css" rel="stylesheet">
+</head>
+<body class="font-sans bg-white text-gray-900">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">C</span>
+                    </div>
+                    <span class="font-bold text-xl">C Labs</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/index.html" class="nav-link">首页</a>
+                    <a href="/tutorials.html" class="nav-link">Web3教程</a>
+                    <a href="/giant-cutie.html" class="nav-link">Giant Cutie</a>
+                    <a href="/lana.html" class="nav-link">Lana Yang</a>
+                    <a href="/contact.html" class="nav-link">联系</a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/contact.html" class="bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        开始合作
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
+                <div class="flex flex-col space-y-2">
+                    <a href="/index.html" class="mobile-nav-link">首页</a>
+                    <a href="/tutorials.html" class="mobile-nav-link">Web3教程</a>
+                    <a href="/giant-cutie.html" class="mobile-nav-link">Giant Cutie</a>
+                    <a href="/lana.html" class="mobile-nav-link">Lana Yang</a>
+                    <a href="/contact.html" class="mobile-nav-link">联系</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-line single-line">加密货币/美股MCN机构</span>
+                    <span class="title-line highlight">Cryptocurrency/US Stock MCN Institution</span>
+                </h1>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">80万+</span>
+                        <span class="stat-label">自营流量</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">500万+</span>
+                        <span class="stat-label">社区联盟</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">60亿+</span>
+                        <span class="stat-label">累计曝光</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">2位</span>
+                        <span class="stat-label">自有头部IP</span>
+                    </div>
+                </div>
+                <div style="width: 100%; display: block; clear: both; margin: 2rem 0 4rem 0;">
+                    <p class="hero-subtitle hero-subtitle-below" style="margin: 0 auto; display: block; width: fit-content; color: rgba(255, 255, 255, 0.4) !important;">投资型用户 | Investment-focused Users</p>
+                </div>
+                <div class="hero-cta">
+                    <a href="/contact.html" class="btn-primary">联系合作</a>
+                    <a href="#giant-cutie" class="btn-secondary">了解IP</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advantages Section -->
+        <div class="advantages-section">
+            <div class="container">
+                <h2 class="section-title">核心优势</h2>
+                <div class="advantages-grid">
+                    <div class="advantage-card">
+                        <div class="advantage-icon">🎯</div>
+                        <h3>统一策略</h3>
+                        <p>全面的策略规划和多方面协作。营销不仅要获得流量，更要实现转化，我们不仅扩大品牌知名度，还帮助合作伙伴传达项目价值。</p>
+                    </div>
+                    <div class="advantage-card">
+                        <div class="advantage-icon">👑</div>
+                        <h3>头部优势</h3>
+                        <p>顶级 KOL 是行业稀缺资源。C Labs 直接控制头部中文 KOL "Giant Cutie"，是新项目进入市场的最佳门户。</p>
+                    </div>
+                    <div class="advantage-card">
+                        <div class="advantage-icon">💰</div>
+                        <h3>竞争定价</h3>
+                        <p>经过四年运营，C Labs 积累了广泛的合作伙伴渠道网络。渠道内广告价格低于市场价格，基于更强信任关系，效率更高。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KOL/IP Section -->
+        <div class="kol-section" id="giant-cutie">
+            <div class="container">
+                <h2 class="section-title">自有IP</h2>
+                
+                <div class="ip-matrix-grid">
+                    <!-- Giant Cutie Card -->
+                    <div class="ip-matrix-card giant-cutie-theme">
+                        <div class="ip-card-header">
+                            <div class="ip-avatar-container">
+                                <div class="ip-avatar">
+                                    <img src="https://ugc.production.linktr.ee/8dff44ed-9394-470c-9acd-751e5fbb5639_ScB2QtvZc64rsA3F7MmNlNGgsmwApuV7vuPKBMWFGJtq2Vf7YxZH7ekYzRtMEHZEKwOLqH6sjA-s900-c-k-c0x00ffffff-no-r.jpeg?io=true&size=thumbnail-stack_v1_0" alt="Giant Cutie">
+                                    <div class="status-indicator active">
+                                        <i class="fas fa-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ip-info">
+                                <div class="ip-name-section">
+                                    <h3 class="ip-name">加密大漂亮</h3>
+                                    <span class="ip-name-en">Giant Cutie</span>
+                                </div>
+                                <p class="ip-description">中文区Web3.0行业最大IP，加密矿工，坐标硅谷</p>
+                                <div class="ip-badges">
+                                    <span class="badge verified">
+                                        <i class="fas fa-check-circle"></i>
+                                        官方认证
+                                    </span>
+                                    <span class="badge trending">
+                                        <i class="fas fa-fire"></i>
+                                        热门创作者
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ip-actions">
+                                <a href="#giant-cutie-details" class="btn-detail">查看详情</a>
+                            </div>
+                        </div>
+                        
+                        <div class="ip-stats-section">
+                            <div class="stats-grid-four">
+                                <div class="stat-item">
+                                    <span class="stat-number">622K+</span>
+                                    <span class="stat-label">总粉丝</span>
+                                    <span class="stat-label-en">Total Followers</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">38.8M+</span>
+                                    <span class="stat-label">月播放</span>
+                                    <span class="stat-label-en">Monthly Views</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">8.5%</span>
+                                    <span class="stat-label">互动率</span>
+                                    <span class="stat-label-en">Engagement Rate</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">4.2M+</span>
+                                    <span class="stat-label">社群成员</span>
+                                    <span class="stat-label-en">Community Members</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ip-platforms-section">
+                            <h4 class="section-label">平台分布</h4>
+                            <div class="platforms-list-expanded">
+                                <a href="https://www.youtube.com/@GiantCutie-CH" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">YouTube(行业)</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="https://www.youtube.com/@GiantCutie-K" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">YouTube(交易)</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="https://x.com/giantcutie666" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-x-twitter" style="color: #1DA1F2;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">Twitter</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="https://discord.com/invite/ZXxyRxDzJD" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-discord" style="color: #5865F2;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">Discord</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="https://t.me/giantcutie6688" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-telegram" style="color: #0088CC;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">Telegram</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="http://x.com/giantcutie777" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-x-twitter" style="color: #1DA1F2;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">Twitter(备用)</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="ip-specialties-section">
+                            <div class="specialty-tags">
+                                <span class="specialty-tag">Web3科普</span>
+                                <span class="specialty-tag">DeFi分析</span>
+                                <span class="specialty-tag">NFT评测</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lana Card -->
+                    <div class="ip-matrix-card lana-theme" id="lana">
+                        <div class="ip-card-header">
+                            <div class="ip-avatar-container">
+                                <div class="ip-avatar">
+                                    <img src="https://ugc.production.linktr.ee/fee9d116-303c-47f8-a1cd-f00a49dfdbc6_2dd6008cc940a03f14fd3d812422212d-c5-1080x1080.jpeg?io=true&size=avatar-v3_0" alt="Lana Yang">
+                                    <div class="status-indicator active">
+                                        <i class="fas fa-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ip-info">
+                                <div class="ip-name-section">
+                                    <h3 class="ip-name">Lana Yang</h3>
+                                    <span class="ip-name-en">Lana Yang</span>
+                                </div>
+                                <p class="ip-description">英文区热榜KOL，加密分析师，行业解读</p>
+                                <div class="ip-badges">
+                                    <span class="badge verified">
+                                        <i class="fas fa-check-circle"></i>
+                                        官方认证
+                                    </span>
+                                    <span class="badge rising">
+                                        <i class="fas fa-chart-line"></i>
+                                        快速成长
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ip-actions">
+                                <a href="#lana-details" class="btn-detail">查看详情</a>
+                            </div>
+                        </div>
+                        
+                        <div class="ip-stats-section">
+                            <div class="stats-grid-four">
+                                <div class="stat-item">
+                                    <span class="stat-number">285K+</span>
+                                    <span class="stat-label">总粉丝</span>
+                                    <span class="stat-label-en">Total Followers</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">15.2M+</span>
+                                    <span class="stat-label">月播放</span>
+                                    <span class="stat-label-en">Monthly Views</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">12.3%</span>
+                                    <span class="stat-label">互动率</span>
+                                    <span class="stat-label-en">Engagement Rate</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">2.1M+</span>
+                                    <span class="stat-label">直播观看</span>
+                                    <span class="stat-label-en">Live Viewers</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ip-platforms-section">
+                            <h4 class="section-label">平台分布</h4>
+                            <div class="platforms-list">
+                                <a href="https://www.youtube.com/@LanaYangcrypto" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">YouTube</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="https://x.com/lanayangcrypto" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-x-twitter" style="color: #1DA1F2;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">Twitter</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="https://www.tiktok.com/@lana.young6" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-tiktok" style="color: #000000;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">TikTok</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                                <a href="https://t.me/+p6_lg0XGAvkxOWJl" target="_blank" rel="noopener" class="platform-item active platform-link">
+                                    <i class="fab fa-telegram" style="color: #0088CC;"></i>
+                                    <div class="platform-details">
+                                        <span class="platform-name">Telegram</span>
+                                        <span class="platform-status">活跃</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="ip-specialties-section">
+                            <div class="specialty-tags">
+                                <span class="specialty-tag">直播互动</span>
+                                <span class="specialty-tag">社区运营</span>
+                                <span class="specialty-tag">用户增长</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div class="services-section" id="services">
+            <div class="container">
+                <h2 class="section-title">服务范围</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <h3>KOL 营销</h3>
+                        <p>顶级 KOL 资源，精准触达目标受众</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>内容传播</h3>
+                        <p>多平台内容策划与传播，全网覆盖</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>社区运营</h3>
+                        <p>专业社区管理，提升用户粘性</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>品牌策划</h3>
+                        <p>项目品牌定位与市场教育</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>交易投研</h3>
+                        <p>每日行情深度投研，专业团队稳定输出，交易统计胜率可查</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>行业投研</h3>
+                        <p>行业走势分析，资金流向分析，深度专业，每月一次行研报告</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section" id="contact">
+            <div class="container">
+                <h2>准备开始合作？</h2>
+                <p>联系我们，让您的 Web3 项目在全球市场闪闪发光</p>
+                <div class="cta-buttons">
+                    <a href="mailto:clabsservice0024@gmail.com" class="btn-primary">立即咨询</a>
+                    <a href="https://t.me/clabskoala1900" target="_blank" class="btn-secondary">Telegram联系</a>
+                </div>
+                
+                <!-- Contact Details -->
+                <div class="contact-details mt-12">
+                    <div class="contact-grid">
+                        <div class="contact-item">
+                            <h3>商务合作</h3>
+                            <p>clabsservice0024@gmail.com</p>
+                            <p class="text-sm text-gray-400">（客户提交资料邮箱）</p>
+                        </div>
+                        <div class="contact-item">
+                            <h3>媒体咨询</h3>
+                            <div class="social-links">
+                                <a href="https://t.me/clabskoala1900" target="_blank" class="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                                    <i class="fab fa-telegram mr-2"></i>
+                                    Telegram
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">C</span>
+                        </div>
+                        <span class="font-bold text-xl">C Labs</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">TOP Vol Web3 Chinese Brand</p>
+                    <p class="text-gray-400 text-sm">专业的 Web3 品牌营销机构，连接全球与中文社区</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">服务</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#services" class="hover:text-white transition-colors">KOL 营销</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">内容传播</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">社区运营</a></li>
+                        <li><a href="#services" class="hover:text-white transition-colors">品牌策划</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">IP展示</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#giant-cutie" class="hover:text-white transition-colors">Giant Cutie</a></li>
+                        <li><a href="#lana" class="hover:text-white transition-colors">Lana</a></li>
+                        <li><a href="#tutorials" class="hover:text-white transition-colors">Web3教程</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">联系我们</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-gray-300">商务合作</span>
+                                <span>clabsservice0024@gmail.com</span>
+                            </div>
+                        </li>
+                        <li class="mt-3">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-gray-300">媒体咨询</span>
+                                <a href="https://t.me/clabskoala1900" target="_blank" class="hover:text-white transition-colors inline-flex items-center">
+                                    <i class="fab fa-telegram mr-2"></i>
+                                    Telegram
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2024 C Labs. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Custom JavaScript -->
+    <script src="/static/app.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
