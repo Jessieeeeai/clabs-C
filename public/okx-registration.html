@@ -197,6 +197,16 @@
                                             </div>
                                             <div class="step-content ml-11">
                                                 <p class="mb-4">在 OKX 首页右上角找到"注册"按钮并点击。</p>
+                                                
+                                                <!-- 注册步骤截图 -->
+                                                <div class="mb-6">
+                                                    <img src="/static/images/tutorials/okx/registration-steps.png" 
+                                                         alt="OKX注册步骤详细截图" 
+                                                         class="w-full rounded-lg shadow-lg border border-gray-200"
+                                                         loading="lazy">
+                                                    <p class="text-sm text-gray-600 mt-2 text-center">OKX 官网注册页面完整流程</p>
+                                                </div>
+                                                
                                                 <ul class="list-disc list-inside space-y-2 text-gray-700">
                                                     <li>在首页右上角找到"注册"或"Sign up"按钮</li>
                                                     <li>点击进入注册页面</li>
@@ -260,24 +270,63 @@
                                             </div>
                                             <div class="step-content ml-11">
                                                 <p class="mb-4">为了更好的体验，建议下载 OKX 手机应用。</p>
-                                                <div class="app-download-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                                    <div class="download-option bg-gray-50 p-4 rounded-lg">
-                                                        <h4 class="font-medium mb-2 flex items-center">
-                                                            <i class="fab fa-android text-green-500 mr-2"></i>Android 下载
+                                                <!-- App 下载详细指南 -->
+                                                <div class="app-download-section">
+                                                    <!-- Android 下载 -->
+                                                    <div class="android-section mb-8 p-6 bg-green-50 rounded-lg border border-green-200">
+                                                        <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                                            <i class="fab fa-android text-green-600 text-xl mr-3"></i>
+                                                            Android 下载安装指南
                                                         </h4>
-                                                        <p class="text-sm text-gray-600 mb-3">扫描官网二维码或访问应用商店</p>
-                                                        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">
-                                                            <i class="fas fa-download mr-1"></i>立即下载
-                                                        </a>
+                                                        <div class="mb-4">
+                                                            <img src="/static/images/tutorials/okx/android-installation-guide.png" 
+                                                                 alt="Android OKX应用下载安装完整指南" 
+                                                                 class="w-full rounded-lg shadow-md border"
+                                                                 loading="lazy">
+                                                            <p class="text-sm text-green-700 mt-2">Android 设备完整安装流程截图</p>
+                                                        </div>
+                                                        <ul class="text-sm text-green-800 space-y-2">
+                                                            <li>• 通过官网扫码或直接下载APK文件</li>
+                                                            <li>• 允许安装未知来源应用</li>
+                                                            <li>• 完成安装后登录账户</li>
+                                                        </ul>
                                                     </div>
-                                                    <div class="download-option bg-gray-50 p-4 rounded-lg">
-                                                        <h4 class="font-medium mb-2 flex items-center">
-                                                            <i class="fab fa-apple text-gray-700 mr-2"></i>iOS 下载
+                                                    
+                                                    <!-- iOS 下载 -->
+                                                    <div class="ios-section p-6 bg-blue-50 rounded-lg border border-blue-200">
+                                                        <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                                            <i class="fab fa-apple text-blue-600 text-xl mr-3"></i>
+                                                            iOS 下载安装指南
                                                         </h4>
-                                                        <p class="text-sm text-gray-600 mb-3">通过 App Store 搜索"OKX"</p>
-                                                        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">
-                                                            <i class="fas fa-download mr-1"></i>App Store
-                                                        </a>
+                                                        <div class="grid gap-4 md:grid-cols-2">
+                                                            <div>
+                                                                <img src="/static/images/tutorials/okx/ios-appstore.png" 
+                                                                     alt="iOS App Store 中搜索 OKX 应用" 
+                                                                     class="w-full rounded-lg shadow-md border"
+                                                                     loading="lazy">
+                                                                <p class="text-sm text-blue-700 mt-2">App Store 搜索 OKX</p>
+                                                            </div>
+                                                            <div>
+                                                                <img src="/static/images/tutorials/okx/ios-security-settings.png" 
+                                                                     alt="iOS 安全设置和隐私配置" 
+                                                                     class="w-full rounded-lg shadow-md border"
+                                                                     loading="lazy">
+                                                                <p class="text-sm text-blue-700 mt-2">安全设置配置</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mt-4">
+                                                            <img src="/static/images/tutorials/okx/ios-appstore-detailed.png" 
+                                                                 alt="iOS 详细下载和安装步骤" 
+                                                                 class="w-full rounded-lg shadow-md border"
+                                                                 loading="lazy">
+                                                            <p class="text-sm text-blue-700 mt-2">iOS 详细安装步骤</p>
+                                                        </div>
+                                                        <ul class="text-sm text-blue-800 space-y-2 mt-4">
+                                                            <li>• 在 App Store 搜索 "OKX" 或 "欧易"</li>
+                                                            <li>• 点击下载并等待安装完成</li>
+                                                            <li>• 配置安全设置和通知权限</li>
+                                                            <li>• 登录账户开始使用</li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                             </div>
@@ -408,6 +457,9 @@
             </div>
         </div>
     </footer>
+    
+    <!-- 移动菜单修复脚本 -->
+    <script src="/mobile-menu-fix.js"></script>
     
     <!-- JavaScript -->
     <script src="/static/app.js"></script>
