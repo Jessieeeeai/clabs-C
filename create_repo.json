@@ -1,0 +1,9 @@
+{
+  "name": "clabs-website",
+  "description": "C Labs - 铁马冰河品牌孵化器官方网站",
+  "homepage": "https://jessieeeeai.github.io/clabs-website",
+  "private": false,
+  "has_issues": true,
+  "has_projects": true,
+  "has_wiki": true
+}
