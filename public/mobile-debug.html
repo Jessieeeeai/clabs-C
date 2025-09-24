@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <title>移动菜单深度调试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        /* 强制移动端样式 */
+        * {
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            -webkit-touch-callout: none;
+        }
+        
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        
+        /* 移动菜单按钮强制样式 */
+        #mobile-menu-btn {
+            display: block !important;
+            position: relative !important;
+            width: 48px !important;
+            height: 48px !important;
+            background: #f3f4f6 !important;
+            border: 2px solid #d1d5db !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            color: #374151 !important;
+            font-size: 20px !important;
+            z-index: 99999 !important;
+            outline: none !important;
+            -webkit-appearance: none !important;
+            -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3) !important;
+            touch-action: manipulation !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        #mobile-menu-btn:hover,
+        #mobile-menu-btn:focus {
+            background: #e5e7eb !important;
+            border-color: #9ca3af !important;
+            transform: scale(1.05) !important;
+        }
+        
+        #mobile-menu-btn:active {
+            background: #3b82f6 !important;
+            color: white !important;
+            transform: scale(0.95) !important;
+        }
+        
+        /* 菜单样式 */
+        #mobile-menu {
+            transition: all 0.3s ease !important;
+            background: white !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        #mobile-menu.hidden {
+            max-height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+            transform: translateY(-10px) !important;
+        }
+        
+        #mobile-menu:not(.hidden) {
+            max-height: 400px !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+        
+        .mobile-nav-link {
+            display: block !important;
+            padding: 16px 20px !important;
+            color: #374151 !important;
+            text-decoration: none !important;
+            border-bottom: 1px solid #f3f4f6 !important;
+            transition: background-color 0.2s ease !important;
+            touch-action: manipulation !important;
+        }
+        
+        .mobile-nav-link:hover,
+        .mobile-nav-link:active {
+            background: #f9fafb !important;
+            color: #1f2937 !important;
+        }
+        
+        .debug-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px;
+            font-size: 12px;
+            z-index: 100000;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .test-buttons {
+            position: fixed;
+            top: 100px;
+            right: 10px;
+            z-index: 99998;
+        }
+        
+        .test-btn {
+            display: block;
+            width: 60px;
+            height: 40px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body>
+    <!-- 测试按钮 -->
+    <div class="test-buttons">
+        <button class="test-btn" onclick="testTouch(this)">测试1</button>
+        <button class="test-btn" onclick="testTouch(this)">测试2</button>
+        <button class="test-btn" onclick="clearDebug()">清空</button>
+    </div>
+
+    <!-- 导航栏 - 与原项目完全相同的结构 -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">C</span>
+                    </div>
+                    <span class="font-bold text-xl">C Labs Debug</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-700">首页</a>
+                    <a href="#" class="text-gray-700">教程</a>
+                    <a href="#" class="text-gray-700">联系</a>
+                </div>
+                
+                <!-- 移动菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" type="button" aria-label="移动菜单">
+                        <i class="fas fa-bars" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动菜单 -->
+            <div id="mobile-menu" class="hidden md:hidden">
+                <div class="flex flex-col">
+                    <a href="#" class="mobile-nav-link">首页</a>
+                    <a href="#" class="mobile-nav-link">Web3教程</a>
+                    <a href="#" class="mobile-nav-link">Giant Cutie</a>
+                    <a href="#" class="mobile-nav-link">Lana Yang</a>
+                    <a href="#" class="mobile-nav-link">联系我们</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面内容 -->
+    <div class="pt-20 p-4">
+        <h1 class="text-2xl font-bold mb-4 text-center">移动菜单深度调试</h1>
+        
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h2 class="font-bold text-blue-800 mb-2">🔍 测试说明</h2>
+            <ul class="text-sm text-blue-700 space-y-1">
+                <li>1. 点击右上角汉堡菜单 ☰</li>
+                <li>2. 观察菜单是否展开</li>
+                <li>3. 检查底部调试信息</li>
+                <li>4. 测试右侧红色按钮确认触摸正常</li>
+            </ul>
+        </div>
+        
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <h2 class="font-bold text-yellow-800 mb-2">📱 设备信息</h2>
+            <div class="text-sm text-yellow-700" id="device-info">
+                <p>加载中...</p>
+            </div>
+        </div>
+        
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h2 class="font-bold text-green-800 mb-2">✅ 当前状态</h2>
+            <div class="text-sm text-green-700" id="status-info">
+                <p>初始化中...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 调试面板 -->
+    <div class="debug-panel" id="debug-panel">
+        <div><strong>调试日志：</strong></div>
+        <div id="debug-log"></div>
+    </div>
+
+    <script>
+        // 调试工具
+        const debugLog = document.getElementById('debug-log');
+        const deviceInfo = document.getElementById('device-info');
+        const statusInfo = document.getElementById('status-info');
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            console.log(logEntry);
+            
+            debugLog.innerHTML += `<div>${logEntry}</div>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+        
+        function updateStatus(message) {
+            statusInfo.innerHTML = `<p>${message}</p>`;
+            log(`状态更新: ${message}`);
+        }
+        
+        function testTouch(btn) {
+            log(`测试按钮 "${btn.textContent}" 被点击`);
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.style.background = '#ef4444';
+            }, 500);
+        }
+        
+        function clearDebug() {
+            debugLog.innerHTML = '';
+            log('调试日志已清空');
+        }
+        
+        // 显示设备信息
+        function showDeviceInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                screen: `${screen.width}x${screen.height}`,
+                viewport: `${window.innerWidth}x${window.innerHeight}`,
+                pixelRatio: window.devicePixelRatio || 1,
+                touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+                platform: navigator.platform,
+                isMobile: /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+            };
+            
+            deviceInfo.innerHTML = `
+                <p><strong>屏幕:</strong> ${info.screen}</p>
+                <p><strong>视窗:</strong> ${info.viewport}</p>
+                <p><strong>像素比:</strong> ${info.pixelRatio}</p>
+                <p><strong>触摸支持:</strong> ${info.touchSupport ? '是' : '否'}</p>
+                <p><strong>移动设备:</strong> ${info.isMobile ? '是' : '否'}</p>
+                <p><strong>平台:</strong> ${info.platform}</p>
+            `;
+            
+            log(`设备信息 - 屏幕: ${info.screen}, 视窗: ${info.viewport}, 触摸: ${info.touchSupport}, 移动: ${info.isMobile}`);
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            log('页面加载完成，开始初始化');
+            showDeviceInfo();
+            
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            
+            if (!mobileMenuBtn) {
+                log('❌ 错误：找不到移动菜单按钮');
+                updateStatus('错误：找不到移动菜单按钮');
+                return;
+            }
+            
+            if (!mobileMenu) {
+                log('❌ 错误：找不到移动菜单');
+                updateStatus('错误：找不到移动菜单');
+                return;
+            }
+            
+            log('✅ 所有DOM元素已找到');
+            updateStatus('DOM元素检查通过，添加事件监听器');
+            
+            // 多种事件监听确保兼容性
+            const events = ['click', 'touchend', 'touchstart'];
+            
+            events.forEach(eventType => {
+                mobileMenuBtn.addEventListener(eventType, function(e) {
+                    log(`🔥 ${eventType} 事件触发！`);
+                    
+                    if (eventType === 'click' || eventType === 'touchend') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const isHidden = mobileMenu.classList.contains('hidden');
+                        log(`当前菜单状态: ${isHidden ? '隐藏' : '显示'}`);
+                        
+                        if (isHidden) {
+                            mobileMenu.classList.remove('hidden');
+                            menuIcon.className = 'fas fa-times';
+                            log('✅ 菜单已展开');
+                            updateStatus('菜单已展开 - 再次点击可收起');
+                        } else {
+                            mobileMenu.classList.add('hidden');
+                            menuIcon.className = 'fas fa-bars';
+                            log('✅ 菜单已收起');
+                            updateStatus('菜单已收起 - 点击可展开');
+                        }
+                    }
+                }, { passive: false });
+            });
+            
+            // 按钮状态监测
+            mobileMenuBtn.addEventListener('mousedown', () => log('🖱️ mousedown 事件'));
+            mobileMenuBtn.addEventListener('mouseup', () => log('🖱️ mouseup 事件'));
+            mobileMenuBtn.addEventListener('touchstart', () => log('📱 touchstart 事件'), { passive: true });
+            mobileMenuBtn.addEventListener('touchmove', () => log('📱 touchmove 事件'), { passive: true });
+            mobileMenuBtn.addEventListener('touchend', () => log('📱 touchend 事件'), { passive: true });
+            
+            log('✅ 所有事件监听器已添加');
+            updateStatus('初始化完成 - 请测试移动菜单功能');
+        });
+        
+        // 全局错误监听
+        window.addEventListener('error', function(e) {
+            log(`❌ JavaScript错误: ${e.message}`);
+        });
+        
+        // 视窗大小变化监听
+        window.addEventListener('resize', function() {
+            const viewport = `${window.innerWidth}x${window.innerHeight}`;
+            log(`📱 视窗大小变化: ${viewport}`);
+            showDeviceInfo();
+        });
+        
+        // 页面可见性变化监听
+        document.addEventListener('visibilitychange', function() {
+            log(`👁️ 页面可见性: ${document.hidden ? '隐藏' : '可见'}`);
+        });
+    </script>
+</body>
+</html>

@@ -519,45 +519,91 @@
     
     <!-- Mobile Menu CSS Fix -->
     <style>
+        /* 移动端强制样式 */
+        * {
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+        }
+        
         @media (max-width: 768px) {
             #mobile-menu-btn {
-                display: block !important;
-                width: 40px !important;
-                height: 40px !important;
-                background: transparent !important;
-                border: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 48px !important;
+                height: 48px !important;
+                background: rgba(243, 244, 246, 0.9) !important;
+                border: 2px solid #d1d5db !important;
+                border-radius: 8px !important;
                 cursor: pointer !important;
                 color: #374151 !important;
-                font-size: 18px !important;
-                z-index: 10000 !important;
+                font-size: 20px !important;
+                z-index: 99999 !important;
                 position: relative !important;
                 outline: none !important;
-                -webkit-tap-highlight-color: transparent !important;
+                -webkit-appearance: none !important;
+                -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3) !important;
+                touch-action: manipulation !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
             }
             
-            #mobile-menu-btn:hover {
-                background: rgba(243, 244, 246, 0.5) !important;
+            #mobile-menu-btn:hover,
+            #mobile-menu-btn:focus {
+                background: rgba(229, 231, 235, 0.9) !important;
+                border-color: #9ca3af !important;
+                transform: scale(1.05) !important;
             }
             
             #mobile-menu-btn:active {
-                background: rgba(209, 213, 219, 0.5) !important;
+                background: #3b82f6 !important;
+                color: white !important;
                 transform: scale(0.95) !important;
+                border-color: #2563eb !important;
             }
         }
         
         #mobile-menu {
-            transition: all 0.3s ease;
+            transition: all 0.3s ease !important;
+            background: white !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            margin-top: 8px !important;
         }
         
         #mobile-menu.hidden {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
+            max-height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+            transform: translateY(-10px) !important;
         }
         
         #mobile-menu:not(.hidden) {
-            max-height: 300px;
-            opacity: 1;
+            max-height: 400px !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+        
+        .mobile-nav-link {
+            display: block !important;
+            padding: 16px 20px !important;
+            color: #374151 !important;
+            text-decoration: none !important;
+            border-bottom: 1px solid #f3f4f6 !important;
+            transition: all 0.2s ease !important;
+            touch-action: manipulation !important;
+        }
+        
+        .mobile-nav-link:hover,
+        .mobile-nav-link:active {
+            background: #f9fafb !important;
+            color: #1f2937 !important;
+        }
+        
+        .mobile-nav-link:last-child {
+            border-bottom: none !important;
         }
     </style>
     
@@ -581,29 +627,44 @@
             
             console.log('移动菜单元素找到，添加事件监听器');
             
-            // 移动菜单点击事件
-            mobileMenuBtn.addEventListener('click', function(e) {
+            // 多重事件监听确保兼容性
+            const events = ['click', 'touchend'];
+            
+            function toggleMobileMenu(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('移动菜单按钮被点击');
+                console.log(`移动菜单 ${e.type} 事件触发`);
                 
                 const isHidden = mobileMenu.classList.contains('hidden');
+                console.log(`当前菜单状态: ${isHidden ? '隐藏' : '显示'}`);
                 
                 if (isHidden) {
                     mobileMenu.classList.remove('hidden');
-                    mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
-                    console.log('菜单已展开');
+                    mobileMenuBtn.querySelector('i').className = 'fas fa-times';
+                    console.log('✅ 菜单已展开');
                 } else {
                     mobileMenu.classList.add('hidden');
-                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    console.log('菜单已收起');
+                    mobileMenuBtn.querySelector('i').className = 'fas fa-bars';
+                    console.log('✅ 菜单已收起');
                 }
+            }
+            
+            events.forEach(eventType => {
+                mobileMenuBtn.addEventListener(eventType, toggleMobileMenu, { passive: false });
             });
             
-            // 添加触摸事件支持
+            // 触摸事件调试
             mobileMenuBtn.addEventListener('touchstart', function(e) {
-                console.log('检测到触摸开始');
+                console.log('📱 touchstart 检测到');
             }, { passive: true });
+            
+            mobileMenuBtn.addEventListener('touchmove', function(e) {
+                console.log('📱 touchmove 检测到');
+            }, { passive: true });
+            
+            // 按钮焦点调试
+            mobileMenuBtn.addEventListener('focus', () => console.log('🔍 按钮获得焦点'));
+            mobileMenuBtn.addEventListener('blur', () => console.log('🔍 按钮失去焦点'));
             
             console.log('移动菜单初始化完成');
         });
