@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动菜单测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        /* 调试CSS - 确保移动菜单按钮可见和可点击 */
+        #mobile-menu-btn {
+            display: block !important;
+            width: 44px !important;
+            height: 44px !important;
+            background: #f3f4f6 !important;
+            border: 2px solid #d1d5db !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            color: #374151 !important;
+            font-size: 20px !important;
+            z-index: 10000 !important;
+            position: relative !important;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        
+        #mobile-menu-btn:hover {
+            background: #e5e7eb !important;
+            border-color: #9ca3af !important;
+        }
+        
+        #mobile-menu-btn:active {
+            background: #d1d5db !important;
+            transform: scale(0.95) !important;
+        }
+        
+        #mobile-menu {
+            transition: all 0.3s ease !important;
+            max-height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        #mobile-menu.open {
+            max-height: 300px !important;
+            opacity: 1 !important;
+        }
+        
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 999999;
+        }
+        
+        .touch-test {
+            width: 60px;
+            height: 60px;
+            background: red;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 10001;
+        }
+    </style>
+</head>
+<body class="font-sans bg-white">
+    <!-- 触摸测试按钮 -->
+    <div class="touch-test" onclick="alert('触摸测试成功！')">点我测试</div>
+    
+    <!-- 调试信息 -->
+    <div class="debug-info" id="debug-info">
+        等待交互...
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-xl">C Labs 移动菜单测试</span>
+                </div>
+                
+                <!-- 桌面菜单 -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-700">首页</a>
+                    <a href="#" class="text-gray-700">教程</a>
+                    <a href="#" class="text-gray-700">联系</a>
+                </div>
+                
+                <!-- 移动菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" type="button">
+                        <i class="fas fa-bars" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动菜单内容 -->
+            <div id="mobile-menu" class="md:hidden border-t border-gray-200">
+                <div class="flex flex-col space-y-2 py-4">
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">首页</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Web3教程</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Giant Cutie</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Lana Yang</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">联系</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面内容 -->
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-4">移动菜单测试页面</h1>
+        <p class="text-gray-600 mb-4">请在移动设备或缩小浏览器窗口后点击右上角的汉堡菜单图标 ☰</p>
+        <p class="text-gray-600 mb-4">如果菜单无法点击，请查看底部的调试信息。</p>
+        
+        <div class="bg-gray-100 p-4 rounded-lg">
+            <h2 class="font-semibold mb-2">测试步骤：</h2>
+            <ol class="list-decimal list-inside space-y-1 text-sm">
+                <li>缩小浏览器窗口宽度到手机大小</li>
+                <li>点击右上角红色的"点我测试"按钮，确认触摸事件正常</li>
+                <li>点击汉堡菜单图标 ☰</li>
+                <li>观察菜单是否展开</li>
+                <li>再次点击查看菜单是否收起</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // 调试信息显示
+        const debugInfo = document.getElementById('debug-info');
+        
+        function log(message) {
+            console.log(message);
+            debugInfo.innerHTML += '<br>' + message;
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            log('页面加载完成');
+            
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            
+            log('查找元素...');
+            log('按钮元素: ' + (mobileMenuBtn ? '找到' : '未找到'));
+            log('菜单元素: ' + (mobileMenu ? '找到' : '未找到'));
+            log('图标元素: ' + (menuIcon ? '找到' : '未找到'));
+            
+            if (mobileMenuBtn && mobileMenu) {
+                log('开始绑定事件监听器');
+                
+                // 多种事件监听，确保兼容性
+                mobileMenuBtn.addEventListener('click', handleMenuClick);
+                mobileMenuBtn.addEventListener('touchstart', handleMenuTouch);
+                
+                function handleMenuClick(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    log('点击事件触发！');
+                    toggleMenu();
+                }
+                
+                function handleMenuTouch(e) {
+                    log('触摸事件触发！');
+                }
+                
+                function toggleMenu() {
+                    const isOpen = mobileMenu.classList.contains('open');
+                    log('当前菜单状态: ' + (isOpen ? '打开' : '关闭'));
+                    
+                    if (isOpen) {
+                        // 关闭菜单
+                        mobileMenu.classList.remove('open');
+                        menuIcon.className = 'fas fa-bars';
+                        log('菜单已关闭');
+                    } else {
+                        // 打开菜单
+                        mobileMenu.classList.add('open');
+                        menuIcon.className = 'fas fa-times';
+                        log('菜单已打开');
+                    }
+                }
+                
+                log('事件监听器绑定完成');
+            } else {
+                log('ERROR: 无法找到必要的DOM元素！');
+            }
+        });
+        
+        // 全局点击监听
+        document.addEventListener('click', function(e) {
+            log('全局点击事件: ' + e.target.tagName + ' ' + (e.target.id || e.target.className));
+        });
+        
+        // 触摸事件监听
+        document.addEventListener('touchstart', function(e) {
+            log('全局触摸事件: ' + e.target.tagName);
+        });
+    </script>
+</body>
+</html>

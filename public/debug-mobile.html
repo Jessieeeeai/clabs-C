@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动菜单调试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-xl">C Labs Debug</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-700">首页</a>
+                    <a href="#" class="text-gray-700">教程</a>
+                </div>
+                
+                <!-- 移动菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-700" style="
+                        display: block !important;
+                        width: 40px !important;
+                        height: 40px !important;
+                        background: transparent !important;
+                        border: 1px solid #ccc !important;
+                        cursor: pointer !important;
+                        font-size: 18px !important;
+                    ">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动菜单 -->
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
+                <div class="flex flex-col space-y-2">
+                    <a href="#" class="block px-4 py-2 text-gray-700">首页</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700">Web3教程</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700">Giant Cutie</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700">Lana Yang</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700">联系</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-20 p-8">
+        <h1 class="text-2xl font-bold mb-4">移动菜单调试页面</h1>
+        
+        <div class="bg-yellow-100 p-4 rounded mb-4">
+            <p><strong>测试步骤：</strong></p>
+            <ol class="list-decimal list-inside mt-2">
+                <li>将浏览器窗口调整到移动设备宽度 (< 768px)</li>
+                <li>点击右上角的汉堡菜单按钮 ☰</li>
+                <li>观察菜单是否展开/收起</li>
+            </ol>
+        </div>
+        
+        <div id="status" class="bg-blue-100 p-4 rounded">
+            <p><strong>状态：</strong> <span id="status-text">等待测试...</span></p>
+        </div>
+        
+        <div class="mt-4 p-4 bg-gray-100 rounded">
+            <h2 class="font-bold mb-2">调试信息：</h2>
+            <div id="debug-log" class="text-sm font-mono"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            console.log(message);
+            const debugLog = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            log('页面加载完成');
+            
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const statusText = document.getElementById('status-text');
+            
+            log('查找DOM元素...');
+            
+            if (!mobileMenuBtn) {
+                log('❌ 错误：找不到移动菜单按钮');
+                statusText.textContent = '错误：找不到移动菜单按钮';
+                return;
+            }
+            
+            if (!mobileMenu) {
+                log('❌ 错误：找不到移动菜单');
+                statusText.textContent = '错误：找不到移动菜单';
+                return;
+            }
+            
+            log('✅ 所有DOM元素找到');
+            statusText.textContent = '准备就绪 - 请点击汉堡菜单测试';
+            
+            // 添加点击事件监听器
+            mobileMenuBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                log('🖱️ 检测到点击事件！');
+                
+                const isHidden = mobileMenu.classList.contains('hidden');
+                log(`当前菜单状态: ${isHidden ? '隐藏' : '显示'}`);
+                
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenuBtn.querySelector('i').className = 'fas fa-times';
+                    log('✅ 菜单已展开');
+                    statusText.textContent = '菜单已展开 - 再次点击可收起';
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuBtn.querySelector('i').className = 'fas fa-bars';
+                    log('✅ 菜单已收起');
+                    statusText.textContent = '菜单已收起 - 点击可展开';
+                }
+            });
+            
+            // 添加触摸事件监听器
+            mobileMenuBtn.addEventListener('touchstart', function(e) {
+                log('📱 检测到触摸开始事件');
+            });
+            
+            mobileMenuBtn.addEventListener('touchend', function(e) {
+                log('📱 检测到触摸结束事件');
+            });
+            
+            log('✅ 事件监听器添加完成');
+            
+            // 添加全局点击监听器用于调试
+            document.addEventListener('click', function(e) {
+                if (e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
+                    log(`🖱️ 其他元素被点击: ${e.target.tagName} ${e.target.className || '(no class)'}`);
+                }
+            });
+        });
+        
+        // 窗口大小变化监听
+        window.addEventListener('resize', function() {
+            log(`📱 窗口大小变化: ${window.innerWidth}x${window.innerHeight}`);
+        });
+    </script>
+</body>
+</html>

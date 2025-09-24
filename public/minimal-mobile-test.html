@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最小化移动菜单测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- 内联移动菜单CSS修复 -->
+    <style>
+        @media (max-width: 768px) {
+            #mobile-menu-btn {
+                display: block !important;
+                width: 40px !important;
+                height: 40px !important;
+                background: transparent !important;
+                border: none !important;
+                cursor: pointer !important;
+                color: #374151 !important;
+                font-size: 18px !important;
+                z-index: 10000 !important;
+                position: relative !important;
+                outline: none !important;
+                -webkit-tap-highlight-color: transparent !important;
+            }
+            
+            #mobile-menu-btn:hover {
+                background: rgba(243, 244, 246, 0.5) !important;
+            }
+            
+            #mobile-menu-btn:active {
+                background: rgba(209, 213, 219, 0.5) !important;
+                transform: scale(0.95) !important;
+            }
+        }
+        
+        #mobile-menu {
+            transition: all 0.3s ease;
+        }
+        
+        #mobile-menu.hidden {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        
+        #mobile-menu:not(.hidden) {
+            max-height: 300px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-sans bg-white text-gray-900">
+    <!-- 与原始项目完全相同的导航结构 -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">C</span>
+                    </div>
+                    <span class="font-bold text-xl">C Labs</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-700 hover:text-blue-600">首页</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">Web3教程</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">Giant Cutie</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">Lana Yang</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">联系</a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        开始合作
+                    </a>
+                </div>
+                
+                <!-- 移动菜单按钮 -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动菜单 -->
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
+                <div class="flex flex-col space-y-2">
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">首页</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Web3教程</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Giant Cutie</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Lana Yang</a>
+                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">联系</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-20 p-8">
+        <h1 class="text-3xl font-bold mb-6">最小化移动菜单测试</h1>
+        
+        <div class="bg-green-100 border-l-4 border-green-500 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-green-700">
+                        这是一个最小化的移动菜单测试页面，使用与原始项目相同的HTML结构。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid gap-4 md:grid-cols-2">
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h2 class="font-semibold text-blue-800 mb-2">测试步骤</h2>
+                <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
+                    <li>将浏览器窗口调整到移动设备宽度 (小于 768px)</li>
+                    <li>点击右上角的汉堡菜单按钮 ☰</li>
+                    <li>观察菜单是否正常展开和收起</li>
+                    <li>测试菜单项的点击响应</li>
+                </ol>
+            </div>
+            
+            <div class="bg-yellow-50 p-4 rounded-lg">
+                <h2 class="font-semibold text-yellow-800 mb-2">状态信息</h2>
+                <div id="status-info" class="text-sm text-yellow-700">
+                    <p>🔄 正在初始化...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 只加载移动菜单相关的JavaScript -->
+    <script>
+        // 状态显示
+        function updateStatus(message, type = 'info') {
+            const statusInfo = document.getElementById('status-info');
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: '📝',
+                warning: '⚠️'
+            };
+            statusInfo.innerHTML = `<p>${icons[type]} ${message}</p>`;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatus('页面加载完成，开始初始化移动菜单', 'info');
+            
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (!mobileMenuBtn) {
+                updateStatus('找不到移动菜单按钮元素', 'error');
+                return;
+            }
+            
+            if (!mobileMenu) {
+                updateStatus('找不到移动菜单元素', 'error');
+                return;
+            }
+            
+            updateStatus('所有元素找到，添加事件监听器', 'success');
+            
+            // 移动菜单点击事件
+            mobileMenuBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('移动菜单按钮被点击');
+                
+                const isHidden = mobileMenu.classList.contains('hidden');
+                
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    updateStatus('菜单已展开 - 再次点击可收起', 'success');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    updateStatus('菜单已收起 - 点击汉堡图标可展开', 'success');
+                }
+            });
+            
+            // 添加触摸事件支持
+            mobileMenuBtn.addEventListener('touchstart', function(e) {
+                console.log('检测到触摸开始');
+            }, { passive: true });
+            
+            updateStatus('移动菜单初始化完成，请测试功能', 'success');
+        });
+    </script>
+</body>
+</html>
