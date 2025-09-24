@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3教程 - C Labs</title>
+    <meta name="description" content="专业的Web3教育内容，涵盖交易所使用、钱包安全、DeFi协议等核心主题">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand': {
+                            'primary': '#283dfe',
+                            'secondary': '#ffffff', 
+                            'dark': '#000002'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link href="/static/styles.css" rel="stylesheet">
+</head>
+<body class="font-sans bg-white text-gray-900">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">C</span>
+                    </div>
+                    <span class="font-bold text-xl">C Labs</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/index.html" class="nav-link">首页</a>
+                    <a href="/tutorials.html" class="nav-link text-brand-primary">Web3教程</a>
+                    <a href="/giant-cutie.html" class="nav-link">Giant Cutie</a>
+                    <a href="/lana.html" class="nav-link">Lana Yang</a>
+                    <a href="/contact.html" class="nav-link">联系</a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/contact.html" class="bg-brand-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        开始合作
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t border-gray-200">
+                <div class="flex flex-col space-y-2">
+                    <a href="/index.html" class="mobile-nav-link">首页</a>
+                    <a href="/tutorials.html" class="mobile-nav-link text-brand-primary">Web3教程</a>
+                    <a href="/giant-cutie.html" class="mobile-nav-link">Giant Cutie</a>
+                    <a href="/lana.html" class="mobile-nav-link">Lana Yang</a>
+                    <a href="/contact.html" class="mobile-nav-link">联系</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16">
+        <!-- Education Platform -->
+        <div class="education-platform">
+            <!-- Hero Section -->
+            <section class="education-hero">
+                <div class="container mx-auto px-4 py-16">
+                    <div class="max-w-4xl mx-auto text-center">
+                        <div class="hero-badge">
+                            <span class="badge-text">专业教育</span>
+                        </div>
+                        <h1 class="hero-title">Web3 学院</h1>
+                        <h2 class="hero-subtitle">掌握Web3核心技能 · 从新手到专家的完整学习路径</h2>
+                        <p class="hero-description">
+                            由Giant Cutie等顶级KOL亲自打造的专业Web3教育内容，涵盖交易所使用、钱包安全、DeFi协议、空投策略等核心主题。
+                            无论您是完全新手还是进阶用户，都能找到合适的学习路径。
+                        </p>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">50+</span>
+                                <span class="stat-label">精选教程</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">6</span>
+                                <span class="stat-label">核心领域</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">100K+</span>
+                                <span class="stat-label">学习者</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Paths Section -->
+            <section class="learning-paths">
+                <div class="container mx-auto px-4 py-12">
+                    <div class="section-header">
+                        <h2 class="section-title">学习路径</h2>
+                        <p class="section-subtitle">系统化的课程体系，循序渐进掌握Web3技能</p>
+                    </div>
+                    
+                    <!-- Course Categories -->
+                    <div class="course-categories">
+                        <!-- Category 1: Exchanges -->
+                        <div class="learning-path-card">
+                            <div class="path-header">
+                                <div class="path-level">
+                                    <span class="level-badge">1</span>
+                                    <span class="level-text">基础</span>
+                                </div>
+                                <div class="path-icon exchanges">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="path-content">
+                                <h3 class="path-title">交易所使用</h3>
+                                <p class="path-description">掌握主流交易所的使用技巧，包括注册、充值、交易、提现等基础操作</p>
+                                
+                                <div class="path-stats">
+                                    <div class="stat">
+                                        <i class="fas fa-book"></i>
+                                        <span>1 个课程</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-clock"></i>
+                                        <span>15 分钟</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-users"></i>
+                                        <span>12.5K 学员</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="path-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 25%"></div>
+                                    </div>
+                                    <span class="progress-text">开始学习</span>
+                                </div>
+                            </div>
+                            
+                            <div class="path-action">
+                                <a href="/okx-registration.html" class="path-btn">
+                                    <span>开始课程</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Category 2: Wallets -->
+                        <div class="learning-path-card">
+                            <div class="path-header">
+                                <div class="path-level">
+                                    <span class="level-badge">2</span>
+                                    <span class="level-text">进阶</span>
+                                </div>
+                                <div class="path-icon wallets">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="path-content">
+                                <h3 class="path-title">钱包安全</h3>
+                                <p class="path-description">学习数字钱包的创建、备份、安全使用等核心知识</p>
+                                
+                                <div class="path-stats">
+                                    <div class="stat">
+                                        <i class="fas fa-book"></i>
+                                        <span>8 个课程</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-clock"></i>
+                                        <span>120 分钟</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-users"></i>
+                                        <span>8.9K 学员</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="path-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 40%"></div>
+                                    </div>
+                                    <span class="progress-text">开始学习</span>
+                                </div>
+                            </div>
+                            
+                            <div class="path-action">
+                                <a href="#" class="path-btn">
+                                    <span>开始课程</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Category 3: DeFi -->
+                        <div class="learning-path-card">
+                            <div class="path-header">
+                                <div class="path-level">
+                                    <span class="level-badge">3</span>
+                                    <span class="level-text">实战</span>
+                                </div>
+                                <div class="path-icon defi">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="path-content">
+                                <h3 class="path-title">DeFi协议</h3>
+                                <p class="path-description">深入了解去中心化金融协议的使用和风险管理</p>
+                                
+                                <div class="path-stats">
+                                    <div class="stat">
+                                        <i class="fas fa-book"></i>
+                                        <span>15 个课程</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-clock"></i>
+                                        <span>225 分钟</span>
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-users"></i>
+                                        <span>5.2K 学员</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="path-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 60%"></div>
+                                    </div>
+                                    <span class="progress-text">开始学习</span>
+                                </div>
+                            </div>
+                            
+                            <div class="path-action">
+                                <a href="#" class="path-btn">
+                                    <span>开始课程</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Courses Section -->
+            <section class="featured-courses">
+                <div class="container mx-auto px-4 py-12">
+                    <div class="section-header">
+                        <h2 class="section-title">精选课程</h2>
+                        <p class="section-subtitle">由专业团队精心制作的高质量教程内容</p>
+                    </div>
+                    
+                    <div class="courses-grid">
+                        <!-- Course 1 -->
+                        <div class="course-card">
+                            <div class="course-header">
+                                <div class="course-thumbnail">
+                                    <div class="thumbnail-placeholder">
+                                        <i class="fas fa-play-circle"></i>
+                                    </div>
+                                    <div class="course-category exchanges">
+                                        交易所使用
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-content">
+                                <h3 class="course-title">OKX欧易注册完整指南</h3>
+                                <p class="course-description">Giant Cutie专属邀请码，一步步教你安全注册OKX，包含安卓和iOS详细步骤</p>
+                                
+                                <div class="course-meta">
+                                    <div class="meta-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>15 分钟</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-eye"></i>
+                                        <span>15,600 学习</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-star"></i>
+                                        <span>4.8</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="course-instructor">
+                                    <div class="instructor-avatar">
+                                        <span>GC</span>
+                                    </div>
+                                    <div class="instructor-info">
+                                        <span class="instructor-name">Giant Cutie</span>
+                                        <span class="instructor-title">Web3 专家</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-action">
+                                <a href="/okx-registration.html" class="course-btn">
+                                    立即学习
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Course 2 -->
+                        <div class="course-card">
+                            <div class="course-header">
+                                <div class="course-thumbnail">
+                                    <div class="thumbnail-placeholder">
+                                        <i class="fas fa-play-circle"></i>
+                                    </div>
+                                    <div class="course-category wallets">
+                                        钱包安全
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-content">
+                                <h3 class="course-title">MetaMask钱包安全使用</h3>
+                                <p class="course-description">学习如何安全地设置和使用MetaMask钱包</p>
+                                
+                                <div class="course-meta">
+                                    <div class="meta-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>15 分钟</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-eye"></i>
+                                        <span>8,900 学习</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-star"></i>
+                                        <span>4.8</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="course-instructor">
+                                    <div class="instructor-avatar">
+                                        <span>GC</span>
+                                    </div>
+                                    <div class="instructor-info">
+                                        <span class="instructor-name">Giant Cutie</span>
+                                        <span class="instructor-title">Web3 专家</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-action">
+                                <a href="#" class="course-btn">
+                                    立即学习
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Tools Section -->
+            <section class="learning-tools">
+                <div class="container mx-auto px-4 py-12">
+                    <div class="tools-grid">
+                        <div class="tool-card search-tool">
+                            <h3>智能搜索</h3>
+                            <p>快速找到您需要的教程内容</p>
+                            <div class="search-box">
+                                <input type="text" placeholder="搜索课程、主题、工具..." id="course-search">
+                                <button class="search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="popular-tags">
+                                <span class="tag">币安</span>
+                                <span class="tag">MetaMask</span>
+                                <span class="tag">DeFi</span>
+                                <span class="tag">空投</span>
+                                <span class="tag">NFT</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tool-card progress-tool">
+                            <h3>学习进度</h3>
+                            <p>追踪您的学习成果</p>
+                            <div class="progress-stats">
+                                <div class="progress-item">
+                                    <span class="progress-label">已完成课程</span>
+                                    <span class="progress-value">0 / 3</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <button class="progress-btn">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">C</span>
+                        </div>
+                        <span class="font-bold text-xl">C Labs</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">TOP Vol Web3 Chinese Brand</p>
+                    <p class="text-gray-400 text-sm">专业的 Web3 品牌营销机构，连接全球与中文社区</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">服务</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">KOL 营销</a></li>
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">内容传播</a></li>
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">社区运营</a></li>
+                        <li><a href="/index.html#services" class="hover:text-white transition-colors">品牌策划</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">IP展示</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/giant-cutie.html" class="hover:text-white transition-colors">Giant Cutie</a></li>
+                        <li><a href="/lana.html" class="hover:text-white transition-colors">Lana</a></li>
+                        <li><a href="/tutorials.html" class="hover:text-white transition-colors">Web3教程</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">联系我们</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-gray-300">商务合作</span>
+                                <span>clabsservice0024@gmail.com</span>
+                            </div>
+                        </li>
+                        <li class="mt-3">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-gray-300">媒体咨询</span>
+                                <a href="https://t.me/clabskoala1900" target="_blank" class="hover:text-white transition-colors inline-flex items-center">
+                                    <i class="fab fa-telegram mr-2"></i>
+                                    Telegram
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2024 C Labs. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Custom JavaScript -->
+    <script src="/static/app.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
